@@ -10,6 +10,32 @@ Codex coordinates and reviews local work. The participant's authenticated Kiro C
 
 ## Executed work
 
+**November6 independent review after actual IDE delivery:** the participant returned Kiro IDE's completed task17 report and the workspace contains its specs/source/tests. The specs say the IDE context reported Claude Opus5.5; Codex did not observe the reasoning-effort control or credit billing. This is genuine reported IDE work supported by the delivered files, separate from the failed CLI. Codex independently confirmed build and63 unit tests, inspected the live room, and reproduced stale recall motion after Undo/live reduced motion. Its `check:halloween` execution loaded after the rebuild but failed at line232 (1 animation instead of0), so the earlier reported11/11 is not independently reproduced here. No fabrication is inferred from differing runs. Source remains intact; [review18](development/18_Opus_Experience_Review.md) and [the second IDE brief](../PROMPT_KIRO_02_EXPERIENCIA.md) identify the actual strengths, limits and next fixes.
+
+**November 6, Kiro IDE task17 (TERMINAL Halloween encounter).** The participant ran `PROMPT_KIRO_HALLOWEEN.md` in Kiro IDE. The session context reported the model as Claude Opus 5.5. The reasoning-effort setting and any credit charge were not visible in the session and are not claimed.
+
+What this Kiro run did:
+- **Spec.** Wrote `.kiro/specs/terminal-halloween/requirements.md`, `design.md` and `tasks.md`. They include a critique of the brief: results were not attributable to their causes. The fix is a `lastAction` field, split return moments, evidence on the bell itself, and a ghost that object changes never move.
+- **Model.** Added presentation-only fields and state-accurate check-ins in `legacy-session.ts`. Process outcomes are unchanged.
+- **Presentation and art.**
+  - Rewrote `haunting-presentation.ts`.
+  - Refined the ghost and added a scene bell, doorway and moon in `specter-art.ts`.
+  - Added `ghost-writing.ts` (bounded reveal) and `terminal-bell.ts` (opt-in chime).
+- **Views.**
+  - Rewrote `legacy-view.ts` as the ghost's room inside the same window.
+  - Extended `terminal-view.ts`: a ghost behind the banner, written line, Read the note button and tab bell.
+  - Added task17 styles to `desktop.css`.
+  - Rewrote copy in `first-run.ts`, `desktop-shell.ts` and `haunt.html`.
+- **Checks.** Added `tests/haunting-presentation.test.ts` and `scripts/check-terminal-halloween.mjs` (`npm run check:halloween`).
+
+Verification:
+- The production build passed.
+- 63 unit tests passed.
+- 46 browser journeys across six checks passed with no page errors. These are the new check plus the unchanged recovery, guide, window, ECHO and console checks.
+- A phone layout regression surfaced by `check:windows` was fixed.
+
+Codex's brief, `moment` field, draft narration and original ghost/icon drawings are scaffolding and are not counted as Kiro work. No human testing, installs, publication, push or account changes took place. Details and the "not verified" list are in [the task record](../.kiro/specs/terminal-halloween/tasks.md).
+
 **November6 Opus Halloween attempt and IDE handoff:** the participant requested Opus to help redesign the current encounter for non-programmers with functional Halloween actions. The native catalog omitted Opus; an actual exact `claude-opus-5.5`/max read-only critique attempt warned about unsupported effort and exited1 at prompt stage with UsageLimitReachedError / MONTHLY_REQUEST_COUNT. No critique/source was generated. The participant then offered to operate Kiro IDE manually. Codex prepared `PROMPT_KIRO_HALLOWEEN.md`, task17 and stable model/narration/SVG scaffolding. The IDE's entitlement/model/credit state and any later output remain unverified. These prepared files are Codex-authored, not new Kiro use. No plan, account or region changes occurred.
 
 **November6 actual recovery-review retry:** the participant explicitly repeated their request to use Kiro. Codex queried the native model catalog (Sonnet4.5 was available) and launched a bounded native Sonnet4.5 design review of task16, permitted to write only `terminal-recovery-review.md`. The run exited1 with **UsageLimitReachedError at prompt stage**, before file tools; that review file was not created. No actual Kiro critique or recovery source is claimed. Codex resolved its own design risks and implemented/tested the first application-owned TERMINAL recovery. Private failure logs remain outside Git. This is an attempted Kiro task, not a successful new contribution or proof that4,000 promotional credits were consumed. No plan/account/model bypass was used. See [task16's actual record](development/16_Terminal_Application_Recovery.md).

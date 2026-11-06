@@ -544,14 +544,39 @@ body { height: 100dvh; }
 /* TERMINAL's encounter lives inside its own window and changes its shell afterward. */
 .terminal-shell-view { display: contents; }
 .terminal-console [hidden] { display: none !important; }
-.terminal-anomaly { padding: 14px 18px; border-bottom: 1px solid #8fbe9a38; background: #132b2377; flex-shrink: 0; }
-.terminal-anomaly > div:first-child { display: grid; gap: 3px; }
-.terminal-health { font-size: 10px; color: #a0bd9d; }
-.terminal-condition { font-size: 12px; font-weight: 500; color: #cee0c8; }
-.terminal-ghost-line { display: block; padding-block: 7px; font: 11px/1.5 Consolas, monospace; color: #8fb495; overflow-wrap: anywhere; }
+/* Task17: a presence behind the banner text writes the farewell; it leaves only after a clean release. */
+.terminal-anomaly { position: relative; overflow: hidden; isolation: isolate; padding: 14px 124px 14px 18px; border-bottom: 1px solid #8fbe9a38; flex-shrink: 0;
+  background: radial-gradient(circle at 88% 16%, #f0c47a24, transparent 34%), linear-gradient(180deg, #13281fd9, #0d1c17e6); }
+.terminal-anomaly > :not(.shell-ghost) { position: relative; z-index: 1; }
+.anomaly-copy { display: grid; gap: 3px; }
+.terminal-health { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #a8c3a3; }
+.terminal-condition { font-size: 12px; font-weight: 500; color: #d5e6cf; }
+.terminal-ghost-line { margin: 0; padding-block: 8px; font: 14px/1.5 'Cascadia Code', Consolas, monospace; color: #c4f5d5; text-shadow: 0 0 9px #7fe0a870; overflow-wrap: anywhere; }
+.ghost-prefix { color: #7f9e8c; text-shadow: none; font-size: 11px; }
+.ghost-caret { color: #b8f0cc; opacity: .7; margin-left: 1px; }
+.terminal-console:not([data-line="writing"]) .ghost-caret { display: none; }
+.terminal-console:is([data-line="hushed"], [data-line="shadow"]) .ghost-hand { color: #8ea597; text-shadow: none; font-style: italic; font-size: 11px; }
 .terminal-case-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.terminal-case-actions button { border: 1px solid #9bbba25c; background: #2a4536; color: #d1e3cf; padding: 6px 10px; border-radius: 4px; font: 11px/1.5 Consolas, monospace; cursor: pointer; }
-.terminal-case-actions [data-ask-status] { background: transparent; }
+.terminal-case-actions button { border: 1px solid #9bbba25c; background: transparent; color: #d1e3cf; padding: 6px 10px; border-radius: 4px; font: 11px/1.5 Consolas, monospace; cursor: pointer; }
+.terminal-case-actions [data-enter-session] { background: #2f5440; border-color: #a7cfae80; color: #eef8ea; }
+.shell-ghost { position: absolute; right: 16px; bottom: -24px; z-index: 0; width: 104px; pointer-events: none; color: #dcebe4; opacity: .74; filter: drop-shadow(0 0 16px #a8e6c477);
+  transition: opacity 700ms ease, transform 700ms ease, filter 500ms ease, color 500ms ease; }
+.shell-ghost svg, .scene-ghost svg { display: block; width: 100%; height: auto; overflow: visible; }
+.shell-ghost .specter-art, .scene-ghost .specter-art { animation: ghost-drift 7s ease-in-out infinite; }
+@keyframes ghost-drift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
+.specter-mouth, .specter-lips, .specter-eyes, .specter-sheen, .specter-folds { transition: opacity 300ms ease, transform 300ms ease; transform-box: fill-box; transform-origin: center; }
+.specter-lips { opacity: 0; }
+.terminal-console[data-ghost="hushed"] .specter-mouth { opacity: 0; }
+.terminal-console[data-ghost="hushed"] .specter-lips { opacity: 1; }
+.terminal-console[data-ghost="shadow"] .shell-ghost { color: #050909; opacity: .75; filter: blur(.6px) drop-shadow(0 0 10px #000); }
+.terminal-console[data-ghost="shadow"] :is(.specter-eyes, .specter-sheen, .specter-mouth, .specter-lips, .specter-folds) { opacity: 0; }
+.terminal-console:is([data-ghost="shadow"], [data-ghost="gone"]) .shell-ghost .specter-art { animation: none; }
+.terminal-console[data-ghost="gone"] .shell-ghost { opacity: 0; transform: translateY(14px) scale(.9); visibility: hidden; transition: opacity 700ms ease, transform 700ms ease, visibility 0s linear 700ms; }
+.terminal-console[data-ghost="gone"] .terminal-anomaly { padding-right: 18px; }
+.terminal-console[data-terminal-health="haunted"] .console-output { background: radial-gradient(ellipse at 88% 0%, #9fd8b410, transparent 58%); }
+.console-bell { display: inline-flex; align-items: center; gap: 3px; margin-left: 4px; color: #f0c47a; font-size: 10px; transform-origin: 50% 0; }
+.console-bell svg { width: 14px; height: 14px; }
+.console-shortcuts-label { align-self: center; color: #7f939c; font-size: 10px; }
 .terminal-console[data-terminal-health="remembered"], .terminal-console[data-terminal-health="blank"] { color: #c8d7e4; }
 #window-terminal:is([data-terminal-health="remembered"], [data-terminal-health="blank"]) { background: #14202d; border-color: #a4bed277; }
 .terminal-console:is([data-terminal-health="remembered"], [data-terminal-health="blank"]) .terminal-anomaly { background: #233749; border-color: #8ba9c138; }
@@ -566,35 +591,165 @@ body { height: 100dvh; }
 .legacy-interior button:hover:enabled { background: #2c4d37; }
 .legacy-interior button:disabled { opacity: .4; cursor: default; }
 .legacy-interior button:focus-visible { outline: 2px solid #d2d5ac; outline-offset: 3px; }
-.legacy-title { padding: 18px 22px 6px; }
-.legacy-title > p { color: #91ad98; font-size: 11px; margin: 0 0 8px; }
-.legacy-title h3 { font: 500 24px/1.2 Consolas, monospace; color: #d4e0ba; margin: 5px 0 13px; }
-.legacy-program { margin: 8px 22px 0; padding: 13px 17px; border-left: 2px solid #a4be8a; background: #8eb36f0a; }
+/* Task17: the ghost's room. Objects, poses and words come from data attributes set from the model. */
+/* A fixed room height keeps the window still while narration and cards change length. */
+#window-terminal.terminal-memory-open { top: 50%; height: min(940px, calc(100% - 32px)); }
+.legacy-heading { flex-wrap: wrap; }
+.legacy-heading-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.legacy-interior .bell-sound { background: transparent; border-color: #89b09344; color: #b9cfbb; }
+.legacy-interior .bell-sound[aria-pressed="true"] { border-color: #f0c47a99; color: #f6d9a2; }
+.bell-sound-state { margin-left: 4px; opacity: .8; }
+.haunt-intro { padding: 16px 22px 8px; }
+.haunt-kicker { margin: 0 0 6px; color: #e3b970; font: 10px/1.4 system-ui, sans-serif; letter-spacing: .07em; text-transform: uppercase; }
+.haunt-intro h3 { margin: 0 0 6px; font: 400 25px/1.15 Georgia, 'Times New Roman', serif; color: #ece4c9; letter-spacing: -.01em; }
+.haunt-lede { margin: 0; color: #a9c1ad; font: 12px/1.55 system-ui, sans-serif; }
+.spectral-scene { position: relative; height: clamp(190px, 30vh, 250px); margin: 6px 22px 0; overflow: hidden; isolation: isolate; border-radius: 10px; border: 1px solid #8fbe9a33;
+  background: radial-gradient(circle at 9% 17%, #f0c47a30, transparent 25%), radial-gradient(ellipse at 50% 118%, #3a6b5560, transparent 62%), linear-gradient(180deg, #07110e, #0e1d18 70%, #0a1512);
+  box-shadow: inset 0 0 70px #000c; }
+.spectral-scene::before { content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 3px, #c8f0d80a 3px 4px); }
+.spectral-scene::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 20%; z-index: 0; background: linear-gradient(#0000, #0b1a1499); border-top: 1px solid #8fbe9a1f; }
+.scene-moon { position: absolute; top: 12px; left: 16px; z-index: 1; width: 46px; filter: drop-shadow(0 0 16px #f0c47a77); }
+.scene-moon svg { display: block; width: 100%; height: auto; }
+.scene-whisper { position: absolute; top: 14px; left: 20%; right: 26%; z-index: 4; margin: 0; min-height: 1.45em; text-align: center; font: 15px/1.45 'Cascadia Code', Consolas, monospace; color: #d3f9e0; text-shadow: 0 0 10px #8ff0b9aa, 0 0 2px #e8fff0; transition: opacity 400ms ease; }
+.legacy-interior:not([data-moment="voice"]) .scene-whisper { opacity: .66; }
+.ghost-word { display: inline-block; white-space: nowrap; }
+/* Backwards fill only: hidden while waiting for its turn, then the letter's own style takes over and no effect lingers. */
+.ghost-letter { display: inline-block; animation: ghost-ink 480ms cubic-bezier(.2, .7, .3, 1) backwards; }
+@keyframes ghost-ink { from { opacity: 0; filter: blur(4px); transform: translateY(-3px); } to { opacity: 1; filter: none; transform: none; } }
+.scene-note { position: absolute; left: 4%; bottom: 14px; z-index: 2; width: min(30%, 190px); padding: 10px 12px 8px; display: grid; gap: 6px; color: #2b2520; border-radius: 3px; rotate: -3deg;
+  background: #ece2c6 repeating-linear-gradient(180deg, transparent 0 17px, #9fb7c444 17px 18px); box-shadow: 0 8px 18px #000a; transition: box-shadow 500ms ease, transform 500ms ease, background-color 900ms ease; }
+.scene-note-line { font: 15px/1.2 'Segoe Print', 'Bradley Hand', 'Noteworthy', 'Ink Free', cursive; transition: opacity 900ms ease; }
+.scene-note-sign { font: 9px/1.2 system-ui, sans-serif; color: #6d6253; letter-spacing: .03em; transition: opacity 900ms ease; }
+.legacy-interior[data-note="faded"] .scene-note { background-color: #d6d3c9; }
+.legacy-interior[data-note="faded"] :is(.scene-note-line, .scene-note-sign) { opacity: 0; }
+.legacy-interior[data-moment="memory"] .scene-note { transform: translateY(-6px); box-shadow: 0 0 0 2px #f0c47a99, 0 0 30px #f0c47a66, 0 10px 22px #000a; }
+.scene-door { position: absolute; right: 3%; bottom: 0; z-index: 1; width: clamp(54px, 12%, 86px); height: 72%; color: #f0c47a; }
+.scene-door svg { display: block; width: 100%; height: 100%; }
+.scene-door-label { position: absolute; left: 50%; bottom: 6px; translate: -50% 0; white-space: nowrap; font: 9px/1 system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #ecd3a3; opacity: .75; }
+.door-glow { transition: fill-opacity 600ms ease; }
+.legacy-interior:is([data-pose="leaving"], [data-pose="gone"]) .door-glow { fill-opacity: .32; }
+.scene-bell { position: absolute; top: 0; right: calc(3% + clamp(54px, 12%, 86px) / 2 - 22px); z-index: 3; width: 44px; color: #f0c47a; filter: drop-shadow(0 0 8px #f0c47a55); transition: color 400ms ease, filter 400ms ease; }
+.scene-bell svg { display: block; width: 100%; height: auto; overflow: visible; }
+.bell-swing { transform-box: view-box; transform-origin: 40px 12px; }
+.bell-waves { opacity: 0; transition: opacity 260ms ease; }
+.legacy-interior[data-rang="true"] .bell-waves { opacity: 1; transition-delay: 460ms; }
+.bell-tie { opacity: 0; transition: opacity 300ms ease; }
+.legacy-interior[data-bell="quiet"] .scene-bell { color: #9a8f7c; filter: none; }
+.legacy-interior[data-bell="quiet"] .bell-tie { opacity: 1; }
+.scene-bell-count { position: absolute; right: 100%; top: 27px; margin-right: 2px; white-space: nowrap; font: 10px/1.2 system-ui, sans-serif; color: #f3d9a8; }
+.scene-ghost { position: absolute; left: 50%; bottom: -10px; z-index: 3; width: clamp(108px, 23%, 158px); translate: -50% 0; color: #dcebe4; opacity: .88; filter: drop-shadow(0 0 22px #a8e6c488);
+  transition: left 650ms cubic-bezier(.3, .7, .3, 1), transform 650ms cubic-bezier(.3, .7, .3, 1), opacity 700ms ease, color 500ms ease, filter 500ms ease; }
+.legacy-interior[data-pose="reading"] .scene-ghost { left: 38%; transform: rotate(-6deg); }
+.legacy-interior[data-pose="speaking"] .scene-ghost { transform: translateY(-6px) scale(1.04); }
+.legacy-interior[data-pose="speaking"][data-whisper="on"] .specter-mouth { transform: scaleY(1.25); }
+.legacy-interior[data-pose="leaving"] .scene-ghost { left: 76%; transform: scale(.94); opacity: .82; }
+.legacy-interior[data-whisper="off"] .specter-mouth { opacity: 0; }
+.legacy-interior[data-whisper="off"] .specter-lips { opacity: 1; }
+.legacy-interior[data-pose="shadow"] .scene-ghost { color: #050909; opacity: .86; filter: blur(.5px) drop-shadow(0 0 1.5px #a9d6be99) drop-shadow(0 0 16px #000); }
+.legacy-interior[data-pose="shadow"] :is(.specter-eyes, .specter-sheen, .specter-mouth, .specter-lips, .specter-folds) { opacity: 0; }
+.legacy-interior:is([data-pose="shadow"], [data-pose="gone"]) .scene-ghost .specter-art { animation: none; }
+.legacy-interior[data-pose="gone"] .scene-ghost { left: 90%; transform: scale(.82); opacity: 0; visibility: hidden; transition: left 900ms ease-in, transform 900ms ease-in, opacity 900ms ease-in, visibility 0s linear 900ms; }
+.haunt-narration { margin: 12px 22px 0; min-height: 3.2em; padding: 10px 14px; border-left: 2px solid #f0c47a99; background: #f0c47a0d; color: #ece6cf; font: 14px/1.55 Georgia, 'Times New Roman', serif; }
+.haunt-objects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 22px 0; }
+.haunt-object { display: grid; grid-template-columns: 26px 1fr; align-content: start; gap: 4px 10px; padding: 11px 12px; border: 1px solid #86a88e55; border-radius: 6px; background: #12261cc9; }
+.haunt-object[data-on="false"] { border-color: #c9b0dd55; background: #211c2799; }
+.object-icon { width: 26px; color: #c9e0c9; }
+.object-icon svg { display: block; width: 26px; height: 26px; }
+.haunt-object[data-object="archive"] .object-icon { color: #ecdfbf; }
+.haunt-object[data-object="restart"] .object-icon { color: #f0c47a; }
+.object-copy h4 { margin: 0 0 3px; color: #e4eed8; font: 600 12px/1.3 system-ui, sans-serif; }
+.object-state { margin: 0; color: #aac0ae; font: 11px/1.45 system-ui, sans-serif; }
+.legacy-interior .haunt-object button { grid-column: 1 / -1; justify-self: start; margin-top: 6px; font: 12px/1.3 system-ui, sans-serif; }
+.legacy-controls { display: flex; gap: 8px; flex-wrap: wrap; padding: 14px 22px 4px; }
+.legacy-interior .legacy-controls button { font: 12px/1.3 system-ui, sans-serif; padding: 9px 12px; }
+.legacy-controls .legacy-primary { background: #d9ecc8; color: #102218; border-color: transparent; font-weight: 600; }
+.legacy-controls .legacy-primary:hover:enabled { background: #eef8e4; }
+.legacy-controls .legacy-force { border-color: #c98a8a66; color: #f0cdc8; background: #3a1f22; }
+.legacy-controls .legacy-force:hover:enabled { background: #4c282c; }
+.legacy-hint { padding: 6px 22px 14px; margin: 0; color: #8fa996; font: 11px/1.5 system-ui, sans-serif; }
+.under-hood { margin: 4px 22px 20px; border: 1px solid #88aa8d30; border-radius: 6px; background: #07110dcc; }
+.under-hood summary { cursor: pointer; padding: 10px 14px; color: #b8d0bb; font: 600 11px/1.4 system-ui, sans-serif; }
+.under-hood summary span { font-weight: 400; color: #819f8b; margin-left: 6px; }
+.under-hood summary:focus-visible { outline: 2px solid #d2d5ac; outline-offset: 2px; }
+.under-hood[open] summary { border-bottom: 1px solid #88aa8d30; }
+.hood-map { margin: 0; padding: 12px 14px 4px; display: grid; gap: 8px; font-size: 11px; }
+.hood-map div { display: grid; grid-template-columns: 110px 1fr; gap: 10px; }
+.hood-map dt { color: #c7d9b1; }
+.hood-map dd { margin: 0; color: #a3b8a7; overflow-wrap: anywhere; }
+.hood-map code, .hood-commands code { color: #d2d7b1; }
+.legacy-program { margin: 10px 14px 0; padding: 10px 14px; border-left: 2px solid #a4be8a; background: #8eb36f0a; }
 .legacy-program > span { color: #839c87; font-size: 10px; }
-.legacy-program code { display: block; font: 15px/1.7 Consolas, monospace; color: #c7d9b1; padding-top: 7px; }
-.legacy-program p { font-size: 10px; color: #8da997; margin-bottom: 0; }
-.legacy-circuit { margin: 0 22px; }
-.legacy-wires { display: block; width: 100%; height: 65px; overflow: visible; }
-.legacy-wires path { fill: none; stroke: #92b29a; stroke-width: 1.5; }
-.legacy-wires .wire-cut { stroke: #bc8876; stroke-dasharray: 3 5; opacity: .5; }
-.legacy-pulse { fill: #e8dda4; }
-.legacy-interior[data-phase="1"] .legacy-pulse { cx: 100; }
-.legacy-interior[data-phase="2"] .legacy-pulse { cx: 500; }
-.legacy-nodes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.legacy-nodes article { padding: 12px; border: 1px solid #86a88e55; background: #13271dc9; display: flex; flex-direction: column; align-items: start; }
-.legacy-nodes article[data-connected="false"] { border-color: #bc88766b; background: #332c2270; }
-.legacy-port { color: #819f8b; font-size: 10px; overflow-wrap: anywhere; }
-.legacy-nodes h4 { color: #c7d9b1; font-size: 13px; margin: 7px 0; font-weight: 500; }
-.legacy-nodes p { margin: 0 0 13px; font-size: 11px; color: #a3b8a7; flex: 1; }
-.legacy-watch { margin: 18px 22px 0; background: #07110d; padding: 12px 15px; border: 1px solid #88aa8d30; }
+.legacy-program code { display: block; font: 13px/1.7 Consolas, monospace; color: #c7d9b1; padding-top: 5px; overflow-wrap: anywhere; }
+.legacy-watch { margin: 10px 14px 0; padding: 10px 12px; border: 1px solid #88aa8d30; background: #050c09; }
 .legacy-execution { font-size: 10px; color: #7f9f8d; }
-.legacy-trace { margin: 7px 0 0; min-height: 38px; color: #d2d7b1; font-size: 12px; }
-.legacy-controls { display: flex; gap: 8px; flex-wrap: wrap; padding: 15px 22px; }
-.legacy-controls .legacy-primary { background: #b4c89f; color: #102218; }
-.legacy-hint { padding: 0 22px 20px; margin: 0; color: #89a591; font-size: 11px; }
-.legacy-interior:is([data-health="remembered"], [data-health="blank"]) { background: #182b32; }
+.legacy-trace { margin: 6px 0 0; color: #d2d7b1; font-size: 12px; overflow-wrap: anywhere; }
+.hood-commands { margin: 10px 14px 14px; color: #8da997; font-size: 10px; line-height: 1.7; }
+.legacy-interior:is([data-health="remembered"], [data-health="blank"]) { background: #142630; }
+.legacy-interior:is([data-health="remembered"], [data-health="blank"]) .spectral-scene { border-color: #8ba9c140;
+  background: radial-gradient(circle at 9% 17%, #f0c47a24, transparent 25%), linear-gradient(180deg, #0b1722, #12212c 70%, #0d1a23); }
+/* After release the banner shows what stayed behind: the kept note on paper, or a blank page. */
+.terminal-console:is([data-line="kept"], [data-line="blank"]) .terminal-ghost-line { display: inline-block; margin: 8px 0 10px; padding: 8px 14px; border-radius: 3px; rotate: -1deg; background: #efe5cc; color: #2c2722; text-shadow: none; box-shadow: 0 6px 14px #0007; font: italic 14px/1.4 'Segoe Print', 'Bradley Hand', 'Noteworthy', 'Ink Free', cursive; }
+.terminal-console:is([data-line="kept"], [data-line="blank"]) .ghost-prefix { color: #7d6f5c; font: 10px/1 system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase; }
+.terminal-console[data-line="blank"] .terminal-ghost-line { background: #e2ded4; color: #8b867b; }
+@media (prefers-reduced-motion: reduce) {
+  .ghost-letter, .shell-ghost .specter-art, .scene-ghost .specter-art { animation: none !important; }
+  .shell-ghost, .scene-ghost, .scene-note, .scene-note-line, .scene-note-sign, .scene-whisper, .bell-waves, .bell-tie, .door-glow, .scene-bell { transition: none !important; }
+}
 .desktop-masthead .desktop-task { font: 11px/1.6 Consolas, monospace; color: #a4b8b1; white-space: pre-line; }
 .desktop-masthead .workshop-task { color: #7d929c; font-size: 10px; }
-@media (max-width: 650px) { .legacy-nodes { grid-template-columns: 1fr; gap: 9px; border-left: 1px dashed #88aa8d66; padding-left: 10px; margin-top: 16px; } .legacy-wires { display: none; } .legacy-nodes article { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; } .legacy-nodes h4 { margin: 2px 0; } .legacy-nodes p { grid-column: 1; margin: 0; } .legacy-nodes button { grid-column: 2; grid-row: 1 / 4; align-self: center; } .terminal-anomaly { padding: 11px 12px; } .legacy-title h3 { font-size: 21px; } }
+@media (max-width: 650px) {
+  .terminal-anomaly { padding: 11px 84px 11px 12px; }
+  .terminal-console[data-ghost="gone"] .terminal-anomaly { padding-right: 12px; }
+  .shell-ghost { right: 6px; bottom: -16px; width: 76px; }
+  .legacy-heading { padding: 10px 14px; }
+  .haunt-intro { padding: 12px 14px 6px; }
+  .haunt-intro h3 { font-size: 21px; }
+  .haunt-lede { display: none; }
+  .spectral-scene, .haunt-narration, .haunt-objects, .under-hood { margin-inline: 14px; }
+  .legacy-controls { padding-inline: 14px; }
+  .legacy-hint { padding-inline: 14px; }
+  .spectral-scene { height: 200px; }
+  .scene-moon { top: 10px; left: 10px; width: 30px; }
+  .scene-whisper { top: 10px; left: 16%; right: 24%; font-size: 12px; }
+  .scene-note { width: 38%; padding: 8px; }
+  .scene-note-line { font-size: 12px; }
+  .scene-ghost { width: 31%; }
+  .legacy-interior[data-pose="leaving"] .scene-ghost { left: 70%; }
+  .haunt-narration { font-size: 13px; }
+  .haunt-objects { grid-template-columns: 1fr; gap: 8px; }
+  .haunt-object { grid-template-columns: 24px 1fr auto; align-items: center; }
+  .legacy-interior .haunt-object button { grid-column: auto; margin-top: 0; }
+  .hood-map div { grid-template-columns: 1fr; gap: 2px; }
+}
 body[data-guide-step="2"] .terminal-anomaly { display: none; }
-@media (max-height: 580px) { .terminal-anomaly { padding-block: 5px; } .terminal-health { display: none; } .terminal-condition { font-size: 10px; } .terminal-ghost-line { padding-block: 3px; font-size: 10px; } .terminal-case-actions button { padding-block: 3px; } }
+@media (max-height: 580px) {
+  .terminal-anomaly { padding-block: 5px; padding-right: 84px; }
+  .terminal-health { display: none; }
+  .terminal-condition { font-size: 10px; }
+  .terminal-ghost-line { padding-block: 3px; font-size: 11px; }
+  .terminal-case-actions button { padding-block: 3px; }
+  .shell-ghost { width: 64px; bottom: -18px; }
+  .legacy-heading { padding-block: 5px; }
+  .legacy-interior .legacy-heading button { padding-block: 4px; }
+  .haunt-intro { padding-block: 8px 2px; }
+  .haunt-intro h3 { font-size: 18px; margin: 0; }
+  .haunt-kicker, .haunt-lede { display: none; }
+  .spectral-scene { height: 150px; }
+  .scene-ghost { width: clamp(86px, 17%, 118px); }
+  .scene-whisper { top: 8px; font-size: 12px; }
+  .scene-note { padding: 6px 8px; }
+  .scene-note-line { font-size: 12px; }
+  .haunt-narration { margin-top: 8px; padding-block: 6px; min-height: 0; font-size: 13px; }
+  .haunt-objects { margin-top: 8px; }
+  .haunt-object { padding: 7px 10px; }
+}
+/* Task17 phones: the haunted banner is taller, so the optional command row and transcript give back that space. */
+@media (max-width: 480px) {
+  .console-shortcuts-label, .console-footer > span:last-child { display: none; }
+  .console-output { height: 200px; }
+}
+/* Task17: the haunted banner changes height with the story. Cap the shell so that, at its offset centre
+   (top 53%, 55% on narrow screens, 50% on short ones), it can never extend past the desktop; the transcript shrinks instead. */
+#window-terminal:not(.terminal-memory-open) { max-height: calc(94% - 8px); }
+@media (max-width: 800px) { #window-terminal:not(.terminal-memory-open) { max-height: calc(90% - 8px); } }
+@media (max-height: 580px) { #window-terminal:not(.terminal-memory-open) { max-height: calc(100% - 32px); } }

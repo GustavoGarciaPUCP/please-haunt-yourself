@@ -1,6 +1,7 @@
 import { FirstRunGuide } from './first-run';
 import type { RehearsalResult } from './echo-view';
 import { isSettled, type LegacySnapshot } from './legacy-session';
+import { desktopTask } from './haunting-presentation';
 
 export class DesktopShell {
   readonly guide: FirstRunGuide;
@@ -52,7 +53,7 @@ export class DesktopShell {
   markTerminal(state: LegacySnapshot): void {
     const task = document.querySelector<HTMLElement>('.desktop-task')!;
     task.dataset.complete = String(isSettled(state));
-    const message = isSettled(state) ? `✓ TERMINAL recovered.\n${state.archive ? 'A memory kept. An executable loop ended.' : 'A blank archive. A prompt of your own.'}` : 'Recovery task: free TERMINAL from its repeating session.\nEnter the session, then return to check how it is doing.';
+    const message = desktopTask(state);
     if (task.textContent !== message) task.textContent = message;
   }
 }

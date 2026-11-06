@@ -1,10 +1,10 @@
 export const GUIDE_STORAGE_KEY = 'haunt.guide.v2';
 type App = 'terminal' | 'echo';
 const steps = [
-  { title: 'The application needs you.', copy: 'TERMINAL keeps borrowing a session that should have ended. Your task is to enter that session, change what holds it here, then return to see whether this program is really better.', target: '#btn-terminal', next: 'Open TERMINAL', app: undefined },
-  { title: 'A line from someone else.', copy: 'The old line belongs to a recovered session. Muting it, forgetting it and ending its loop are different actions. This application will remember what you choose.', target: '.terminal-anomaly', next: 'Check how it is doing', app: 'terminal' },
-  { title: 'Ask before you intervene.', copy: 'Use ask status or ask are you okay. TERMINAL answers from its actual condition. You can inspect its session and test echo hello before and after recovery. This tour never repairs it for you.', target: '.terminal-console', next: 'Find the way inside', app: 'terminal' },
-  { title: 'Enter the session itself.', copy: 'This opens an execution trace inside the same terminal. Step through it, change a connection and observe what happens. Return to the prompt whenever you want. Stopping the encounter early is not a repair.', target: '[data-enter-session]', next: 'Start exploring', app: 'terminal' },
+  { title: 'Something is haunting TERMINAL.', copy: 'A ghost keeps writing someone’s last words on this screen. You can set it free without typing anything. Open TERMINAL to begin.', target: '#btn-terminal', next: 'Open TERMINAL', app: undefined },
+  { title: 'A farewell that writes itself.', copy: 'A presence behind this text writes an old note again and again. Hushing it, keeping or fading the note, and letting it go are different choices. TERMINAL will remember what you choose.', target: '.terminal-anomaly', next: 'Check how it is doing', app: 'terminal' },
+  { title: 'Ask before you act.', copy: 'Press Are you okay? or type ask are you okay. TERMINAL answers from what is really happening. This tour never frees the ghost for you.', target: '.terminal-console', next: 'Find the way inside', app: 'terminal' },
+  { title: 'Follow the ghost.', copy: 'This turns the same window into the ghost’s room. Watch what happens, change one thing at a time and see what follows. You can come back to the prompt whenever you like; leaving early does not fix anything.', target: '[data-enter-session]', next: 'Start exploring', app: 'terminal' },
 ] as const;
 
 /** Coach UI points at real app surfaces; it never repairs scenery or process state. */
@@ -26,7 +26,7 @@ export class FirstRunGuide {
     this.layer.innerHTML = `<div class="guide-shade" aria-hidden="true"></div><div class="guide-shade" aria-hidden="true"></div><div class="guide-shade" aria-hidden="true"></div><div class="guide-shade" aria-hidden="true"></div>
       <div class="guide-spot" aria-hidden="true"></div>
       <section class="guide-card" role="dialog" aria-labelledby="guide-title" aria-describedby="guide-copy" tabindex="-1">
-        <div class="guide-heading"><span>Recovery assistant</span><select aria-label="Guide topic"><option value="0">Desktop</option><option value="1">Anomaly</option><option value="2">Check-in</option><option value="3">Enter</option></select><button data-guide="skip">Skip tour</button></div>
+        <div class="guide-heading"><span>Recovery assistant</span><select aria-label="Guide topic"><option value="0">Desktop</option><option value="1">The ghost</option><option value="2">Check-in</option><option value="3">Inside</option></select><button data-guide="skip">Skip tour</button></div>
         <p class="guide-count"></p><h2 id="guide-title"></h2><p id="guide-copy"></p>
         <button class="guide-query" data-guide="query">Ask: are you okay?</button>
         <div class="guide-actions"><button data-guide="back">Back</button><button data-guide="next"></button></div>

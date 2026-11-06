@@ -42,3 +42,27 @@ The participant offered to open Kiro IDE and paste a concrete task. Codex theref
 Kiro IDE has not yet been operated or inspected by Codex, and its available models, credit state and execution remain unverified. A different IDE entitlement/account context is a possibility, not an established diagnosis of the CLI error. The user will select an available model and run the brief; no computer-use automation is authorized or needed. Genuine Kiro-generated specs/code/checks can be reviewed afterward from the shared project files.
 
 Before the handoff, Codex verified the prepared baseline: production build/TypeScript passed, all55 existing unit tests passed, and the five existing recovery browser journeys passed without page errors. Those checks preserve task16 behavior after the semantic/plain-language scaffolding change; they do not validate an already implemented ghost/bell/redesign. The new SVG and presentation helper remain intentionally unintegrated for Kiro's review/implementation.
+
+## Kiro IDE implementation, November 6
+
+This section was written by the Kiro IDE run. The session context reported Claude Opus 5.5; the effort setting and credits were not visible. The spec and its critique are in `.kiro/specs/terminal-halloween/`.
+
+**Implemented.**
+- Both views read the same model:
+  - **Shell.** A ghost behind the banner writes the farewell once per opening and once per new return. Follow the ghost, Are you okay? and Read the note need no typing. A visual bell appears in the console tab after the first return.
+  - **The ghost's room** inside the same window. Mara's note, the ghost and its whisper, and a shop-door bell above "the way out".
+- **Actions.** Watch the next moment, Hush the whisper, Keep or fade the note, Quiet the bell, Guide it out, Force it out, Call the shadow back and Undo all map to the existing model calls.
+- **Narration.** It names the cause of every return, including the player's own failed farewell. Changing an object never moves the ghost.
+- **Endings.** Both clean endings clear the presence and leave a different banner, check-in, note and desktop line. Forcing leaves an eyeless shadow.
+- **Optional parts.** Under the hood is a closed disclosure holding PID, trace, BASIC, the `on_exit`/TERM/KILL mapping and typed commands. Bell sound is an opt-in chime.
+- **Motion and access.** Reduced motion shows complete words and still poses.
+
+**Process semantics** are unchanged. Only presentation fields (`lastAction`, `recalled`/`threshold`) and check-in wording changed.
+
+**Verified:** build, 63 unit tests, and 46 browser journeys across six checks.
+
+**Remains:**
+- Human comprehension and enjoyment testing with people who do not program.
+- Real screen-reader and audio checks.
+- The other applications.
+- The main usability risk: many controls are visible at once inside the room.
