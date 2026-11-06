@@ -4,6 +4,8 @@ Complete revised experience proposal · November 6, 2026 · Concept/design only.
 
 This is Codex's recommendation for participant review, developed with creative and adversarial Codex agents. It replaces proposal07 as the recommended direction. It is not participant approval, implemented software, observed user research or a prize prediction. Application coding remains stopped.
 
+**Operational closure, November 6:** [09 — Experience contract](09_Experience_Contract.md) now governs the journey, modes, replay/access/visibility rules, completion and ending. This document retains the concept rationale and published competitive comparison. Where the earlier exploration was ambiguous,09 is authoritative; no application implementation or Kiro task was started for this closure.
+
 ## Value proposition
 
 Build and rehearse a haunted desktop around a recorded version of your own navigation decisions, then make it work for a visitor who behaves differently. Six dead applications become the cast and instruments of a playable production that preserves your choices.
@@ -25,16 +27,16 @@ These references do not provide a numerical quality comparison or evidence that 
 
 ### Defined opening: encounter your own visit before learning the studio
 
-The desktop opens with a small, visibly unfinished production, not an empty editor and six mandatory tutorials. CANVAS already has a provisional body; ECHO has the self-view problem; route objects and a playable invitation exist. These are editable starting material, not the player's final creation.
+The desktop opens with a small, visibly unfinished production, not an empty editor and six mandatory tutorials. CANVAS already has a provisional body; ECHO has the self-view problem; route objects and a valid playable invitation exist. These are editable starting material, not the player's final creation. The scene is the main surface; only one authoring inspector is open at a time. Staged windows remain independent props, so closing an inspector does not change coverage.
 
-1. REPLAY offers **Record a rehearsal**. Recording is deliberate and confined to the fiction.
+1. REPLAY offers **Record a visit**, with **Use an example visit** as a complete alternative. Recording is deliberate and confined to the fiction. A supplied example is never attributed to the player.
 2. The player interacts with actual objects: opens a particular invitation, inspects its attachment, uses a received entrance or chooses a visible exit. There is no abstract personality questionnaire offering Preview/Enter/Leave as three labels.
-3. REPLAY preserves those semantic actions and plays the take from the same initial scene. Its report quotes only actions that occurred, for example **You inspected this attachment before entering.**
-4. An accepted visit requests an appearance, but ECHO sees its own local image and hides. TERMINAL identifies that observable condition; it does not declare the player's habits wrong.
+3. REPLAY preserves those object/action decisions and their relevant checkpoints. Each run uses the selected arrangement's declared initial cast state, not residues from the previous run. Its report quotes only actions that occurred, for example **You inspected this attachment before entering.**
+4. An accepted visit requests an appearance, but ECHO sees its own local image and hides. TERMINAL can identify that observable condition; it does not declare the player's habits wrong. The default reaction links already exist, so the first repair requires no event-editor onboarding.
 5. The first repair can be spatial: position an opaque staged window over that private panel while leaving the public scene visible. The player rehearses the unchanged take again.
-6. The double performs the same recorded action, but the changed scene now permits the appearance and the host's reaction. The relationship is visible before advanced score editing is needed.
+6. The recommended first recording is explicitly kept as an unfinished entrance prefix via Edit show, without recording Leave. Its replay can now permit the appearance and host reaction. It remains unfinished: no departure is invented and it cannot certify a complete premiere visit. A recorded departure retains its checkpoint and can still interrupt the repaired show. The relationship is visible before advanced score editing is needed;09 defines the precise cases.
 
-A take that declines or leaves before requesting a performance is a valid recorded visit. Its report says that no performance was requested; it is not assigned a personality label or treated as a bad person. The player can retain it, reshoot a decision or make a separate accepted performance take.
+A take that declines or leaves before requesting a performance is a valid recorded visit. Its report says that no performance was requested; it is not assigned a personality label or treated as a bad person. The player can retain it and use an accepted example, change a decision or voluntarily record an accepted visit. No second personal recording is required. A visit that leaves during performance remains an interruption, not evidence of a complete show.
 
 ### Two comparisons inside existing tools
 
@@ -43,7 +45,7 @@ A take that declines or leaves before requesting a performance is a valid record
 
 Both runs begin with the same declared scene and visitor access. Stage reactions, automatic actor state and the visiting trace are reset consistently. No random personality or secret seed is introduced. The comparison shows the action, condition and result; it does not score fear or psychology. REPLAY chooses takes, TERMINAL explains house reactions, and POSTMAN supplies each visitor's access.
 
-The production should support functionally different arrangements: an UNINSTALL panel can provide camera privacy, or a CANVAS window can provide it while UNINSTALL handles the departure elsewhere. Both must obey the same visibility rules. Body/color changes alone do not establish depth.
+The production supports a public surprise and an optional backstage/accomplice presentation, with the actual body reaction turning ECHO into the instigator or victim. A permanent CANVAS mask is valid; an UNINSTALL mask can stage a delayed comic reveal. Swapping masks alone is not a deep puzzle. What visitors know before admission, which routes they receive and how the cast reacts provide the more substantive differences defined in09.
 
 ### Hard judgment to make later
 
@@ -55,9 +57,9 @@ A Halloween theme installer imports six deleted applications as period decoratio
 
 The programs ask you to give them a working production. They survive as declared interactive actors and tools, not because an omniscient inspector accepts a new label. TERMINAL keeps the temporary session available while you build.
 
-The first visitor is an inspectable recording of a visit you deliberately perform inside this fictional desktop. A second visitor, The Last Subscriber, has a visible, authored visiting policy and communicates through POSTMAN. Neither is a real person or a psychological model of the player.
+The first visitor can be an inspectable recording of a visit you deliberately perform inside this fictional desktop, or an explicitly labeled example if you decline recording. A second visitor, The Last Subscriber, has a visible, authored visiting policy and communicates through POSTMAN. Neither is a real person or a psychological model of the player.
 
-The final action is to save the cast, layout, correspondence, visitor take and reaction links, then close maintenance and premiere the inhabited desktop. Your recorded visitor can remain as its host or take its exit. The installed show reproduces the choices you actually made.
+The final action is to save the cast, initial layout, correspondence, visitor sequence and reaction links, then close TERMINAL and premiere the inhabited desktop. CANVAS remains the host; a recorded visitor stays a replayable guest or completes its departure. The installed show reproduces the choices actually saved and does not inherit transient states from the last rehearsal.
 
 There is no real-time deadline. Restart is initiated by the player, with a save/recovery choice. All actions and files belong to the fictional browser experience.
 
@@ -71,9 +73,9 @@ There is no real-time deadline. Restart is initiated by the player, with a save/
 
 **Rule:** the local self-view must be fully occluded by an opaque staged component while the public appearance remains visible. Physical coverage, keyboard focus and visitor attention are different states.
 
-**Decisions:** framing, placement, which component provides coverage and when that coverage appears. Anchoring provides a keyboard/click alternative to exact dragging and can preserve coverage across the two preview sizes.
+**Decisions:** framing, placement, which staged component provides coverage and when that coverage appears. Authoring inspectors never provide coverage. Anchoring provides a keyboard/click alternative to exact dragging and preserves correct coverage across the two preview sizes. The exact visibility and pending-appearance rules are in09.
 
-**Cross-program consequence:** a modal opened by UNINSTALL or the opaque CANVAS window can provide coverage. A different visitor route may open a different panel or approach before that coverage exists. TERMINAL must account for the actual route.
+**Cross-program consequence:** a staged modal opened by UNINSTALL or the opaque staged CANVAS window can provide coverage. Public and backstage admission share the baseline Performance entered event. Optional route-specific responses may differ, but the player does not need to wire two synonymous admission triggers to complete the public route.
 
 ### CANVAS — Constructing a character, not selecting a key
 
@@ -103,11 +105,11 @@ The actor's habit becomes staged suspense, not an infinite clicking task. Real p
 
 **Character:** a screen recorder that remembers what you did, including inconvenient choices. “You chose Leave here. I kept it.”
 
-**Distinct interaction:** record a deliberate visitor take, inspect its semantic action blocks and reshoot one decision while preserving later blocks. Original and revised takes remain distinguishable.
+**Distinct interaction:** record a deliberate visitor sequence, inspect its object/action cards and use **Change one decision** while preserving later cards. Original and revised visits remain distinguishable. Only visitor mode is recorded; changing the body in Edit show is not a recorded visitor decision.
 
 Recorded actions include inspecting an attachment, entering through a received route, visiting a named scene component and requesting departure. They reference declared recipients, not screen coordinates or typing speed. Stage reactions are not recorded as if the visitor chose them.
 
-**Decisions:** which take to cast, which decision to reshoot and whether to repair a visitor route or redesign the performance around the original choice. A missing recipient pauses playback at that exact action and names the broken dependency; the system does not invent a convenient substitute.
+**Decisions:** which visit to cast, which decision to change and whether to repair a visitor route or redesign the performance around the original choice. A missing or inaccessible recipient pauses playback at that exact action and names the broken dependency; the system does not invent a substitute. Leave ends the visit: the retained suffix is marked Not reached, never used to reopen the visit.
 
 **Cross-program consequence:** the same montage can succeed on one take and fail on another because they activate different events. This is the central personalization: your recorded decisions become an actor whose behavior you can inspect and revise.
 
@@ -117,21 +119,21 @@ The recorder is explicit and confined to the game. It does not inspect the real 
 
 **Character:** an abandoned mail client carrying messages without a place to deliver them. “You attached a doorway. Nobody attached a way back.”
 
-**Distinct interaction:** compose an invitation with working route attachments, inspect a received issue report, reply with corrected access and forward selected attachments. Text can be personalized, but no puzzle depends on an AI interpreting arbitrary prose.
+**Distinct interaction:** compose an invitation with working preview/public/backstage attachments, inspect the actual delivered access and reply with a new identified rehearsal invitation if needed. Text can be personalized, but no puzzle depends on an AI interpreting arbitrary prose. Elaborate forwarding chains are outside the baseline.
 
-**Rules:** an attachment can grant access to a declared preview, entrance, backstage view or return route. A visitor can follow only routes actually received. A reply carries a return route to its sender. Forwarding does not silently include every attachment or earlier message. The reader can inspect exactly what will be sent.
+**Rules:** an attachment can grant access to a declared preview, public entrance or backstage view. A visitor can follow only routes actually received. Return is always available and is never a missing attachment to solve for. Received envelopes are immutable records; the reader can inspect exactly what a new invitation will send.
 
-**The Last Subscriber's known contract:** receive an honest preview, have a distinct choice to enter the performance, and be able to leave without answering a survey. Once those conditions are met, this simulated visitor accepts a full visit. Declining or requesting preview is not treated as moral failure.
+**The Last Subscriber's published sequence:** inspect the received preview, accept public admission without inspecting backstage, observe the appearance and selected host reaction, then choose Leave now without answering a survey. It reports an unavailable required route instead of inventing a substitute. This is a known simulated path, not a moral evaluator or independent human.
 
-**Concrete report:** “Your invitation promised a preview. This link started the performance.” The repair is to change the linked action and send a corrected invitation, not guess a phrase. Another report can identify an Exit attachment that opens another modal rather than a return route.
+**Concrete report if the author's edits cause a mismatch:** “Your invitation promised a preview. This link started the performance.” The repair is to change the linked action and send a new identified invitation, not guess a phrase. The starting invitation is valid; no broken message or forced complaint is seeded as a mandatory task.
 
-**Cross-program consequence:** correspondence changes which routes are available to the visitor. A recording that follows a backstage attachment behaves differently when the invitation only contains the public entrance. A received route is not retrospectively erased by deleting a sent message; a new invitation/test can start a clearly identified fresh rehearsal.
+**Cross-program consequence:** correspondence changes which routes are available and what a visitor can learn before admission. An existing recording that requests an unavailable backstage route pauses at that action; it does not behave like a newly recorded public visit. A received route is not retrospectively erased by deleting a sent message; a new invitation starts a clearly identified fresh rehearsal.
 
 ### TERMINAL — The house's reactions and the save boundary
 
 **Character:** a legacy console holding the cast's temporary sessions. “Please don't close me. You haven't saved us yet.”
 
-**Distinct interaction:** connect observed events to stage reactions in a readable When/Then score, inspect a causal execution trace, rehearse a section and save the completed production. No real terminal commands are executed.
+**Distinct interaction:** inspect a causal explanation, edit contextual When/Then response rows on request and save the completed production. Basic links are already connected for the first loop. There is no unrestricted graph editor to learn first. No real terminal commands are executed.
 
 **Decisions:** what triggers coverage, appearance, reaction and release; whether preview and performance entry remain distinct; which reactions must work on more than one route.
 
@@ -143,7 +145,7 @@ On save, the host stores the actual actors, selected states, layout, routes and 
 
 1. **Authored appearance:** CANVAS's selected body, framing, gesture and staged layout survive into the final show.
 2. **Authored behavior:** the visitor follows a take recorded during the player's deliberate visit; reshooting changes what it attempts, not merely a dialogue line.
-3. **Authored access:** invitations and forwarding determine what each visitor can actually enter or inspect.
+3. **Authored access:** delivered invitation attachments determine what each visitor can actually enter or inspect; received access is not silently rewritten.
 4. **Authored causality:** the score determines what the house does in response to those decisions.
 
 An alias, a wallpaper or a new accent color does not count as this system's personalization. The design does not claim unseen psychological inference or unlimited generated narrative.
@@ -152,23 +154,23 @@ An alias, a wallpaper or a new accent color does not count as this system's pers
 
 This is a proposed playthrough, not an observed ninety-second usability result.
 
-1. You record a first visit to the unfinished desktop. You inspect a backstage attachment and try an exit before entering the main scene. Those actions remain visible in your take.
-2. You build CANVAS's host and set ECHO's framing. In rehearsal, your double follows the backstage route rather than the entrance you assumed it would use. ECHO sees itself and refuses to perform; the trace identifies that condition.
-3. You place UNINSTALL's second panel over the local self-view and connect its opening to the relevant arrival/exit event. The public scene remains visible.
-4. Replaying the original take now produces the appearance, the host's chosen reaction and a functioning exit. You may reshoot the first decision to test direct entry; the original is retained for comparison.
-5. POSTMAN delivers an invitation to The Last Subscriber. Your Preview link accidentally points to Start Performance. Their report names that mismatch. You repair the target and resend, preserving the correspondence.
-6. This visitor enters by the promised public route and chooses Leave without responding. If UNINSTALL opens another question, the trace identifies the incorrect exit link. You connect it to close the entire stack and the return route.
-7. You rehearse again, save the production in TERMINAL and premiere it. The final desktop retains your cast, body, gesture, routing and recorded visitor.
+1. You record a first visit, inspect backstage and leave before admission. It remains a completed non-performance visit; no later repair is allowed to force that recording into the show.
+2. You select the supplied accepted example, or explicitly keep a different personal entrance prefix while ECHO is blocked. Under the initial composition ECHO sees itself and freezes; the trace identifies that condition. Keeping a prefix stops capture without adding Leave.
+3. You place an opaque staged CANVAS window over the local self-view while keeping the public stage clear. The default event links need no editing.
+4. Replaying that example or retained entrance prefix can now produce appearance and the chosen body reaction. A prefix still has no recorded departure and remains unfinished; the supplied completed example can demonstrate the full performance and actual exit. Your earlier departure-only recording still leaves without performing.
+5. You choose the body's construction/reaction and which access to offer. A public entrance produces a surprise; optional backstage can reveal ECHO's preparation before a separate Join the show action. An UNINSTALL mask may instead stage its comic reveal on admission.
+6. The Last Subscriber follows its visible public sequence without inspecting backstage, then chooses the direct exit. If actual authoring choices prevent a response or departure, the report names that cause; there is no compulsory seeded failure.
+7. You rehearse the final arrangement and save/premiere it through TERMINAL. The saved initial scene reproduces the actual body, reaction, routes and chosen guest, without promoting the guest into an undefined host.
 
 Different choices yield different takes, compositions and causal problems. They do not require improvising dialogue with an unrestricted runtime model.
 
 ## Completion, recovery and final artifact
 
-The production must support one recorded take and the declared second visitor, with valid entry, visible actor/appearance/reaction during an accepted performance and reachable release. Preview and full performance have distinct actions. No test judges human fear, humor, psychology or entertainment.
+The production must support a selected personal or clearly labeled example visit and the declared second visitor, with a complete accepted performance and reachable release under the final arrangement. A personal early-exit recording can remain alongside that demonstration. Preview and full admission have distinct actions. No simulation judges human fear, humor, psychology or entertainment.
 
 The supplied visitor is another **simulated policy**, not independent human validation. Recorder editing is not itself proof of robustness; rehearsal reports expose which routes were actually exercised.
 
-Two stage sizes and both exit branches are available before premiere. Anchored, correctly prepared components stay correct; the finale does not sabotage the layout to manufacture tension. Missing recipients, occluded views and invalid exits stop at the cause, retain the production and allow a return to editing.
+Two stage sizes and early/in-performance departure are available before premiere. Anchored, correctly prepared components stay correct; the finale does not sabotage the layout to manufacture tension. Missing recipients and occluded views stop at the cause, retain the production and allow editing. Leave always releases the visitor and cancels pending cues. Changing relevant settings invalidates the corresponding completion evidence; saving drafts remains possible.
 
 The result is a playable inhabited theme in this app, plus a saveable show package of bounded fictional scene data. A future import must validate that data. This is not arbitrary website export, executable uploads or an actual operating-system modification tool.
 
@@ -182,6 +184,6 @@ Creative and critical agents challenged duplicate editors, cosmetic mail, hidden
 
 Adaptive desktop horror already exists: [KinitoPET](https://store.steampowered.com/app/2075070/KinitoPET/) explicitly advertises an adaptive virtual assistant. [The Stanley Parable](https://store.steampowered.com/app/1703340/The_Stanley_Parable_Ultra_Deluxe/) explores choices and the player's relationship with them. These published descriptions were consulted, not tested in this session. Recording behavior or reacting to choices cannot be sold as a world-first invention.
 
-The proposed differentiation is an inspectable visitor take, an author-controlled haunted production built from application-specific behavior, and correspondence that changes the playable access graph. Halloween shapes what the player makes and how it functions. [Costume Contest](https://kiroween.devpost.com/rules) remains the intended category; ordinary Kiro/source/license/demo/submission obligations still apply.
+The proposed differentiation is an inspectable visitor sequence, an author-controlled haunted production built from application-specific behavior, and correspondence that changes playable access. Halloween shapes what the player makes and how it functions. [Costume Contest](https://kiroween.devpost.com/rules) remains the intended category; event obligations must be checked against the official rules, and this document-only closure does not claim new Kiro usage.
 
 **Status:** concrete revised design recommendation, six English-language programs, defined premise, rules, route example and ending. Not participant approval, implementation, completed human testing or a promise of winning. No application code is authorized in this phase.

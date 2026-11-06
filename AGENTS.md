@@ -2,6 +2,14 @@
 
 ## Product and sources
 
+Experience-closure baseline, November 6: `docs/diseno/09_Experience_Contract.md` is authoritative for the six-program recommendation's modes, journey, visibility, replay/access semantics, completion and ending. Read it before08 when resolving operational behavior. The participant authorized resolving design risks before any new Kiro work; this revision is documentation-only. No application coding or new Kiro task is authorized by this design request.
+
+Key corrections: a genuine Leave cancels cues and never becomes admission; Return is always available rather than an attachment; authoring inspectors cannot supply staged coverage; a supplied example supports declining personal recording; public/backstage admission share a baseline event; recorded guests never acquire an undefined host role; new edits require new relevant rehearsal evidence. Permanent coverage is valid and is not described as a deep puzzle. Do not add programs or unrestricted editors to solve onboarding. Distinguish document reasoning, simulations and actual human observation.
+
+Opening precision: the first-reward path explicitly keeps an unfinished entrance prefix via Edit show; replay may show new house consequences but never appends a visitor departure or certifies a complete visit. Recorded Leave preserves its logical checkpoint and priority after repairs. The completed premiere guest can be a clearly labeled example, so no second personal recording is mandatory.
+
+Existing `.kiro/specs/the-wrong-window/` files describe the preserved paper-bridge prototype. They are historical implementation evidence, not the requirements for PLEASE HAUNT YOURSELF. This design phase does not overwrite them or manufacture new Kiro-authored specifications.
+
 Latest revision, November 6: the participant requested at least five programs, English product text and substantive personalization. Codex's revised recommendation is `docs/diseno/08_Please_Haunt_Yourself.md`: six programs, a visitor take recorded by the player, correspondence-controlled access and an authored haunted production. It supersedes07 as the recommendation for participant review, not as user approval. Distinguish REPLAY visitor decisions, POSTMAN access/correspondence and TERMINAL house reactions. No coding is authorized.
 
 The same document now includes a competitive review and a defined opening that shows self-replay before editor onboarding, plus two controlled comparisons (same visit/changed house; changed visit/same house). Retain the six-program core for evaluating this recommendation rather than claiming extra features prove greater innovation. This is design judgment, not user approval or a claim to equal winning products.
@@ -45,6 +53,6 @@ Use TypeScript, Vite and SVG/HTML/CSS unless a concrete verified need justifies 
 
 Keep `.kiro/` tracked. Do not place credentials in project files. Do not fabricate tool sessions, test results, user research, usage statistics or prize claims. Distinguish planning, implemented behavior, automated checks and human observation.
 
-Use English for source and submission documents, and provide English/Spanish game text. Local internal Spanish design documents are retained as sources and will need translation for submission.
+Use English for source, product text and submission documents, following the participant's later explicit English-product request. Local internal Spanish design documents are retained as historical sources; English/Spanish game text belonged to the superseded paper-bridge plan.
 
 Public publication, account changes, purchases and final submission require a separate reviewable decision. This development authorization covers local implementation and testing, not those actions.
