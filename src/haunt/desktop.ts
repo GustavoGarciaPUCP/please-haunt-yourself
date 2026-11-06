@@ -4,6 +4,7 @@
  */
 
 import { animateOpen, animateClose, animateMinimize, animateRestore, cancelAllAnimations, onPreferenceChange } from './window-motion';
+import { initEchoScene, EchoController } from './echo-view';
 
 type WindowState = 'closed' | 'opening' | 'open' | 'closing' | 'minimized' | 'restoring';
 type AppId = 'echo' | 'terminal';
@@ -15,6 +16,7 @@ interface WindowInstance {
   operationGen: number;
   zIndex: number;
   trigger: HTMLElement | null;
+  echoController?: EchoController;
 }
 
 const windows = new Map<AppId, WindowInstance>();
@@ -130,6 +132,9 @@ function openWindow(id: AppId, trigger: HTMLElement | null): void {
   };
 
   windows.set(id, instance);
+  if (id === 'echo') {
+    instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!);
+  }
   instance.element.style.zIndex = String(instance.zIndex);
   updateTaskbarButton(id, true);
 
@@ -156,6 +161,7 @@ function closeWindow(id: AppId): void {
   cancelPendingMotion(instance);
 
   instance.state = 'closing';
+  instance.echoController?.leave();
   instance.operationGen++;
 
   // Restore focus and disable interactions immediately
@@ -186,6 +192,7 @@ function minimizeWindow(id: AppId): void {
   cancelPendingMotion(instance);
 
   instance.state = 'minimized';
+  instance.echoController?.pause();
   instance.operationGen++;
 
   // Restore focus and disable interactions immediately
@@ -247,6 +254,12 @@ function cancelPendingMotion(instance: WindowInstance): void {
  * Cleanup after close
  */
 function cleanup(instance: WindowInstance): void {
+  // Dispose ECHO controller if present
+  if (instance.echoController) {
+    instance.echoController.dispose();
+    instance.echoController = undefined;
+  }
+
   instance.element.remove();
   windows.delete(instance.id);
   instance.state = 'closed';
@@ -426,10 +439,15 @@ function createWindowElement(id: AppId): HTMLElement {
 
   const content = document.createElement('div');
   content.className = 'window-content';
-  content.innerHTML = getWindowContent(id);
-  content.querySelector('[data-open-echo]')?.addEventListener('click', () => {
-    openWindow('echo', document.getElementById('btn-echo'));
-  });
+
+  if (id === 'echo') {
+    content.classList.add('echo-scene-container');
+  } else {
+    content.innerHTML = getWindowContent(id);
+    content.querySelector('[data-open-echo]')?.addEventListener('click', () => {
+      openWindow('echo', document.getElementById('btn-echo'));
+    });
+  }
 
   win.appendChild(titleBar);
   win.appendChild(content);
@@ -456,35 +474,7 @@ function getWindowContent(id: AppId): string {
         <h3>Someone left the<br>lights on.</h3>
         <p>Six deleted applications. One unfinished show.<br>Open ECHO. I'll stay here.</p>
         <button class="primary-action" data-primary data-open-echo>Open ECHO <span aria-hidden="true">↗</span></button>
-        <p class="terminal-note">Try opening, minimizing and closing the windows.<br>The performance comes next.</p>
-      </div>
-    `;
-  } else if (id === 'echo') {
-    return `
-      <div class="echo-stage">
-        <svg viewBox="0 0 480 290" class="echo-illustration" role="img" aria-label="A paper figure and a nervous ink creature waiting on an empty stage">
-          <defs>
-            <radialGradient id="stage-light"><stop stop-color="#a16b41" stop-opacity=".5"/><stop offset="1" stop-color="#172329"/></radialGradient>
-            <linearGradient id="paper-fold"><stop stop-color="#f1e6cc"/><stop offset="1" stop-color="#bda783"/></linearGradient>
-          </defs>
-          <rect width="480" height="290" rx="8" fill="url(#stage-light)"/>
-          <path d="M0 0h105Q88 57 17 95L0 152zM480 0H375q18 57 88 95l17 57z" fill="#642c34"/>
-          <path d="M0 0q45 28 105 0M375 0q60 28 105 0" fill="none" stroke="#b5794a" stroke-opacity=".5"/>
-          <ellipse cx="249" cy="252" rx="175" ry="14" fill="#11181e" opacity=".8"/>
-          <path d="M273 236q-21-43-11-81-30 30-41 58-8-47 24-80 5-43 30-57 32-16 49 19 15 37 5 65 29 32 30 72-27-21-37-40l10 51-17-9-8 9-12-8-9 9z" fill="#11171e" stroke="#617173" stroke-opacity=".32"/>
-          <ellipse cx="278" cy="111" rx="5" ry="10" fill="#e7d9b7"/>
-          <ellipse cx="296" cy="114" rx="5" ry="9" fill="#e7d9b7"/>
-          <path d="M278 145q8-16 18 0" stroke="#9d7471" stroke-width="3" fill="none"/>
-          <path d="m141 129-43 108 28-8 4 18 27-10 17 11 21-12 24 7-28-101z" fill="url(#paper-fold)" stroke="#aa9273"/>
-          <path d="m141 129 13 108 20 11-6-104 27 92-4-94z" fill="#aa9273" opacity=".45"/>
-          <path d="m141 129-44 43 28-3 28-33 38 6 24 31-26-10-14-19z" fill="#e5d8ba"/>
-          <path d="m157 68-44 72 39-14 38 14z" fill="#ede3cc" stroke="#c1aa85"/>
-          <path d="m137 116 10-6 5 5-8 6zM160 111l10 5-8 5-6-5z" fill="#36332e"/>
-          <path d="m145 160 7 13-12 9m16 15-12 9m28-33 10 9-6 14" stroke="#8a765a" fill="none" stroke-width="2"/>
-          <path d="M27 251h426" stroke="#aa7b53" stroke-opacity=".5"/>
-          <circle cx="46" cy="267" r="2" fill="#c49a63"/><circle cx="143" cy="267" r="2" fill="#c49a63"/><circle cx="240" cy="267" r="2" fill="#c49a63"/><circle cx="337" cy="267" r="2" fill="#c49a63"/><circle cx="434" cy="267" r="2" fill="#c49a63"/>
-        </svg>
-        <p class="stage-caption">Waiting in the wings.</p>
+          <p class="terminal-note">ECHO needs a little privacy.<br>Help it make an entrance.</p>
       </div>
     `;
   }

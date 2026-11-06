@@ -6,7 +6,7 @@ inclusion: always
 
 Updated through Codex on November 6, 2026 after the participant explicitly requested a small implementation increment. This steering file is Codex-prepared, not evidence that Kiro consumed it or generated the new game.
 
-- Current task: WINDOW-01 in docs/development/12_Window_Foundation_Kiro_Task.md. Following the failed Opus5.5 request, the participant explicitly authorized the best available model. Use native Claude Sonnet4.5 for this bounded window foundation; do not claim Opus or a configurable max effort was used. Do not purchase a plan or change accounts.
+- Current task: ECHO-01 in docs/development/13_Echo_Rehearsal_Kiro_Task.md, authorized by the participant's continuation request after WINDOW-01. Use native Claude Sonnet4.5; do not claim Opus or configurable max effort. Preserve the existing window lifecycle and older prototype. No plan purchase or account change.
 - Read AGENTS for current authorization. The older concept-only stop is superseded for this task only. The full four-tableau experience is not yet implemented or authorized as an unlimited build.
 - New concept references: docs/diseno/09,10 and11. Existing .kiro/specs/the-wrong-window/ and src/core/ describe the preserved paper-bridge prototype; do not relabel or overwrite them as the new project specifications.
 - Keep this increment separate under haunt.html and src/haunt/, with genuine Kiro-authored scope notes in .kiro/specs/please-haunt-yourself/ only if the run actually writes them. Retain original index/main behavior.
