@@ -10,6 +10,45 @@ Build and rehearse a haunted desktop around a recorded version of your own navig
 
 The participant's requested product language is **English**: interfaces, dialogue, help, reports and the final performance. Internal Spanish planning references remain historical; this brief and its proposed product copy are English.
 
+## Competitive review and concrete improvement — November 6
+
+Codex's judgment: the combination is a defensible differentiation hypothesis, not a demonstrated winning product. The main weakness is delayed payoff and editor overhead. Six applications alone do not solve that weakness. The recommendation is to retain the roster and premise while improving immediate recognition and causal authorship, rather than adding another subsystem.
+
+Published-reference comparison, not hands-on demo evaluation:
+
+| Reference | What its published submission establishes | Consequence for this design |
+| --- | --- | --- |
+| [Seance](https://devpost.com/software/seance), Best Costume Contest2025 | A clear folklore-learning premise, country exploration and an interactive book/quiz presentation | Our audience benefit must be equally legible: create and keep a playable software haunting shaped by one's own recorded visit |
+| [SpookBnB](https://devpost.com/software/spookbnb-when-dark-mode-gets-truly-dark), Overall3rd2025 | A recognizable rental interface becomes a flashlight-guided horror escape experience through a mode change | Our distinguishing effect must appear before mastering six editors: recognizable self-replay plus an observable changed consequence |
+
+These references do not provide a numerical quality comparison or evidence that our idea is better. The event also evaluates impact, implementation, design and presentation; novelty of a proposal alone cannot establish those results.
+
+### Defined opening: encounter your own visit before learning the studio
+
+The desktop opens with a small, visibly unfinished production, not an empty editor and six mandatory tutorials. CANVAS already has a provisional body; ECHO has the self-view problem; route objects and a playable invitation exist. These are editable starting material, not the player's final creation.
+
+1. REPLAY offers **Record a rehearsal**. Recording is deliberate and confined to the fiction.
+2. The player interacts with actual objects: opens a particular invitation, inspects its attachment, uses a received entrance or chooses a visible exit. There is no abstract personality questionnaire offering Preview/Enter/Leave as three labels.
+3. REPLAY preserves those semantic actions and plays the take from the same initial scene. Its report quotes only actions that occurred, for example **You inspected this attachment before entering.**
+4. An accepted visit requests an appearance, but ECHO sees its own local image and hides. TERMINAL identifies that observable condition; it does not declare the player's habits wrong.
+5. The first repair can be spatial: position an opaque staged window over that private panel while leaving the public scene visible. The player rehearses the unchanged take again.
+6. The double performs the same recorded action, but the changed scene now permits the appearance and the host's reaction. The relationship is visible before advanced score editing is needed.
+
+A take that declines or leaves before requesting a performance is a valid recorded visit. Its report says that no performance was requested; it is not assigned a personality label or treated as a bad person. The player can retain it, reshoot a decision or make a separate accepted performance take.
+
+### Two comparisons inside existing tools
+
+- **Same visit, changed house:** keep the visitor take fixed and compare one scene revision. This makes a framing, coverage or event-link repair understandable.
+- **Changed visit, same house:** keep the production fixed and compare the original take with a reshot decision. This reveals a different route or missing reaction without silently changing the stage as well.
+
+Both runs begin with the same declared scene and visitor access. Stage reactions, automatic actor state and the visiting trace are reset consistently. No random personality or secret seed is introduced. The comparison shows the action, condition and result; it does not score fear or psychology. REPLAY chooses takes, TERMINAL explains house reactions, and POSTMAN supplies each visitor's access.
+
+The production should support functionally different arrangements: an UNINSTALL panel can provide camera privacy, or a CANVAS window can provide it while UNINSTALL handles the departure elsewhere. Both must obey the same visibility rules. Body/color changes alone do not establish depth.
+
+### Hard judgment to make later
+
+If players only recognize a copied click and then follow instructions, the personalization has little value. The intended evidence is that they understand why their recorded action led to a different consequence, make an intentional revision and want to try another arrangement or route. That requires observation when coding resumes. This revision defines the opening and causal comparisons; it does not claim those responses have occurred.
+
 ## Premise, stakes and ending
 
 A Halloween theme installer imports six deleted applications as period decorations. It accidentally restores their unfinished sessions and personalities. The maintenance session is temporary; the next confirmed restart will discard anything not saved into the new interactive-theme host.

@@ -45,6 +45,8 @@ On November 6, the participant explicitly requested independent-agent criticism 
 
 The participant then requested five or more English-language programs and stronger personalization. The same two Codex agents challenged the proposed extension: REPLAY must not duplicate TERMINAL and POSTMAN must not be a decorative visitor menu. Codex defined their separate behavioral/access/reaction roles and consolidated `docs/diseno/08_Please_Haunt_Yourself.md`. Those design discussions are not Kiro usage, working personalization or independent human validation. Source, tests and dependencies remain untouched.
 
+In a subsequent competitive review, the Codex critic identified a remaining risk: a recording of three abstract menu choices could feel like a questionnaire with a replaying puppet. Codex revised the same design document with object-based rehearsal, immediate recognizable replay, and controlled comparisons of scene changes versus visitor changes. The review used published winner submissions and did not include hands-on winner-demo evaluation or human playtesting.
+
 [Official rules, section 4](https://kiroween.devpost.com/rules) accept Kiro CLI and leave sufficiency of Kiro use to the judges. There is no numeric usage threshold stated there. Spending credits alone is not our acceptance criterion.
 
 Before submission, review the actual development contributions and explain how specific Kiro outputs affected the working product. Keep `.kiro/` in the public source, provide the required write-up and ensure it agrees with files, history and demonstrated behavior. We do not claim organizer approval, completed human playtesting or guaranteed eligibility.
