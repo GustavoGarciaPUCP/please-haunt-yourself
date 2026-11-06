@@ -1,8 +1,8 @@
 # Initial brief for Kiro
 
-Prepared on October 30, 2026. This prompt has not been submitted to Kiro. Sending it will use the account's available credits; wait for the participant to choose when to begin.
+Prepared on October 30, 2026, and submitted through Kiro CLI on November 5 after the participant authorized development. This is a historical record of the first requirements task. Current implementation work follows the reviewed specification and tasks.
 
-In Kiro, start a **Feature Spec → Requirements-First** and paste the text below. This follows the [official Specs workflow](https://kiro.dev/docs/specs/).
+The text below was used to start a **Feature Spec → Requirements-First** through the terminal workflow, following the [official Specs workflow](https://kiro.dev/docs/specs/).
 
 ---
 

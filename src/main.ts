@@ -1,5 +1,6 @@
 import { CUTOUT, FIGURE, FRAME, LAMP, STORAGE_KEY } from './core/constants';
 import { frameContacts, project } from './core/geometry';
+import { openingDuration, OPENING_WAYPOINTS, sampleOpening } from './core/opening';
 import { decodeSave, encodeSave } from './core/persistence';
 import { tryRoute } from './core/route';
 import { beginEdit, cancelEdit, commitEdit, finishArrival, finishTrial, newGame, pauseTrial, previewEdit, resumeTrial, returnFrameHome, reviewConstruction, startTrial, stopTrial, undo } from './core/state';
@@ -35,6 +36,8 @@ let notice = rawSave && !savedState ? 'invalid-save' : '';
 let hintLevel = 0;
 let elapsed = 0;
 let duration = 1000;
+let openingElapsed = 0;
+let openingDurationValue = 0;
 let arrivalElapsed = 0;
 let lastTick = performance.now();
 let endPosition: Point = { x: FIGURE.startX, y: FIGURE.startY };
@@ -101,11 +104,12 @@ function render(): void {
   const config = state.pending?.config ?? state.config;
   const contact = frameContacts(config);
   const figure = ['trial', 'paused'].includes(state.phase) && state.route ? sampleRoute(state.route, Math.min(1, elapsed / duration))
+    : state.phase === 'opening' ? sampleOpening(OPENING_WAYPOINTS, Math.min(1, openingElapsed / openingDurationValue), state.preferences.reducedMotion)
     : ['arrival', 'final'].includes(state.phase) ? endPosition : { x: FIGURE.startX, y: FIGURE.startY };
   const model: WorkshopModel = {
     phase: state.phase, locale: state.preferences.language, sound: state.preferences.sound, reducedMotion: state.preferences.reducedMotion,
     hasSave: !!savedState, canUndo: !!state.history.length, lampX: config.lampX, angle: config.angle, lampMin: LAMP.min, lampMax: LAMP.max,
-    shadow: project(config), cutout: CUTOUT, frame: { centerX: config.frame.x, bottomY: config.frame.y, held: state.phase === 'final', leftContact: contact.left, rightContact: contact.right },
+    shadow: project(config), cutout: CUTOUT, frame: { centerX: config.frame.x, bottomY: config.frame.y, atHome: config.frame.mode === 'home', held: state.phase === 'final', leftContact: contact.left, rightContact: contact.right },
     figure, feedback: feedback(), failurePoint: state.failure?.point ?? (state.phase === 'trial' && elapsed >= duration ? state.route?.failure?.point : undefined),
     editingKind: state.pending?.kind,
     geometry: { frameWidth: FRAME.width, frameHeight: FRAME.height, frameBorder: FRAME.border, padWidth: FRAME.padWidth, minContact: FRAME.minContact, figureWidth: FIGURE.width, figureHeight: FIGURE.height },
@@ -148,7 +152,16 @@ function askRestart(): void {
 }
 
 function beginNewGame(): void {
-  state = newGame({ ...state.preferences }); notice = ''; hintLevel = 0; elapsed = 0; persist(); render();
+  state = newGame({ ...state.preferences }); notice = ''; hintLevel = 0; elapsed = 0;
+
+  // Start opening demonstration if not seen
+  if (!state.introSeen) {
+    state = { ...state, phase: 'opening' };
+    openingElapsed = 0;
+    openingDurationValue = openingDuration(state.preferences.reducedMotion);
+  }
+
+  persist(); render();
 }
 
 function dispatch(action: WorkshopAction): void {
@@ -159,6 +172,20 @@ function dispatch(action: WorkshopAction): void {
       state = { ...savedState, preferences: initialPreferences() };
       if (state.phase === 'final') { const route = tryRoute(state.config); endPosition = route.points[route.points.length - 1] ?? endPosition; }
       notice = ''; render();
+      // If returning to editing after intro was seen, focus lamp
+      if (state.phase === 'editing' && state.introSeen) {
+        requestAnimationFrame(() => view.focusLampControl());
+      }
+    }
+    return;
+  }
+  if (action.type === 'skip-opening') {
+    if (state.phase === 'opening') {
+      state = { ...state, phase: 'editing', introSeen: true };
+      openingElapsed = 0;
+      persist(); render();
+      // Transfer focus to lamp control after rendering
+      requestAnimationFrame(() => view.focusLampControl());
     }
     return;
   }
@@ -168,6 +195,18 @@ function dispatch(action: WorkshopAction): void {
     if (action.key === 'sound' && typeof action.value === 'boolean') manualPreferences.sound = action.value;
     if (action.key === 'reducedMotion' && typeof action.value === 'boolean') manualPreferences.reducedMotion = action.value;
     state = { ...state, preferences: initialPreferences() };
+
+    // If disabling reduced motion during opening, restart animation
+    if (state.phase === 'opening' && action.key === 'reducedMotion' && !state.preferences.reducedMotion) {
+      openingElapsed = 0;
+      openingDurationValue = openingDuration(false);
+    }
+    // If enabling reduced motion during opening, keep coherent behavior
+    if (state.phase === 'opening' && action.key === 'reducedMotion' && state.preferences.reducedMotion) {
+      openingElapsed = 0;
+      openingDurationValue = openingDuration(true);
+    }
+
     write(preferencesKey, JSON.stringify(manualPreferences)); persist(); render(); return;
   }
   notice = ''; if (action.type !== 'hint') hintLevel = 0;
@@ -184,18 +223,57 @@ function dispatch(action: WorkshopAction): void {
     case 'stop': state = stopTrial(state); elapsed = 0; break;
     case 'review': state = reviewConstruction(state); break;
     case 'hint': if (['editing', 'failed'].includes(state.phase)) hintLevel = Math.min(4, hintLevel + 1); break;
-    case 'help': state = pauseTrial(cancelEdit(state)); break;
+    case 'help': {
+      // Finish opening safely before showing dialog
+      if (state.phase === 'opening') {
+        state = { ...state, phase: 'editing', introSeen: true };
+        openingElapsed = 0;
+      }
+      state = pauseTrial(cancelEdit(state));
+      break;
+    }
     case 'close-help': break;
   }
   persist(); render();
 }
 
 motionQuery.addEventListener('change', () => { if (manualPreferences.reducedMotion === undefined) { state = { ...state, preferences: { ...state.preferences, reducedMotion: motionQuery.matches } }; render(); } });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { state = pauseTrial(cancelEdit(state)); persist(); render(); } });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // Finish opening safely if interrupted
+    if (state.phase === 'opening') {
+      state = { ...state, phase: 'editing', introSeen: true };
+      openingElapsed = 0;
+      persist(); render();
+    } else {
+      state = pauseTrial(cancelEdit(state));
+      persist(); render();
+    }
+  }
+});
 
 function tick(timestamp: number): void {
   const delta = Math.max(0, Math.min(70, timestamp - lastTick)); lastTick = timestamp;
-  if (state.phase === 'trial' && state.route) {
+  if (state.phase === 'opening') {
+    const wasReducedMotion = state.preferences.reducedMotion;
+
+    // In reduced motion, hold at contact pose indefinitely
+    if (wasReducedMotion) {
+      // Don't increment elapsed time - wait for explicit Continue
+      render();
+    } else {
+      // Normal motion: auto-complete after duration
+      openingElapsed += delta;
+      render();
+      if (openingElapsed >= openingDurationValue) {
+        state = { ...state, phase: 'editing', introSeen: true };
+        openingElapsed = 0;
+        persist(); render();
+        // Transfer focus to lamp control after rendering
+        requestAnimationFrame(() => view.focusLampControl());
+      }
+    }
+  } else if (state.phase === 'trial' && state.route) {
     elapsed += delta;
     if (elapsed >= duration + 450) {
       endPosition = state.route.points[state.route.points.length - 1] ?? endPosition;

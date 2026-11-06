@@ -1,24 +1,41 @@
 # How Kiro is being used
 
-This is a factual development record, updated on November 5, 2026. Planned work is not counted as completed work.
+Factual development record, November 5, 2026. This is a work log, not the final submission write-up. Planned work, failed attempts and completed contributions are distinguished below.
 
 ## Starting material and tool roles
 
 The V3/R1 concept, Spanish design references and initial handoff existed before the first Kiro task. Their original planning dates are retained. They were developed through discussion and review in Codex, not by Kiro.
 
-Codex coordinates local files, reviews outputs, makes implementation decisions and verifies results. Kiro CLI 3.1.0 is authenticated through the participant's Google account and works on this same local project. Desktop automation is outside the participant's chosen workflow.
+Codex coordinates and reviews local work. The participant's authenticated Kiro CLI 3.1.0 operates in this project through its native interface. No desktop automation is used. No authentication tokens are extracted or routed to a third-party model harness.
 
 ## Executed work
 
-| Task | Kiro contribution | Review and status |
+| Local run | Actual Kiro contribution | Review/outcome |
 | --- | --- | --- |
-| Requirements-first specification | Read the V3/R1 references and generated `.kiro/specs/the-wrong-window/requirements.md` in English, including source references, N01–N12 and separate software/human checks | Codex reviewed the draft against the source. The draft raised useful implementation gaps: body width, home geometry and placement tolerance |
-| Requirements corrections | Applied review changes using `docs/development/implementation-decisions.md`, whose decisions were prepared through Codex | Corrections are present. Technical design and task planning are in progress; they are not yet accepted as implemented behavior |
+| Requirements, V3 spec mode | Read the V3/R1 references and generated `requirements.md` in English, with source references, N01–N12 and separate human/software checks | Generated file retained. Some repair operations failed because the caller's initial tool allowance omitted editing; a subsequent task applied them |
+| Design, resumed V3 spec mode | Corrected requirements and wrote `design.md` after concrete implementation decisions supplied through Codex | Design file retained and reviewed. The command stalled after writing and was stopped; no Kiro-generated task list is claimed |
+| Core setup, V2 | Created initial `package.json`, `tsconfig.json` and `vite.config.ts`; revised technical design | Service throttled before engine implementation. Codex subsequently updated dependencies/configuration and implemented the playable engine and UI |
+| Geometry, V2 | Read relevant sources | Service throttled; no geometry code or tests were produced. Current `geometry.ts` was implemented through Codex |
+| Sonnet properties, V2 | Attempted a smaller test task | Service throttled; no tests from this attempt are claimed |
+| Physics tests, V3 default, Claude Sonnet 4.5 | Wrote `tests/physics-properties.test.ts`, covering projection, contacts, routes, edit transactions and save validation | All 14 initial tests passed independently. Type checking exposed an unused import; review also identified a vacuous conditional and opportunities for stronger randomized checks |
+| Physics review, V3 default, Claude Sonnet 4.5 | Corrected the import, replaced a vacuous check with concrete 20/19 contact boundaries, and added randomized rollback and bridge-save tests | Kiro ran type checking and the suite, corrected a failing fixture, then obtained 28 passing tests. Codex independently confirmed the results and tightened save coverage to encode during the unsupported preview, rather than before the attempted edit |
+| Opening performance, V3 default, Claude Sonnet 4.5 | Read the project steering contract; wrote `src/core/opening.ts`, integrated the opening into controller/view/types, and added unit/browser checks | Type checking and unit checks executed. A browser run left a passed report, but the CLI remained waiting and was stopped. Completed files are retained; a normal command completion is not claimed |
+| Opening review, V3 default, Claude Sonnet 4.5 | Applied concrete review on reduced-motion holding, Help interruption, focus transfer and a physically clearer local path; extended browser coverage | Task finished normally without running commands, as requested. Codex independently tested the changes, fixed a remaining zero-time reduced-motion pose and incorrect test selector/expectations, then obtained 35 passing unit/property tests and 9 passing browser checks |
 
-The first run could create the draft but some formatting repairs failed because the caller's non-interactive tool allowance omitted the required edit operation. A follow-up corrected the allowance and the repairs executed. This was an orchestration issue, not a participant rejection or a product test result.
+Codex authored the first playable engine, workshop UI/controller, `tests/route.test.ts` and initial browser end-to-end tests. Kiro authored the later opening module and integration/tests; Codex review fixes are identified above. Codex also added the home aperture closing when its frame moves, a visible final grip, and the visual correction that keeps opening text off the figure's feet. Kiro specs informed the implementation, but they do not make all subsequent code Kiro-authored.
 
 ## Evidence and limits
 
-The specification files are retained under `.kiro/` and will remain tracked. Raw local CLI event streams are kept outside the repository; this public-facing record does not publish private model reasoning or authentication data.
+Requirements/design live in `.kiro/specs/the-wrong-window/`. The task tracker there is explicitly Codex-maintained and was created after the first playable build. Steering was prepared through Codex, and the opening run's Read File events confirm it was consumed. Its practical constraints were used in the task and reviewed in the output: unchanged mechanisms, equivalent motion choices, truthful evidence and local-only work.
 
-No automated product test, human playtest, working build, publication or prize result is claimed by this entry. Those results will be added only after execution and review. The account's exact remaining credit balance has not been independently verified.
+No production defect is claimed to have been discovered by the physics PBT suite in this iteration. It provides regression coverage; review and verification did reveal and correct test-fixture and opening-integration problems. We have not used Kiro hooks, Crew or MCP for this implementation and do not claim otherwise.
+
+Actual CLI event streams are retained privately outside the repository. The public-facing record excludes private model reasoning, credentials and account data. Local Git commits preserve reviewed artifacts; this record does not fabricate sessions or alter dates.
+
+No exact credit debit or remaining balance has been independently verified. The participant last reported `0/4000` used. Successful Kiro file changes establish real execution, not a particular charge or usage threshold.
+
+## Competition boundary
+
+[Official rules, section 4](https://kiroween.devpost.com/rules) accept Kiro CLI and leave sufficiency of Kiro use to the judges. There is no numeric usage threshold stated there. Spending credits alone is not our acceptance criterion.
+
+Before submission, review the actual development contributions and explain how specific Kiro outputs affected the working product. Keep `.kiro/` in the public source, provide the required write-up and ensure it agrees with files, history and demonstrated behavior. We do not claim organizer approval, completed human playtesting or guaranteed eligibility.

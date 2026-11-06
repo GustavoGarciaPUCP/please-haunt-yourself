@@ -61,14 +61,14 @@ describe('Physics Properties', () => {
       expect(contacts990.left).toBeCloseTo(40, 1);
       expect(contacts990.right).toBeCloseTo(40, 1);
       expect(contacts990.valid).toBe(true);
-      
+
       // At x=970: left=40, right=20 (boundary valid)
       const config970: Configuration = { lampX: 650, angle: 0, frame: { x: 970, y: 160, mode: 'placed' } };
       const contacts970 = frameContacts(config970);
       expect(contacts970.left).toBeCloseTo(40, 1);
       expect(contacts970.right).toBeCloseTo(20, 1);
       expect(contacts970.valid).toBe(true);
-      
+
       // At x=969: left=40, right=19 (invalid)
       const config969: Configuration = { lampX: 650, angle: 0, frame: { x: 969, y: 160, mode: 'placed' } };
       const contacts969 = frameContacts(config969);
@@ -84,7 +84,7 @@ describe('Physics Properties', () => {
         { lampX: 650, angle: 0, frame: { x: 1010, y: 160, mode: 'placed' } },
         { lampX: 700, angle: 0, frame: { x: 985, y: 160, mode: 'placed' } },
       ];
-      
+
       for (const config of configs) {
         const result = tryRoute(config);
         expect(result.success).toBe(true);
@@ -120,7 +120,7 @@ describe('Physics Properties', () => {
           state = beginEdit(state, 'lamp');
           state = previewEdit(state, { lampX });
           const result = commitEdit(state);
-          
+
           expect(result.accepted).toBe(true);
           expect(result.state.pending).toBeNull();
           expect(result.state.config.lampX).toBeCloseTo(lampX, 5);
@@ -134,7 +134,7 @@ describe('Physics Properties', () => {
       state = beginEdit(state, 'frame');
       state = previewEdit(state, { frameX: 100, frameY: 50 });
       const result = commitEdit(state);
-      
+
       expect(result.accepted).toBe(false);
       expect(result.state.config.frame.mode).toBe('home');
       expect(result.state.config.frame.x).toBeCloseTo(-40, 5);
@@ -167,15 +167,15 @@ describe('Physics Properties', () => {
           const baseResult = commitEdit(state);
           expect(baseResult.accepted).toBe(true);
           state = baseResult.state;
-          
+
           const beforeConfig = JSON.parse(JSON.stringify(state.config));
           const beforeHistory = JSON.parse(JSON.stringify(state.history));
-          
+
           // Apply random edit
           state = beginEdit(state, editKind);
           state = previewEdit(state, patch);
           const result = commitEdit(state);
-          
+
           if (result.accepted) {
             // Must be valid
             expect(frameContacts(result.state.config).valid).toBe(true);
@@ -196,7 +196,7 @@ describe('Physics Properties', () => {
     it('newGame initializes from preferences', () => {
       const prefs: Preferences = { language: 'es', sound: true, reducedMotion: false };
       const state = newGame(prefs);
-      
+
       expect(state.phase).toBe('editing');
       expect(state.preferences).toEqual(prefs);
       expect(state.config.frame.mode).toBe('home');
@@ -208,10 +208,10 @@ describe('Physics Properties', () => {
       let state = newGame({ language: 'en', sound: false, reducedMotion: true });
       state = beginEdit(state, 'frame');
       state = previewEdit(state, { frameX: 50, frameY: 20 });
-      
+
       const encoded = encodeSave(state);
       const decoded = decodeSave(encoded);
-      
+
       expect(decoded).not.toBeNull();
       expect(decoded!.pending).toBeNull();
       expect(decoded!.config.frame.mode).toBe('home');
@@ -230,17 +230,17 @@ describe('Physics Properties', () => {
       state = beginEdit(state, 'frame');
       state = previewEdit(state, { frameX: 1010, frameY: 160 });
       state = commitEdit(state).state;
-      
+
       expect(state.config.frame.mode).toBe('placed');
       expect(state.history).toHaveLength(3);
-      
+
       // Save during an unsupported preview: storage must retain the confirmed bridge.
       state = beginEdit(state, 'frame');
       state = previewEdit(state, { frameX: 100, frameY: 50 });
       const encoded = encodeSave(state);
       const rejected = commitEdit(state);
       expect(rejected.accepted).toBe(false);
-      
+
       // Decode should restore the valid bridge
       const decoded = decodeSave(encoded);
       expect(decoded).not.toBeNull();
@@ -260,7 +260,7 @@ describe('Physics Properties', () => {
       const valid = newGame({ language: 'en', sound: false, reducedMotion: true });
       const encoded = encodeSave(valid);
       const tampered = encoded.replace('"x":-40', '"x":999');
-      
+
       expect(decodeSave(tampered)).toBeNull();
     });
   });

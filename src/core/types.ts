@@ -8,7 +8,7 @@ export interface ContactResult { valid: boolean; left: number; right: number }
 export type FailureReason = 'gap' | 'step' | 'slope' | 'contact' | 'invalid';
 export interface RoutePoint extends Point { support: SurfaceSource; transition?: boolean }
 export interface RouteResult { success: boolean; points: RoutePoint[]; failure?: { reason: FailureReason; point: Point } }
-export type Phase = 'cover' | 'editing' | 'tentative' | 'trial' | 'paused' | 'failed' | 'arrival' | 'final';
+export type Phase = 'cover' | 'opening' | 'editing' | 'tentative' | 'trial' | 'paused' | 'failed' | 'arrival' | 'final';
 export type EditKind = 'lamp' | 'cutout' | 'frame';
 export type Locale = 'en' | 'es';
 export interface Preferences { language: Locale; sound: boolean; reducedMotion: boolean }

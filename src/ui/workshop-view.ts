@@ -4,14 +4,14 @@ export type Locale = 'en' | 'es';
 export type EditKind = 'lamp' | 'cutout' | 'frame';
 export type Point = { x: number; y: number };
 export type WorkshopAction =
-  | { type: 'start' | 'continue' | 'trial' | 'pause' | 'resume' | 'stop' | 'undo' | 'home' | 'review' | 'restart' | 'hint' | 'help' | 'close-help' }
+  | { type: 'start' | 'continue' | 'trial' | 'pause' | 'resume' | 'stop' | 'undo' | 'home' | 'review' | 'restart' | 'hint' | 'help' | 'close-help' | 'skip-opening' }
   | { type: 'preference'; key: 'language' | 'sound' | 'reducedMotion'; value: Locale | boolean }
   | { type: 'begin'; kind: EditKind }
   | { type: 'preview'; lampX?: number; angle?: number; frameX?: number; frameY?: number }
   | { type: 'commit' | 'cancel' };
 
 export interface WorkshopModel {
-  phase: 'cover' | 'editing' | 'tentative' | 'trial' | 'paused' | 'failed' | 'arrival' | 'final';
+  phase: 'cover' | 'opening' | 'editing' | 'tentative' | 'trial' | 'paused' | 'failed' | 'arrival' | 'final';
   locale: Locale;
   sound: boolean;
   reducedMotion: boolean;
@@ -24,7 +24,7 @@ export interface WorkshopModel {
   lampMax: number;
   shadow: readonly Point[];
   cutout: readonly Point[];
-  frame: { centerX: number; bottomY: number; held: boolean; leftContact: number; rightContact: number };
+  frame: { centerX: number; bottomY: number; atHome: boolean; held: boolean; leftContact: number; rightContact: number };
   figure: Point;
   feedback: string;
   failurePoint?: Point;
@@ -46,6 +46,8 @@ const copy = {
     helpKeys: 'Tab moves between controls. Arrow keys move the selected mechanism. Home and End take the lamp or paper to their stops. For the frame, Enter confirms and Escape cancels.',
     close: 'Back to the workshop', trialStatus: 'The figure is trying your construction.', pausedStatus: 'The performance is paused.',
     frameKeys: 'Arrow keys move the frame; Enter sets it down; Escape cancels.', rest: 'Resting', raised: 'Raised',
+    skipOpening: 'Skip', openingObservation1: 'Black edges support from above.', openingObservation2: 'Their sides are not walls.',
+    continueFromOpening: 'Continue',
   },
   es: {
     title: 'La ventana equivocada', subtitle: 'Un misterio de teatro de papel', language: 'Idioma', soundOff: 'Sonido apagado', soundOn: 'Sonido encendido', motion: 'Movimiento reducido',
@@ -61,6 +63,8 @@ const copy = {
     helpKeys: 'Tab cambia de control. Las flechas mueven el mecanismo seleccionado. Inicio y Fin llevan la luz o el recorte a sus topes. En el marco, Enter confirma y Escape cancela.',
     close: 'Volver al taller', trialStatus: 'La figura está probando tu construcción.', pausedStatus: 'La función está en pausa.',
     frameKeys: 'Las flechas mueven el marco; Enter confirma; Escape cancela.', rest: 'En reposo', raised: 'Alzado',
+    skipOpening: 'Omitir', openingObservation1: 'Los trazos negros sostienen desde arriba.', openingObservation2: 'Sus lados no son muros.',
+    continueFromOpening: 'Continuar',
   },
 } as const;
 
@@ -102,6 +106,13 @@ export class WorkshopView {
               <ellipse cx="750" cy="360" rx="830" ry="570" fill="url(#lamp-wash)" data-light-wash/>
               <g transform="translate(0 660) scale(1 -1)" class="world">
                 <path d="M-246 0V270L-185 282L-90 268L-5 281L129 270L211 279V0Z" fill="#d2c09e" opacity=".45" data-paper-wall/>
+                <g data-home-aperture aria-hidden="true">
+                  <path d="M-200 10H120V170H-200Z" fill="#aa9475"/>
+                  <path d="M-200 10L-158 39V170H-200Z" fill="#7f6e5a" opacity=".5"/>
+                  <path d="M-158 39H120V170H-158Z" fill="#c1af90"/>
+                  <path d="M-158 39L120 10V39Z" fill="#8a765e" opacity=".5"/>
+                  <path d="M-145 149H105M-145 140H78" stroke="#ded0b4" stroke-width="2" opacity=".5"/>
+                </g>
                 <path d="M1280 160V311Q1340 380 1400 311V160" fill="#c7a46c" opacity=".32"/>
                 <path d="M1286 160V307Q1340 367 1394 307V160" fill="#a88e60" opacity=".24"/>
                 <path d="M1340 160V334M1284 260H1396" stroke="#67513a" stroke-width="5" opacity=".35"/>
@@ -127,6 +138,10 @@ export class WorkshopView {
                   <circle cx="0" cy="85" r="13" fill="#eeeadc" stroke="#33262b" stroke-width="3"/>
                   <circle cx="-4" cy="87" r="1.7" fill="#33262b"/><circle cx="4" cy="87" r="1.7" fill="#33262b"/>
                   <path d="M-3 79Q0 77 3 79" fill="none" stroke="#594247" stroke-width="1.5"/>
+                  <g data-carry-grip hidden>
+                    <path d="M-12 65L-25 60L-18 52" fill="none" stroke="#33262b" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="-18" cy="52" r="4" fill="#eeeadc" stroke="#33262b" stroke-width="2"/>
+                  </g>
                 </g>
                 <g data-failure-marker hidden aria-hidden="true"><circle r="16" fill="#e6dabf" stroke="#8d493a" stroke-width="3"/><path d="M-5 -5L5 5M-5 5L5 -5" stroke="#8d493a" stroke-width="3"/></g>
               </g>
@@ -136,6 +151,16 @@ export class WorkshopView {
             <div class="cover" data-cover>
               <div class="vera-note"><span data-copy="note"></span><h2 data-copy="quote"></h2><p data-copy="introduction"></p>
                 <div class="cover-actions"><button type="button" class="primary" data-action="start" data-copy="enter"></button><button type="button" class="secondary" data-action="continue" data-copy="continue" hidden></button></div>
+              </div>
+            </div>
+            <div class="opening-overlay" data-opening-overlay hidden>
+              <div class="opening-text">
+                <p data-copy="openingObservation1"></p>
+                <p data-copy="openingObservation2"></p>
+              </div>
+              <div class="opening-controls">
+                <button type="button" class="primary" data-action="skip-opening" data-copy="skipOpening"></button>
+                <button type="button" class="primary" data-action="skip-opening" data-copy="continueFromOpening" data-reduced-motion-only hidden></button>
               </div>
             </div>
             <div class="ending" data-ending hidden><div><h2 data-copy="finalTitle"></h2><p data-copy="finalText"></p><div class="cover-actions"><button type="button" class="primary" data-action="review" data-copy="review"></button><button type="button" class="secondary" data-action="restart" data-copy="restart"></button></div></div></div>
@@ -184,6 +209,12 @@ export class WorkshopView {
   private emit(action: WorkshopAction): void { this.dispatch(action); }
   private setText(element: Element, value: string): void { if (element.textContent !== value) element.textContent = value; }
   private canEdit(): boolean { return this.model?.phase === 'editing' || this.model?.phase === 'tentative' || this.model?.phase === 'failed'; }
+
+  /** Transfer focus to the lamp control if it's currently enabled */
+  focusLampControl(): void {
+    const lamp = this.get<SVGGElement>('[data-lamp-cart]');
+    if (lamp.getAttribute('tabindex') === '0') lamp.focus();
+  }
 
   private bindButtons(): void {
     for (const button of this.root.querySelectorAll<HTMLButtonElement>('[data-action]')) {
@@ -326,6 +357,8 @@ export class WorkshopView {
     this.stage.setAttribute('aria-label', labels.stage);
     this.get('[data-shadow]').setAttribute('points', model.shadow.map(point => `${point.x},${point.y}`).join(' '));
     this.get('[data-light-wash]').setAttribute('cx', String(900 - (model.lampX - model.lampMin)));
+    this.get<SVGElement>('[data-home-aperture]').style.display = model.frame.atHome && !model.frame.held ? '' : 'none';
+    this.get('[data-carry-grip]').toggleAttribute('hidden', !model.frame.held);
     const w = model.geometry.frameWidth, h = model.geometry.frameHeight, b = model.geometry.frameBorder, pad = model.geometry.padWidth;
     const frameX = model.frame.held ? model.figure.x - w - 18 : model.frame.centerX - w / 2;
     const frameY = model.frame.held ? model.figure.y + 52 : model.frame.bottomY;
@@ -358,6 +391,9 @@ export class WorkshopView {
     handle.setAttribute('aria-label', labels.cutoutControl); handle.setAttribute('aria-valuenow', String(model.angle));
     handle.setAttribute('aria-valuetext', model.angle === 0 ? labels.rest : model.angle === 90 ? labels.raised : `${Math.round(model.angle)}°`);
     this.get<HTMLElement>('[data-cover]').hidden = model.phase !== 'cover';
+    this.get<HTMLElement>('[data-opening-overlay]').hidden = model.phase !== 'opening';
+    this.get<HTMLButtonElement>('[data-reduced-motion-only]').hidden = !model.reducedMotion;
+    this.get<HTMLButtonElement>('[data-copy="skipOpening"]').hidden = model.reducedMotion;
     this.get<HTMLElement>('[data-ending]').hidden = model.phase !== 'final';
     this.get<HTMLButtonElement>('[data-action="continue"]').hidden = !model.hasSave;
     this.setText(this.get('[data-action="start"]'), model.hasSave ? labels.newGame : labels.enter);

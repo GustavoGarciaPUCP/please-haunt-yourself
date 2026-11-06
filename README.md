@@ -1,36 +1,47 @@
-# La ventana equivocada
+# The Wrong Window / La ventana equivocada
 
-Working title · Kiroween 2026 · Costume Contest · V3/R1
+A browser puzzle in a paper-theatre workshop. Move the light, turn a paper cutout and reconsider a rigid frame to make a path to a fixed high gallery. The shadow is calculated from the objects you manipulate; success follows material contacts and the figure's route.
 
-A browser-based puzzle game set in an eerie paper-theatre workshop. Players manipulate a lamp, a paper cutout and a physical frame to construct a path for a small figure. Shape, placement and support must work together.
+Working entry for Kiroween 2026, Costume Contest. First playable development milestone, not a finished competition submission.
 
-## Current status
+## Run locally
 
-This folder contains a design handoff, prepared on October 30, 2026. There is no game implementation, live app, completed product test or verified Kiro execution yet. The design includes earlier planning; its chronology is retained. It must not be described as work generated or tested by Kiro.
+Requires Node.js 22.12 or later in the Node 22 release line (development verified with 22.13.1).
 
-## Start here
+```powershell
+npm.cmd ci
+npm.cmd run dev
+```
 
-1. Open this folder in Kiro IDE, using the account associated with the hackathon credit request.
-2. Read [the initial Kiro brief](PROMPT_INICIAL_KIRO.md). It is ready to paste when the participant chooses to begin; it has not been sent to Kiro.
-3. Use a Feature Spec with the Requirements-First workflow. Review requirements before technical design or implementation.
+Open the local address printed by Vite, normally `http://127.0.0.1:5173/`. On non-Windows shells, use `npm` in place of `npm.cmd`.
 
-## Design references
+```powershell
+npm.cmd run typecheck
+npm.cmd test
+npm.cmd run test:browser
+npm.cmd run build
+```
 
-- [Experience, controls and state rules](docs/diseno/01_Experiencia_y_sistema.md)
-- [Geometry, counterexamples and review limits](docs/diseno/02_Geometria_y_revision_independiente.md)
-- [Official requirements and project status](docs/diseno/03_Requisitos_oficiales_y_cierre.md)
-- [Setup and submission checklist](docs/diseno/04_Preparacion_e_instalacion.md)
+Browser tests use a locally installed Google Chrome through Playwright. Build output goes to `dist/`. The game needs no backend, login, runtime AI service or API key. It saves confirmed constructions and preferences in this browser's local storage; if storage is unavailable, the current session remains playable.
 
-These internal design references are currently in Spanish. Submission materials will need English versions or translations.
+## Play
 
-## First milestone
+- Enter the workshop. The figure waits while you prepare the scene.
+- Drag or click the lamp rail and paper pivot. Keyboard arrows adjust them; Home/End reach their mechanical stops.
+- Drag the frame, or choose **Place frame** and click the stage. With keyboard focus on the frame, Enter picks it up, arrows move it, Enter sets it down and Escape cancels.
+- Try the route, pause, continue or return to the table. Undo restores confirmed edits. Hints are requested explicitly.
+- Language, sound and reduced motion can be changed. Sound starts off.
 
-Validate one playable route with the real body, contacts and recovery rules. This is the first milestone toward the complete game, not the final scope. Teaching, narrative, art, accessibility, sound and presentation follow evidence from the working route.
+The skippable opening, moving figure, support contacts, transactional rejection, save recovery and first ending are implemented. Automated checks exercise two distinct constructions through the actual browser controls. Human discovery testing, ending choreography and mobile legibility still need work; a fitting mobile layout is not proof that the puzzle is comfortable on a phone. Use a desktop browser for this development version.
 
-Recommended starting stack: TypeScript, Vite and SVG/HTML/CSS. No dependencies have been installed in this folder.
+## Development and evidence
 
-## Kiro evidence
+Game implementation began November 5, 2026. Earlier concept and design notes retain their dates and are disclosed as planning. Kiro CLI generated requirements, technical design, initial configuration, physics tests and the opening feature with integration/tests. Codex implemented the first playable engine/interface, reviewed and corrected Kiro output and runs independent checks. The detailed [Kiro usage record](docs/kiro-usage.md) distinguishes completed contributions, interrupted attempts and planned work.
 
-Kiro specs, steering and any hooks must reflect real use. The required `.kiro/` folder will be populated through actual work with Kiro and preserved in the eventual public repository. This handoff is not evidence of Kiro execution.
+- [Requirements](.kiro/specs/the-wrong-window/requirements.md), [technical design](.kiro/specs/the-wrong-window/design.md) and [current task tracker](.kiro/specs/the-wrong-window/tasks.md).
+- [Implementation decisions](docs/development/implementation-decisions.md) and [design review](docs/development/design-review.md).
+- [Executed verification](docs/development/verification.md) and [next iterations](docs/development/next-iterations.md).
+- [Original experience](docs/diseno/01_Experiencia_y_sistema.md) and [geometry reference](docs/diseno/02_Geometria_y_revision_independiente.md), retained in Spanish.
+- [Official rules](https://kiroween.devpost.com/rules). The event website governs; local notes do not establish eligibility or sufficient Kiro usage.
 
-No repository, publication or submission has been created by preparing this folder. An open-source license and asset notices must be selected and added before public delivery.
+`.kiro/` stays tracked. No public deployment or submission has occurred. Public delivery still needs license/asset review, English or translated submission materials, a real demo, and a separate publication decision. Private CLI streams and authentication information are not part of this repository.

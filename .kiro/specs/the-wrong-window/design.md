@@ -1,7 +1,7 @@
 # The Wrong Window — Technical Design
 
 **Spec:** the-wrong-window
-**Status:** Draft for review — no game code, dependencies, or build created yet.
+**Status:** Technical design reviewed for the first playable milestone. Implementation is in progress; `tasks.md` records current progress and remaining work. The design is not a claim that every feature is implemented.
 **Date:** November 5, 2026.
 **Requirements:** `.kiro/specs/the-wrong-window/requirements.md`
 
