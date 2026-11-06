@@ -2,6 +2,8 @@
 
 Maintained by Codex. Created November 5, 2026, after the first playable implementation. This is a retrospective status record and forward checklist, not a claim that Kiro generated or executed every task. See `docs/kiro-usage.md` for attribution.
 
+**Concept reopened:** the participant subsequently authorized a central concept change and proposed a Halloween desktop of dead programs. This tracker is now historical for the preserved paper-bridge prototype. Unchecked experience/delivery items below are not automatically the next development work. See `docs/diseno/05_Programas_muertos_propuesta.md` for the current candidate.
+
 ## First playable milestone
 
 - [x] Kiro requirements and reviewed technical design.
