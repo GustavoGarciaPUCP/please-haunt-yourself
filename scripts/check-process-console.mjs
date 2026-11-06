@@ -7,6 +7,7 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const outcomes = [], errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 980 }, reducedMotion: 'no-preference' });
+  await page.addInitScript(() => localStorage.setItem('haunt.guide.v1', 'dismissed'));
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(url);
   const terminal = page.locator('.terminal-console');

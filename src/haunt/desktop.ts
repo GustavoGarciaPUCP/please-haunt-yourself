@@ -7,6 +7,7 @@ import { animateOpen, animateClose, animateMinimize, animateRestore, cancelAllAn
 import { initEchoScene, EchoController } from './echo-view';
 import { TerminalController } from './terminal-view';
 import { ProcessSession } from './process-session';
+import { DesktopShell } from './desktop-shell';
 
 type WindowState = 'closed' | 'opening' | 'open' | 'closing' | 'minimized' | 'restoring';
 type AppId = 'echo' | 'terminal';
@@ -25,6 +26,7 @@ interface WindowInstance {
 const windows = new Map<AppId, WindowInstance>();
 const processSession = new ProcessSession();
 let nextZIndex = 100;
+let desktopShell: DesktopShell;
 
 /**
  * Initialize desktop and start TERMINAL
@@ -32,6 +34,8 @@ let nextZIndex = 100;
 export function init(): void {
   const stage = document.getElementById('desktop-stage');
   if (!stage) return;
+  desktopShell = new DesktopShell(id => openWindow(id, document.getElementById(`btn-${id}`)),
+    () => windows.forEach(instance => instance.echoController?.pause()));
 
   // Set up taskbar buttons
   const terminalBtn = document.getElementById('btn-terminal') as HTMLElement;
@@ -57,6 +61,7 @@ export function init(): void {
   if (terminalBtn) {
     openWindow('terminal', terminalBtn);
   }
+  desktopShell.guide.startIfNew();
 }
 
 /**
@@ -137,7 +142,7 @@ function openWindow(id: AppId, trigger: HTMLElement | null): void {
 
   windows.set(id, instance);
   if (id === 'echo') {
-    instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!, processSession);
+    instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!, processSession, result => desktopShell.markRehearsal(result));
   } else {
     instance.terminalController = new TerminalController(windowEl.querySelector<HTMLElement>('.window-content')!, processSession,
       () => openWindow('echo', document.getElementById('btn-echo')));
@@ -168,6 +173,7 @@ function closeWindow(id: AppId): void {
   cancelPendingMotion(instance);
 
   instance.state = 'closing';
+  desktopShell.setContext(findActiveWindow()?.id);
   instance.echoController?.leave();
   instance.operationGen++;
 
@@ -199,6 +205,7 @@ function minimizeWindow(id: AppId): void {
   cancelPendingMotion(instance);
 
   instance.state = 'minimized';
+  desktopShell.setContext(findActiveWindow()?.id);
   instance.echoController?.pause();
   instance.operationGen++;
 
@@ -280,12 +287,14 @@ function cleanup(instance: WindowInstance): void {
 function bringToFront(instance: WindowInstance): void {
   instance.zIndex = nextZIndex++;
   instance.element.style.zIndex = String(instance.zIndex);
+  desktopShell.setContext(instance.id);
 }
 
 /**
  * Focus window
  */
 function focusWindow(instance: WindowInstance): void {
+  desktopShell.setContext(instance.id);
   const focusTarget = instance.element.querySelector<HTMLElement>('[data-primary]')
     ?? instance.element.querySelector<HTMLElement>('[autofocus], button, [tabindex="0"]');
   if (focusTarget) {

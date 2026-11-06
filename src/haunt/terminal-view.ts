@@ -32,7 +32,7 @@ export class TerminalController {
     container.querySelector('form')!.addEventListener('submit', event => { event.preventDefault(); this.submit(); }, options);
     container.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button');
-      if (button?.dataset.command) { this.input.value = button.dataset.command; this.input.focus(); }
+      if (button?.dataset.command) { this.input.value = button.dataset.command; this.submit(); }
       if (button?.hasAttribute('data-open-echo')) this.openEcho();
     }, options);
     this.input.addEventListener('keydown', event => {

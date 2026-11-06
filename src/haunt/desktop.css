@@ -483,3 +483,60 @@ body { height: 100dvh; }
 @media (max-width: 480px) { .console-output { height: 240px; padding: 14px 12px; } .console-form { padding-inline: 12px; gap: 6px; } .console-prompt { font-size: 10px; } .console-shortcuts, .console-footer { padding-inline: 12px; } .echo-appbar { padding-inline: 17px; } .echo-brand > span:last-child { display: none; } }
 @media (max-height: 580px) { .console-output { height: 150px; min-height: 40px; flex: 1; } .console-tab, .console-footer { padding-block: 5px; } .console-shortcuts { padding-block: 8px; } }
 @media (prefers-reduced-motion: reduce) { .console-entry:has(input:placeholder-shown:focus) .console-caret { animation: none !important; opacity: 1; } }
+
+/* The OS shell carries navigation; the guide carries one focus at a time. */
+.os-menubar { height: 36px; flex-shrink: 0; display: flex; align-items: center; gap: 19px; padding: 0 24px; background: #101a23ed; border-bottom: 1px solid #9aafb32b; font: 11px/1.4 system-ui, sans-serif; color: #c0cdd0; z-index: 4000; }
+.os-brand { font-weight: 650; white-space: nowrap; letter-spacing: .04em; }
+.os-brand > span { color: #c9b4d9; margin-right: 7px; font-size: 15px; }
+.os-session-menu { position: relative; }
+.os-session-menu summary { cursor: pointer; list-style: none; padding: 7px 4px; }
+.os-session-menu summary::-webkit-details-marker { display: none; }
+.os-menu-panel { position: absolute; left: -10px; top: 30px; width: 185px; padding: 6px; background: #1a2833; border: 1px solid #a8bec44d; box-shadow: 0 12px 30px #0006; border-radius: 7px; }
+.os-menu-panel button { display: block; width: 100%; text-align: left; background: transparent; border: 0; padding: 10px; color: #d7e0df; font: inherit; cursor: pointer; border-radius: 4px; }
+.os-menu-panel button:hover, .os-menu-panel button:focus-visible { background: #2e4657; }
+#os-app-context { color: #9bafba; }
+#btn-guide { margin-left: auto; background: transparent; color: #cedad9; border: 1px solid #b2c4c133; border-radius: 5px; padding: 4px 9px; font: inherit; cursor: pointer; }
+#btn-guide span { margin-left: 8px; opacity: .65; }
+.os-clock { min-width: 58px; color: #a8bac3; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.os-menubar :focus-visible, .desktop-shortcuts button:focus-visible { outline: 2px solid #cdbbe0; outline-offset: 3px; }
+.desktop-masthead { left: 40px; top: 30px; }
+.desktop-masthead h1 { font-size: 38px; line-height: 1.04; }
+.desktop-masthead h1 br { display: none; }
+.desktop-masthead .session-label { margin-bottom: 13px; }
+.desktop-masthead > p:last-child { display: block; color: #9bafb2; font-size: 11px; }
+.desktop-task { white-space: pre-line; }
+.desktop-masthead .desktop-task[data-complete="true"] { color: #bdcfb5; }
+.desktop-shortcuts { position: absolute; top: 174px; left: 30px; display: grid; gap: 20px; }
+.desktop-shortcuts button { width: 87px; padding: 8px 3px; display: grid; justify-items: center; gap: 8px; border: 1px solid transparent; background: transparent; color: #d4deda; border-radius: 8px; font: 11px/1.4 system-ui, sans-serif; cursor: pointer; text-shadow: 0 1px 4px #0009; }
+.desktop-shortcuts button:hover { background: #b4c7c00b; border-color: #b4c7c022; }
+.desktop-shortcuts button:active { background: #b4c7c01c; }
+.desktop-icon { width: 48px; height: 43px; display: grid; place-items: center; border-radius: 8px; box-shadow: 0 4px 12px #0004, inset 0 1px #ffffff12; }
+.terminal-icon { background: #111e27; border: 1px solid #a7bdd152; font: 23px/1 Consolas, monospace; color: #c7b4de; }
+.echo-icon { background: #2f4a5c; border: 1px solid #adcadd60; font-size: 31px; color: #c2d7e8; }
+#guide-layer { position: fixed; inset: 0; z-index: 10000; pointer-events: none; }
+#guide-layer[hidden] { display: none; }
+.guide-shade { position: absolute; pointer-events: auto; background: #061019b8; backdrop-filter: blur(3px); }
+.guide-spot { position: absolute; border: 1px solid #c1d5e6; border-radius: 8px; box-shadow: 0 0 0 3px #a9c8e326; }
+.guide-card { position: absolute; width: min(340px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; padding: 20px; border: 1px solid #a5c1d25c; border-radius: 12px; background: #1b2b38; color: #d8e4e8; box-shadow: 0 16px 50px #0009; pointer-events: auto; font: 13px/1.65 system-ui, sans-serif; }
+.guide-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 10px; color: #adbfca; }
+.guide-heading select { min-width: 0; width: 85px; border: 1px solid #a5c1d244; border-radius: 4px; background: #213644; color: #d0dce4; padding: 4px; font: inherit; }
+.guide-heading button { font-size: 11px; border: 0; background: transparent; color: #c3ced5; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 5px; }
+.guide-card h2 { margin: 6px 0 11px; font-size: 22px; line-height: 1.2; letter-spacing: -.025em; font-weight: 600; }
+.guide-card .guide-count { color: #a8c6dc; font-size: 11px; margin: 15px 0 0; }
+#guide-copy { margin: 0 0 18px; color: #bdcbd4; }
+.guide-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.guide-actions button, .guide-query { border: 1px solid #a5c1d254; border-radius: 5px; padding: 9px 11px; font: 600 12px/1.4 system-ui, sans-serif; background: transparent; color: #c9d8e3; cursor: pointer; }
+.guide-actions [data-guide="next"] { background: #b5cde1; color: #142330; border-color: transparent; }
+.guide-actions button:disabled { opacity: .35; cursor: default; }
+.guide-query { display: block; margin: 0 0 15px; text-align: left; font-weight: 500; }
+.guide-query[hidden] { display: none; }
+.guide-card :focus-visible { outline: 2px solid #d0bcdf; outline-offset: 3px; }
+@media (max-width: 650px) { .os-menubar { gap: 12px; padding-inline: 14px; } #os-app-context { display: none; } .os-clock { min-width: 52px; font-size: 10px; } .desktop-masthead { left: 22px; top: 22px; } .desktop-masthead h1 { font-size: 29px; } .desktop-shortcuts { top: 146px; left: 12px; } .guide-card { padding: 17px; } .guide-card h2 { font-size: 20px; } }
+@media (max-height: 580px) { .desktop-masthead { top: 18px; } .desktop-shortcuts { top: 105px; display: flex; gap: 8px; } .guide-card { font-size: 12px; padding: 14px; max-height: calc(100dvh - 24px); } .guide-card h2 { font-size: 19px; } .guide-card .guide-count { margin-top: 5px; } #guide-copy { margin-bottom: 10px; } }
+@media (max-width: 650px) and (min-height: 650px) {
+  body[data-guide-step="2"] #window-terminal { top: calc(var(--guide-card-height, 330px) + 20px); translate: -50% 0; max-height: calc(100dvh - var(--guide-card-height, 330px) - 144px); }
+  body[data-guide-step="2"] .console-output { min-height: 65px; }
+}
+@media (min-width: 651px) and (max-height: 580px) {
+  body[data-guide-step="2"] #window-terminal { width: calc(100% - 380px); left: calc((100% - 380px) / 2 + 12px); }
+}

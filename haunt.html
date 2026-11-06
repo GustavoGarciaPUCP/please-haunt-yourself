@@ -31,12 +31,25 @@
 </head>
 <body>
   <div id="desktop-root">
+    <header class="os-menubar" aria-label="System menu bar">
+      <span class="os-brand"><span aria-hidden="true">⌘</span> HAUNT OS</span>
+      <details class="os-session-menu"><summary>Session</summary><div class="os-menu-panel" role="group" aria-label="Session actions">
+        <button data-launch="terminal">Open Terminal</button><button data-launch="echo">Open Echo Studio</button><button data-open-guide>Show guide</button>
+      </div></details>
+      <span id="os-app-context">Desktop</span>
+      <button id="btn-guide" aria-label="Open desktop guide">Guide <span aria-hidden="true">?</span></button>
+      <time class="os-clock" aria-label="Local time"></time>
+    </header>
     <main id="desktop-stage" role="main" aria-label="Recovery desktop">
       <header class="desktop-masthead">
         <p class="session-label"><span aria-hidden="true">✦</span> Recovery session</p>
-        <h1>Please haunt<br>yourself.</h1>
-        <p>There are still six of us.</p>
+        <h1>Please haunt yourself.</h1>
+        <p class="desktop-task" aria-live="polite">Recovery task: help ECHO make an entrance.<br>Two apps recovered. Four still missing.</p>
       </header>
+      <nav class="desktop-shortcuts" aria-label="Desktop shortcuts">
+        <button data-launch="terminal"><span class="desktop-icon terminal-icon" aria-hidden="true">&gt;_</span><span>Terminal</span></button>
+        <button data-launch="echo"><span class="desktop-icon echo-icon" aria-hidden="true">◉</span><span>Echo Studio</span></button>
+      </nav>
       <!-- Windows rendered here -->
     </main>
 
@@ -73,10 +86,10 @@
         <div class="taskbar-separator"></div>
 
         <div class="taskbar-labels">
-          <span class="app-label">CANVAS</span>
-          <span class="app-label">UNINSTALL</span>
-          <span class="app-label">REPLAY</span>
-          <span class="app-label">POSTMAN</span>
+          <span class="app-label" title="Not recovered yet">CANVAS</span>
+          <span class="app-label" title="Farewell scenery available inside ECHO; app not recovered yet">UNINSTALL</span>
+          <span class="app-label" title="Not recovered yet">REPLAY</span>
+          <span class="app-label" title="Not recovered yet">POSTMAN</span>
         </div>
       </div>
 

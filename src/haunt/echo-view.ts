@@ -5,6 +5,7 @@ import { createScene, moveProp, setPropPosition, validateCoverage, startPerforma
 import { ProcessSession, assessStage } from './process-session';
 
 type Phase = 'idle' | 'appearance' | 'host-reaction' | 'echo-response';
+export interface RehearsalResult { reaction: HostReaction; privacy: 'released' | 'covered'; }
 const durations = { appearance: 280, 'host-reaction': 240, 'echo-response': 160 };
 const inkCreature = `<path d="M273 236q-21-43-11-81-30 30-41 58-8-47 24-80 5-43 30-57 32-16 49 19 15 37 5 65 29 32 30 72-27-21-37-40l10 51-17-9-8 9-12-8-9 9z" fill="#11171e" stroke="#849292" stroke-opacity=".5"/>
   <ellipse cx="278" cy="111" rx="5" ry="10" fill="#e7d9b7"/><ellipse cx="296" cy="114" rx="5" ry="9" fill="#e7d9b7"/>
@@ -32,7 +33,7 @@ export class EchoController {
   private readonly help: HTMLElement;
   private drag: { pointerId: number; x: number; y: number; target: HTMLElement } | undefined;
 
-  constructor(private readonly container: HTMLElement, private readonly session: ProcessSession) {
+  constructor(private readonly container: HTMLElement, private readonly session: ProcessSession, private readonly onComplete: (result: RehearsalResult) => void) {
     const { publicStage: stage, privateView: view } = SCENE_CONFIG;
     container.innerHTML = `
       <div class="echo-appbar"><span class="echo-brand"><span aria-hidden="true">◉</span> ECHO <span>Capture studio</span></span><span class="echo-transport-state"></span></div>
@@ -216,7 +217,10 @@ export class EchoController {
       if (this.disposed || generation !== this.scene.runGeneration || this.scene.state !== 'performing') return;
       if (this.phase === 'appearance') this.phase = 'host-reaction';
       else if (this.phase === 'host-reaction') this.phase = 'echo-response';
-      else this.scene = completePerformance(this.scene);
+      else {
+        this.scene = completePerformance(this.scene);
+        this.onComplete({ reaction: this.scene.hostReaction, privacy: this.session.snapshot().frame === 'released' ? 'released' : 'covered' });
+      }
       this.render();
       if (this.scene.state === 'performing') this.schedule();
     }, this.motion.matches ? 50 : durations[this.phase]);
@@ -312,4 +316,4 @@ export class EchoController {
   }
 }
 
-export function initEchoScene(container: HTMLElement, session: ProcessSession): EchoController { return new EchoController(container, session); }
+export function initEchoScene(container: HTMLElement, session: ProcessSession, onComplete: (result: RehearsalResult) => void): EchoController { return new EchoController(container, session, onComplete); }

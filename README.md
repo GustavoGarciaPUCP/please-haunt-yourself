@@ -15,6 +15,8 @@ npm.cmd run dev -- --port 5174 --strictPort
 Open **http://127.0.0.1:5174/haunt.html**. The root `/` still opens the preserved bridge prototype.
 
 - TERMINAL starts open. Use **Open ECHO** or its taskbar button.
+- On a first visit, a four-step optional spotlight guide introduces the task. Skip or Escape dismisses it; **Guide** reopens it, with a topic selector for direct access. Dismissal is remembered in browser storage when available. The tour never repairs the scene or kills a process.
+- The system menu, desktop shortcuts, current-app label and local clock form the OS shell. Opening guidance pauses an active take; resuming stays explicit. The recovery task acknowledges completed reactions for this page session.
 - TERMINAL accepts `help`, `ps`, `inspect`, `kill`, `restore mirror`, `open echo` and `clear`. Its commands control fictional local game services. Use `ps` to find the current PIDs, then inspect their dependencies. The console has command history and a reduced-motion-aware block cursor.
 - Close, minimize and restore either window. Reopening during a close keeps the latest request.
 - Keyboard focus raises a window; Escape closes the active window and restores the taskbar trigger.
@@ -32,6 +34,7 @@ npm.cmd run build
 npm.cmd run check:windows
 npm.cmd run check:echo
 npm.cmd run check:console
+npm.cmd run check:guide
 npm.cmd test
 ```
 
@@ -39,12 +42,15 @@ The browser check requires the development server above plus the already install
 
 Build output includes both `dist/haunt.html` and the preserved `dist/index.html`. Unit tests now include seven ECHO geometry/edit-boundary cases and six process-session cases alongside35 preserved prototype tests (48 total). `test:browser` is the historical bridge suite; `check:echo` and `check:console` exercise the new experience. The visibility-handler case uses a simulated hidden event, not an observed real OS background-tab transition.
 
+The three game regression harnesses explicitly mark onboarding dismissed before loading; `check:guide` separately exercises a fresh visitor, first-run storage/focus, real spotlight geometry, mobile/short layouts, pause/Leave priority and unavailable storage. Simulated novice agent reports identified and drove UI repairs; they do not substitute for human enjoyment tests.
+
 ## Current design and tool evidence
 
 - [Build-readiness and motion contract](docs/diseno/11_Build_Readiness_and_Motion.md), [scene/art direction](docs/diseno/10_Scenes_Art_and_Novelty_Review.md) and [experience rules](docs/diseno/09_Experience_Contract.md).
 - [Actual window-foundation work and checks](docs/development/2026-11-06-window-foundation.md).
 - [Actual ECHO work, corrections and checks](docs/development/2026-11-06-echo-rehearsal.md).
 - [App identity and process interaction](docs/development/14_App_Identity_and_Process_Rehearsal.md), with actual implementation/check status below its brief.
+- [First-run guide, OS shell and independent agent findings](docs/development/15_First_Run_and_Desktop_Shell.md).
 - [Kiro-authored foundation scope](.kiro/specs/please-haunt-yourself/window-foundation.md) with later review notes, and [tool usage record](docs/kiro-usage.md).
 - [Illustrative concept board](docs/diseno/concept-art/scene-board-v2.png), which is a visual target rather than a game screenshot.
 

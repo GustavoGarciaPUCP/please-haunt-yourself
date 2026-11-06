@@ -2,6 +2,8 @@
 
 ## Product and sources
 
+LATEST FIRST-RUN CONTINUATION, November6: participant requests a simulated novice agent, skippable spotlight guidance and a stronger OS shell. Implement docs/development/15_First_Run_and_Desktop_Shell.md, preserve existing interactions and distinguish agent walkthroughs from human fun testing. The user explicitly authorizes this bounded agent review. No Kiro usage is claimed while the prior service-limit error remains unresolved.
+
 LATEST APP-IDENTITY CONTINUATION, November6: participant requests characteristic technology-oriented interfaces and an actual fictional kill/process interaction beyond dragging scenery. Implement the bounded console/process connection in docs/development/14_App_Identity_and_Process_Rehearsal.md, preserving ECHO/window behavior and the old prototype. This explicitly extends ECHO-01 to terminal commands and two alternative privacy interventions. Native Kiro reached its monthly service limit in the preceding run; do not invent further Kiro contribution, purchases or account changes. Continue locally with Codex and record attribution. Other four app identities are design scope until implemented.
 
 LATEST CONTINUATION, November6: the participant explicitly asked to inspect the running desktop and keep improving it. Implement ECHO-01, the first interactive reflection/exposure rehearsal described in `docs/development/13_Echo_Rehearsal_Kiro_Task.md`, with native Kiro Sonnet4.5 plus Codex review. Preserve the working window lifecycle, old prototype and existing design contracts. This extends the completed WINDOW-01 scope to one actual ECHO scene, not all four tableaux or any unrequested publishing/install/account action. No new model restriction is introduced.
