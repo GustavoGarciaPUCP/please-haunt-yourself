@@ -10,6 +10,8 @@ Working entry for Kiroween 2026, Costume Contest. First playable development mil
 
 **Latest recommendation, November 6:** [One Last Function — complete experience proposal](docs/diseno/07_Ultima_funcion_diseno_completo.md). Three applications with distinct behaviors stage a Halloween attraction and survive as an interactive theme. The document defines the premise, encounters, event sequence, recovery and playable ending, incorporating criticism from two Codex agents. This is the proposal to review next; earlier explorations are retained as history. No application code was changed for it.
 
+**Later revision:** [Please Haunt Yourself](docs/diseno/08_Please_Haunt_Yourself.md) is now the recommendation to review: six English-language programs and personalization through the player's recorded decisions, authored scene, correspondence and causal score. This responds to the participant's rejection of07 as too simple. The old runnable game remains unchanged; the revised experience is design only.
+
 ## Run locally
 
 Requires Node.js 22.12 or later in the Node 22 release line (development verified with 22.13.1).

@@ -43,6 +43,8 @@ No exact credit debit or remaining balance has been independently verified. The 
 
 On November 6, the participant explicitly requested independent-agent criticism and a defined concept with different interactions per application. Two Codex collaboration agents contributed creative design and critique; Codex consolidated `docs/diseno/07_Ultima_funcion_diseno_completo.md`. These were Codex agents, not additional Kiro CLI tasks, and are not reported as Kiro credit usage or human testing. Only documentation changed during this design phase.
 
+The participant then requested five or more English-language programs and stronger personalization. The same two Codex agents challenged the proposed extension: REPLAY must not duplicate TERMINAL and POSTMAN must not be a decorative visitor menu. Codex defined their separate behavioral/access/reaction roles and consolidated `docs/diseno/08_Please_Haunt_Yourself.md`. Those design discussions are not Kiro usage, working personalization or independent human validation. Source, tests and dependencies remain untouched.
+
 [Official rules, section 4](https://kiroween.devpost.com/rules) accept Kiro CLI and leave sufficiency of Kiro use to the judges. There is no numeric usage threshold stated there. Spending credits alone is not our acceptance criterion.
 
 Before submission, review the actual development contributions and explain how specific Kiro outputs affected the working product. Keep `.kiro/` in the public source, provide the required write-up and ensure it agrees with files, history and demonstrated behavior. We do not claim organizer approval, completed human playtesting or guaranteed eligibility.
