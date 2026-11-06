@@ -16,6 +16,8 @@ Retain earlier planning dates and preserve the working prototype. Superseded tra
 
 ## Workflow
 
+The participant explicitly stopped application coding on November 5 and requested concept exploration and innovation only. Work on ideas, research, written rules and paper walkthroughs until they request implementation again. Do not edit application source, tests, dependencies or build configuration during this phase. An agent critique does not resume implementation. See `docs/diseno/06_Exploracion_funciones_heredadas.md` for a newer candidate that challenges the original kill/diagnose loop; it is not an accepted new spec.
+
 The participant wants development coordinated from Codex through files and terminal tools. Do not automate desktop windows. Kiro CLI may perform actual development tasks in this directory; record what each tool actually does.
 
 Start with reviewed requirements, then technical design and tasks, then implementation. The next concept milestone is one convincing dead-program encounter with observable evidence, a causal intervention and a meaningful consequence. The older route milestone has software evidence but did not validate the concept as an outstanding experience.

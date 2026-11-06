@@ -6,6 +6,8 @@ inclusion: always
 
 Prepared through Codex on November 5, 2026. This document directs future Kiro tasks; its existence alone is not evidence that a task consumed it.
 
+Current participant instruction: concept/design work only; application coding is stopped until they request implementation again. The paper-bridge app is a preserved earlier prototype. New dead-program and inherited-function documents are candidates under critique, not accepted implementation specs. Do not treat an agent recommendation as permission to code or as empirical validation.
+
 - Follow `AGENTS.md` and the V3/R1 references. Requirements and design are in `.kiro/specs/the-wrong-window/`. Use `tasks.md` for current progress rather than historical status snapshots.
 - Work through files and terminal tools. Do not automate desktop windows, change accounts, purchase services, publish, push or submit.
 - Keep the projection, support contacts, dimensions and fixed gallery in `src/core/` independent of rendering. No solution presets or hidden understanding flags.

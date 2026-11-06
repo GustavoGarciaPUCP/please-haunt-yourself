@@ -4,6 +4,8 @@
 
 **Estado: dirección candidata, no diseño cerrado ni aplicación implementada.** La ventana equivocada sigue conservada como prototipo anterior. Sus pruebas validan ese software, no esta nueva experiencia. Este documento desarrolla la propuesta del participante; no reclama invención mundial ni posibilidad de premio demostrada.
 
+**Instrucción posterior del participante:** detener el código y cuestionar/mejorar también esta idea. Las pruebas de concepto que se mencionan abajo no se programarán todavía. `06_Exploracion_funciones_heredadas.md` estudia un cambio más profundo de interacción; tampoco está aceptado como idea final.
+
 ## Situación y público
 
 Un escritorio ficticio dentro del navegador, dirigido a personas que disfrutan de la tecnología y a programadores principiantes. Durante una última sesión de Halloween reaparecen programas retirados. Tu encargo es conseguir un apagado limpio y darles un cierre, averiguando qué los mantiene ligados a la sesión.

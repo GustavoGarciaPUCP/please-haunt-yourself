@@ -6,6 +6,8 @@ Working entry for Kiroween 2026, Costume Contest. First playable development mil
 
 **Concept status, November 5:** the participant has authorized changing the central idea. This running game is the preserved earlier prototype. The current candidate is a [Halloween desktop with dead programs](docs/diseno/05_Programas_muertos_propuesta.md), proposed by the participant and under review. The checks below belong to the earlier game; they are not evidence for a new implementation or its competitive quality.
 
+**Current phase: concepts only.** The participant has stopped application coding while we challenge and develop the ideas. [Inherited functions](docs/diseno/06_Exploracion_funciones_heredadas.md) explores a substantially different interaction within the fictional desktop; it remains a candidate, not an implementation commitment.
+
 ## Run locally
 
 Requires Node.js 22.12 or later in the Node 22 release line (development verified with 22.13.1).
