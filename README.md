@@ -1,55 +1,44 @@
-# The Wrong Window / La ventana equivocada
+# Please Haunt Yourself
 
-A browser puzzle in a paper-theatre workshop. Move the light, turn a paper cutout and reconsider a rigid frame to make a path to a fixed high gallery. The shadow is calculated from the objects you manipulate; success follows material contacts and the figure's route.
+A fictional haunted desktop for Kiroween 2026. Six deleted applications become the cast and tools of a small interactive production. The current implementation is **WINDOW-01: a working desktop/window-motion foundation**, not the completed game.
 
-Working entry for Kiroween 2026, Costume Contest. First playable development milestone, not a finished competition submission.
+The project directory was renamed from `LaVentanaEquivocada` to `PleaseHauntYourself` on November 6 at the participant's request. It retains the same Git history. The earlier paper-bridge prototype remains at the root index page and is not presented as the new experience.
 
-**Concept status, November 5:** the participant has authorized changing the central idea. This running game is the preserved earlier prototype. The current candidate is a [Halloween desktop with dead programs](docs/diseno/05_Programas_muertos_propuesta.md), proposed by the participant and under review. The checks below belong to the earlier game; they are not evidence for a new implementation or its competitive quality.
+## Run the new foundation
 
-**Current phase: concepts only.** The participant has stopped application coding while we challenge and develop the ideas. [Inherited functions](docs/diseno/06_Exploracion_funciones_heredadas.md) explores a substantially different interaction within the fictional desktop; it remains a candidate, not an implementation commitment.
-
-**Latest recommendation, November 6:** [One Last Function — complete experience proposal](docs/diseno/07_Ultima_funcion_diseno_completo.md). Three applications with distinct behaviors stage a Halloween attraction and survive as an interactive theme. The document defines the premise, encounters, event sequence, recovery and playable ending, incorporating criticism from two Codex agents. This is the proposal to review next; earlier explorations are retained as history. No application code was changed for it.
-
-**Later revision:** [Please Haunt Yourself](docs/diseno/08_Please_Haunt_Yourself.md) is now the recommendation to review: six English-language programs and personalization through the player's recorded decisions, authored scene, correspondence and causal score. This responds to the participant's rejection of07 as too simple. The old runnable game remains unchanged; the revised experience is design only.
-
-## Run locally
-
-Requires Node.js 22.12 or later in the Node 22 release line (development verified with 22.13.1).
+Use the existing installed development dependencies, or `npm.cmd ci` for a fresh checkout. Node 22.13.1 was used for local development.
 
 ```powershell
-npm.cmd ci
-npm.cmd run dev
+npm.cmd run dev -- --port 5174 --strictPort
 ```
 
-Open the local address printed by Vite, normally `http://127.0.0.1:5173/`. On non-Windows shells, use `npm` in place of `npm.cmd`.
+Open **http://127.0.0.1:5174/haunt.html**. The root `/` still opens the preserved bridge prototype.
+
+- TERMINAL starts open. Use **Open ECHO** or its taskbar button.
+- Close, minimize and restore either window. Reopening during a close keeps the latest request.
+- Keyboard focus raises a window; Escape closes the active window and restores the taskbar trigger.
+- Reduced-motion preference is respected at startup and when changed.
+
+The ECHO stage is representative inline SVG artwork. The privacy puzzle, personal recording, body extraction, mail/postcards and saved show are still design scope; their artwork and gameplay are not implemented by this window study.
+
+## Verification
 
 ```powershell
-npm.cmd run typecheck
-npm.cmd test
-npm.cmd run test:browser
 npm.cmd run build
+npm.cmd run check:windows
 ```
 
-Browser tests use a locally installed Google Chrome through Playwright. Build output goes to `dist/`. The game needs no backend, login, runtime AI service or API key. It saves confirmed constructions and preferences in this browser's local storage; if storage is unavailable, the current session remains playable.
+The browser check requires the development server above plus the already installed local Chrome/Playwright environment. It exercises real window controls, cancellation, focus, reduced motion and wide/narrow layouts; reports/captures go to `output/playwright/`. An alternative server origin can be supplied through `HAUNT_BASE_URL`.
 
-## Play
+Build output includes both `dist/haunt.html` and the preserved `dist/index.html`. The existing `npm.cmd test` and `npm.cmd run test:browser` suites belong to the paper-bridge prototype; their historical results do not validate new game mechanics.
 
-- Enter the workshop. The figure waits while you prepare the scene.
-- Drag or click the lamp rail and paper pivot. Keyboard arrows adjust them; Home/End reach their mechanical stops.
-- Drag the frame, or choose **Place frame** and click the stage. With keyboard focus on the frame, Enter picks it up, arrows move it, Enter sets it down and Escape cancels.
-- Try the route, pause, continue or return to the table. Undo restores confirmed edits. Hints are requested explicitly.
-- Language, sound and reduced motion can be changed. Sound starts off.
+## Current design and tool evidence
 
-The skippable opening, moving figure, support contacts, transactional rejection, save recovery and first ending are implemented. Automated checks exercise two distinct constructions through the actual browser controls. Human discovery testing, ending choreography and mobile legibility still need work; a fitting mobile layout is not proof that the puzzle is comfortable on a phone. Use a desktop browser for this development version.
+- [Build-readiness and motion contract](docs/diseno/11_Build_Readiness_and_Motion.md), [scene/art direction](docs/diseno/10_Scenes_Art_and_Novelty_Review.md) and [experience rules](docs/diseno/09_Experience_Contract.md).
+- [Actual window-foundation work and checks](docs/development/2026-11-06-window-foundation.md).
+- [Kiro-authored foundation scope](.kiro/specs/please-haunt-yourself/window-foundation.md) with later review notes, and [tool usage record](docs/kiro-usage.md).
+- [Illustrative concept board](docs/diseno/concept-art/scene-board-v2.png), which is a visual target rather than a game screenshot.
 
-## Development and evidence
+Native Kiro with Claude Sonnet 4.5 wrote the new scope notes and first foundation, then applied a directed correction. Codex reviewed and repaired remaining motion/focus issues, refined the inline art and interface, integrated the second build entry and ran checks. Opus 5.5 was requested first but rejected by the account; it was not used. No maximum-effort execution or exact promotional-credit debit is claimed.
 
-Game implementation began November 5, 2026. Earlier concept and design notes retain their dates and are disclosed as planning. Kiro CLI generated requirements, technical design, initial configuration, physics tests and the opening feature with integration/tests. Codex implemented the first playable engine/interface, reviewed and corrected Kiro output and runs independent checks. The detailed [Kiro usage record](docs/kiro-usage.md) distinguishes completed contributions, interrupted attempts and planned work.
-
-- [Requirements](.kiro/specs/the-wrong-window/requirements.md), [technical design](.kiro/specs/the-wrong-window/design.md) and [current task tracker](.kiro/specs/the-wrong-window/tasks.md).
-- [Implementation decisions](docs/development/implementation-decisions.md) and [design review](docs/development/design-review.md).
-- [Executed verification](docs/development/verification.md) and [next iterations](docs/development/next-iterations.md).
-- [Original experience](docs/diseno/01_Experiencia_y_sistema.md) and [geometry reference](docs/diseno/02_Geometria_y_revision_independiente.md), retained in Spanish.
-- [Official rules](https://kiroween.devpost.com/rules). The event website governs; local notes do not establish eligibility or sufficient Kiro usage.
-
-`.kiro/` stays tracked. No public deployment or submission has occurred. Public delivery still needs license/asset review, English or translated submission materials, a real demo, and a separate publication decision. Private CLI streams and authentication information are not part of this repository.
+No external deployment, public repository publication or submission has occurred. `.kiro/` remains tracked. License/asset review, the complete game, human observation and final submission materials remain pending. Historical plans and the old prototype retain their dates and status in Git.

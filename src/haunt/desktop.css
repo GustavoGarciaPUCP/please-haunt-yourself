@@ -1,0 +1,367 @@
+/**
+ * PLEASE HAUNT YOURSELF — Desktop window chrome and motion
+ * Nocturnal recovery desktop with fluid window lifecycle
+ */
+
+#desktop-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#desktop-stage {
+  flex: 1;
+  position: relative;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+/* ========================================
+   Window chrome
+   ======================================== */
+
+.window {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: min(520px, 90vw);
+  max-height: 70vh;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 223, 208, 0.15);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px var(--shadow-2),
+    0 2px 8px var(--shadow-1);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.window:focus {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+
+/* Titlebar */
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(232, 223, 208, 0.1);
+  background: rgba(26, 26, 26, 0.3);
+  border-radius: 12px 12px 0 0;
+  user-select: none;
+}
+
+.window-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--copper);
+  opacity: 0.9;
+}
+
+.window-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.window-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(232, 223, 208, 0.08);
+  color: var(--bone);
+  border-radius: 6px;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.window-btn:hover {
+  background: rgba(232, 223, 208, 0.15);
+}
+
+.window-btn:focus {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+
+.window-btn:active {
+  background: rgba(232, 223, 208, 0.2);
+}
+
+.window-btn-close:hover {
+  background: var(--oxblood);
+  color: var(--bone);
+}
+
+/* Window content */
+.window-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow: auto;
+  min-height: 200px;
+}
+
+/* ========================================
+   TERMINAL content
+   ======================================== */
+
+.terminal-message {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--bone);
+}
+
+.terminal-message p {
+  margin: 0 0 1rem 0;
+}
+
+.terminal-message strong {
+  color: var(--copper);
+  font-weight: 600;
+}
+
+.terminal-note {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(212, 165, 116, 0.08);
+  border-left: 3px solid var(--copper);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* ========================================
+   ECHO content
+   ======================================== */
+
+.echo-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.echo-illustration {
+  display: block;
+}
+
+/* ========================================
+   Taskbar
+   ======================================== */
+
+#taskbar {
+  height: 60px;
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(232, 223, 208, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.taskbar-apps {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.taskbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--bone);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 150ms ease-out, opacity 150ms ease-out, border-color 150ms ease-out;
+  opacity: 0.7;
+}
+
+.taskbar-btn:hover {
+  background: rgba(232, 223, 208, 0.08);
+  opacity: 1;
+}
+
+.taskbar-btn:focus {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+
+.taskbar-btn.active {
+  background: rgba(212, 165, 116, 0.15);
+  border-color: rgba(212, 165, 116, 0.3);
+  color: var(--copper);
+  opacity: 1;
+}
+
+.taskbar-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.taskbar-separator {
+  width: 1px;
+  height: 32px;
+  background: rgba(232, 223, 208, 0.15);
+  margin: 0 0.25rem;
+}
+
+.taskbar-labels {
+  display: flex;
+  gap: 1rem;
+  opacity: 0.4;
+}
+
+.app-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--bone);
+  user-select: none;
+}
+
+.taskbar-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-text {
+  font-size: 0.75rem;
+  color: var(--copper);
+  opacity: 0.6;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ========================================
+   Motion overrides for reduced motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .window {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   Responsive adjustments
+   ======================================== */
+
+@media (max-width: 768px) {
+  #desktop-stage {
+    padding: 1rem;
+  }
+
+  .window {
+    width: min(95vw, 520px);
+    max-height: 75vh;
+  }
+
+  .taskbar-labels {
+    display: none;
+  }
+
+  .taskbar-btn span {
+    display: none;
+  }
+
+  .taskbar-btn {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #desktop-stage {
+    padding: 0.5rem;
+  }
+
+  .window {
+    border-radius: 8px;
+  }
+
+  .window-titlebar {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .window-content {
+    padding: 1rem;
+  }
+
+  .status-text {
+    font-size: 0.6875rem;
+  }
+}
+
+/* WINDOW-01 visual review: a nocturnal theatre, with one motion per window. */
+* { box-sizing: border-box; }
+body { height: 100dvh; }
+#desktop-root { height: 100dvh; }
+#desktop-stage { min-height: 0; }
+#desktop-stage::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .1; background: repeating-linear-gradient(0deg, transparent, transparent 3px, #b7c1bd0d 4px); }
+.desktop-masthead { position: absolute; left: clamp(24px, 5.5vw, 90px); top: clamp(28px, 6vh, 70px); pointer-events: none; }
+.session-label { display: flex; gap: 10px; align-items: center; color: #b89f7d; font-size: 12px; margin: 0 0 20px; }
+.desktop-masthead h1 { font: 400 clamp(46px, 5.2vw, 78px)/.99 Georgia, serif; letter-spacing: -.045em; margin: 0 0 19px; color: #d9cfbb; }
+.desktop-masthead > p:last-child { font: 12px/1.6 Consolas, monospace; color: #98a39b; }
+.window { width: min(500px, calc(100% - 36px)); border-radius: 18px; border-color: #b6b9aa30; box-shadow: 0 26px 75px #0008, 0 1px 0 #e8d9ba13 inset; max-height: calc(100% - 32px); }
+#window-terminal { left: 42%; top: 53%; }
+#window-echo { width: min(540px, calc(100% - 36px)); left: 65%; top: 47%; background: #17252bfa; }
+.window-titlebar { padding: 10px 15px 10px 21px; min-height: 51px; border-radius: 18px 18px 0 0; }
+.window-title { font: 12px/1.4 Consolas, monospace; letter-spacing: .025em; color: #d2b38e; }
+.window-content { min-height: 0; padding: 26px; }
+.window-btn { width: 30px; height: 30px; color: #d9cfbb; }
+.window-btn:focus:not(:focus-visible), .taskbar-btn:focus:not(:focus-visible) { outline: none; }
+.window-btn:focus-visible, .taskbar-btn:focus-visible, .primary-action:focus-visible { outline: 2px solid #dfbf8e; outline-offset: 3px; }
+.terminal-message { font: 13px/1.8 Consolas, monospace; }
+.terminal-message h3 { font: 400 35px/1.12 Georgia, serif; letter-spacing: -.025em; margin: 13px 0 21px; color: #eee1c9; }
+.console-line { color: #a4b5aa; font-size: 11px; }
+.console-line span { color: #d0a26e; }
+.primary-action { margin: 5px 0 5px; padding: 10px 15px; border: 1px solid #e9d9bb8c; border-radius: 8px; background: #ded0b5; color: #202a2b; font: 600 12px/1.4 system-ui, sans-serif; cursor: pointer; }
+.primary-action span { margin-left: 22px; }
+.primary-action:hover { background: #eee1c9; }
+.terminal-message .terminal-note { background: transparent; border: 0; padding: 0; margin: 21px 0 0; font: 11px/1.7 system-ui, sans-serif; color: #b9c3ba; opacity: .8; }
+.echo-stage { display: block; min-height: 0; }
+.echo-illustration { width: 100%; height: auto; border: 1px solid #a9865a42; border-radius: 8px; }
+.stage-caption { font: italic 18px/1.3 Georgia, serif; color: #cdbb9e; text-align: center; margin: 15px 0 0; }
+#taskbar { height: 76px; padding: 0 25px; background: #11191eee; border-top-color: #bfa98622; }
+.taskbar-btn { border-radius: 11px; padding: 10px 15px; transition: background 150ms ease-out, opacity 150ms ease-out, border-color 150ms ease-out; }
+.taskbar-btn.active { background: #bb97691c; border-color: #c4a87e48; color: #d5bd94; }
+.taskbar-labels { opacity: .55; }
+.status-text { opacity: .85; color: #a99d86; }
+@media (max-width: 1050px) { #window-terminal { left: 44%; } #window-echo { left: 60%; width: min(480px, calc(100% - 36px)); } .taskbar-labels { gap: 13px; } }
+@media (max-width: 800px) { #window-terminal, #window-echo { left: 50%; top: 55%; } .desktop-masthead h1 { font-size: 48px; } .desktop-masthead { top: 24px; } .session-label { margin-bottom: 12px; } #taskbar { padding: 0 15px; } }
+@media (max-width: 480px) { .window-content { padding: 19px; } .terminal-message h3 { font-size: 30px; } .desktop-masthead h1 { font-size: 42px; } .desktop-masthead > p:last-child { display: none; } .status-text { font-size: 10px; } .window { max-height: calc(100% - 24px); } }
+@media (max-height: 580px) { .desktop-masthead { top: 15px; opacity: .4; } .desktop-masthead h1 { font-size: 38px; } .desktop-masthead > p:last-child { display: none; } #window-terminal, #window-echo { top: 50%; } #taskbar { height: 60px; } }
+@media (prefers-reduced-motion: reduce) { .taskbar-btn { transition: none; } }

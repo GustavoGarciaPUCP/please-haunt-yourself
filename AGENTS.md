@@ -2,6 +2,14 @@
 
 ## Product and sources
 
+Project folder renamed at the participant's explicit request on November6: current root is `C:/Users/51924/Documents/Kiroween2026/PleaseHauntYourself`. This is the same repository and Git history formerly under LaVentanaEquivocada, not a new pre-dated project. Historical run references retain their original paths. WINDOW-01 now exists at `haunt.html`; the original index/paper-bridge app is preserved. Read `docs/development/2026-11-06-window-foundation.md` for actual Kiro/Codex contributions and verification before reporting status. Do not expand this completed small increment into all four gameplay scenes without a new implementation request.
+
+LATEST MODEL AUTHORIZATION, November6: after the exact Opus5.5 run was rejected and the participant confirmed their Free account, they explicitly authorized the best available model and use of their Kiro credits. Use native **Claude Sonnet4.5**, available in the current CLI catalog, for WINDOW-01. This supersedes the earlier exact-Opus restriction below; it does not authorize purchasing a plan, changing accounts or silently claiming Opus/max was used. Sonnet4.5 has no configurable effort levels advertised here. Retain the small window-foundation scope and review actual output before further work.
+
+CURRENT AUTHORIZATION, November 6: the participant has now requested a small implementation increment, specifically smooth opening/closing and related OS window motion, using native Kiro with **Claude Opus5.5 at maximum supported reasoning effort**. This supersedes the historical coding-stop statements below ONLY for the bounded WINDOW-01 task in `docs/development/12_Window_Foundation_Kiro_Task.md`. Do not silently substitute Auto, Sonnet or another model. If the exact model is unavailable, report that blocker and do not present another model's work as requested Kiro execution. Keep scope small to respect the participant's remaining credits.
+
+For this increment, preserve the paper-bridge source and existing main page. The new foundation has a separate `haunt.html` entry. It demonstrates real window lifecycle, not completed haunted gameplay. No new application coding beyond WINDOW-01, installs, publication, purchases or desktop automation are authorized by this increment. Older paragraphs saying no implementation was requested are historical snapshots, not a new stop after this authorization.
+
 Latest build-readiness review, November 6: `docs/diseno/11_Build_Readiness_and_Motion.md` closes canonical first-run navigation, shared `show.entry` admission, motion/state cancellation and save/recovery details. Read11, then10 and09 for the scoped PLEASE HAUNT YOURSELF recommendation. Four skills were installed into the user's Codex skills directory at their explicit request; they are not Kiro skills or Kiro credit usage. Root `PITCH.md` is a planned175second capture with all recordings/rehearsals pending, not submission-ready proof.
 
 Design is ready for native Kiro requirements/design and one polished complete slice once implementation is explicitly requested. This review itself does not resume coding, execute Kiro, certify fun or prove a winning standard. Do not add scenes to avoid testing the existing four. The first production slice must use representative art and the actual interaction; preserve the final four-tableau scope through subsequent increments.
@@ -38,7 +46,7 @@ Retain earlier planning dates and preserve the working prototype. Superseded tra
 
 ## Workflow
 
-The participant explicitly stopped application coding on November 5 and requested concept exploration and innovation only. Work on ideas, research, written rules and paper walkthroughs until they request implementation again. Do not edit application source, tests, dependencies or build configuration during this phase. An agent critique does not resume implementation. See `docs/diseno/06_Exploracion_funciones_heredadas.md` for a newer candidate that challenges the original kill/diagnose loop; it is not an accepted new spec.
+The participant stopped application coding on November5 during concept revision, then explicitly resumed a bounded WINDOW-01 implementation on November6 as stated at the top. That current small scope governs work; a request for animation is not permission to implement every planned scene. See09–11 for the current experience, and retain06 only as a historical exploration.
 
 The participant wants development coordinated from Codex through files and terminal tools. Do not automate desktop windows. Kiro CLI may perform actual development tasks in this directory; record what each tool actually does.
 

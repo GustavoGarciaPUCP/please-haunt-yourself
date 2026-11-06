@@ -10,6 +10,8 @@ Codex coordinates and reviews local work. The participant's authenticated Kiro C
 
 ## Executed work
 
+**November6 new-project increment:** native Kiro Claude Sonnet4.5 generated the short `.kiro/specs/please-haunt-yourself/window-foundation.md` and the separate `haunt.html`/`src/haunt/` foundation. A targeted correction completed after Codex stopped an earlier correction attempt whose file-replacement permissions had failed before approval. Codex made final motion/focus/type-check fixes, refined local vector art/UI, integrated the build and executed eight browser checks. The requested Opus5.5/max attempt was rejected before code generation; it was not used. The participant explicitly authorized the available-model substitution before Sonnet ran. See [the detailed record](development/2026-11-06-window-foundation.md). This is actual Kiro file work, not proof that the full game exists or that a particular number of promotional credits was charged.
+
 | Local run | Actual Kiro contribution | Review/outcome |
 | --- | --- | --- |
 | Requirements, V3 spec mode | Read the V3/R1 references and generated `requirements.md` in English, with source references, N01–N12 and separate human/software checks | Generated file retained. Some repair operations failed because the caller's initial tool allowance omitted editing; a subsequent task applied them |

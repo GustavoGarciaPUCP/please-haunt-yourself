@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Please Haunt Yourself — Desktop study</title>
+  <link rel="stylesheet" href="/src/haunt/desktop.css">
+  <style>
+    :root {
+      --bone: #ede6d8;
+      --charcoal: #171b20;
+      --petrol: #305b62;
+      --oxblood: #7d303a;
+      --copper: #b5794a;
+      --glass: rgba(29, 44, 47, 0.96);
+      --shadow-1: rgba(0, 0, 0, 0.12);
+      --shadow-2: rgba(0, 0, 0, 0.24);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: radial-gradient(ellipse at 74% 62%, #65342e66, transparent 57%),
+        radial-gradient(ellipse at 20% 12%, #305b6238, transparent 55%), #131a1f;
+      color: var(--bone);
+      overflow: hidden;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="desktop-root">
+    <main id="desktop-stage" role="main" aria-label="Recovery desktop">
+      <header class="desktop-masthead">
+        <p class="session-label"><span aria-hidden="true">✦</span> Recovery session</p>
+        <h1>Please haunt<br>yourself.</h1>
+        <p>There are still six of us.</p>
+      </header>
+      <!-- Windows rendered here -->
+    </main>
+
+    <footer id="taskbar" role="navigation" aria-label="Applications">
+      <div class="taskbar-apps">
+        <button
+          id="btn-terminal"
+          class="taskbar-btn active"
+          aria-label="TERMINAL - Recovery console"
+          aria-pressed="true"
+          data-app="terminal">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="2" y="3" width="16" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M5 7l3 3-3 3M9 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>TERMINAL</span>
+        </button>
+
+        <button
+          id="btn-echo"
+          class="taskbar-btn"
+          aria-label="ECHO - Video application"
+          aria-pressed="false"
+          data-app="echo">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="8" cy="9" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
+            <path d="M7 13c1 1.5 5 1.5 6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>ECHO</span>
+        </button>
+
+        <div class="taskbar-separator"></div>
+
+        <div class="taskbar-labels">
+          <span class="app-label">CANVAS</span>
+          <span class="app-label">UNINSTALL</span>
+          <span class="app-label">REPLAY</span>
+          <span class="app-label">POSTMAN</span>
+        </div>
+      </div>
+
+      <div class="taskbar-status">
+        <span class="status-text">Desktop study · 01</span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/haunt/desktop.ts"></script>
+</body>
+</html>

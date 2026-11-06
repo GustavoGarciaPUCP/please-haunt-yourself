@@ -1,8 +1,8 @@
 {
-  "name": "the-wrong-window",
+  "name": "please-haunt-yourself",
   "version": "0.1.0",
   "private": true,
-  "description": "A paper-theatre mystery built for Kiroween 2026",
+  "description": "A haunted desktop experience built for Kiroween 2026",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "check:windows": "node scripts/check-haunt-windows.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",
