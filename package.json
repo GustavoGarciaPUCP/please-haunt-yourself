@@ -15,7 +15,8 @@
     "check:windows": "node scripts/check-haunt-windows.mjs",
     "check:echo": "node scripts/check-echo-scene.mjs",
     "check:console": "node scripts/check-process-console.mjs",
-    "check:guide": "node scripts/check-first-run.mjs"
+    "check:guide": "node scripts/check-first-run.mjs",
+    "check:recovery": "node scripts/check-terminal-recovery.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

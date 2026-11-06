@@ -7,7 +7,7 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const outcomes = [], errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 980 }, reducedMotion: 'no-preference' });
-  await page.addInitScript(() => localStorage.setItem('haunt.guide.v1', 'dismissed'));
+  await page.addInitScript(() => localStorage.setItem('haunt.guide.v2', 'dismissed'));
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(url);
   const terminal = page.locator('.terminal-console');
@@ -105,7 +105,7 @@ try {
   await page.locator('#btn-terminal').click();
   await command('ps');
   assert.match((await transcript.locator('.console-line').allTextContents()).join('\n'), /^414\s+400\s+observing\s+mirror.watch/m);
-  assert.match(await terminal.locator('.console-process-state').textContent(), /live/);
+  assert.match(await transcript.textContent(), /Private display buffer: live/);
   outcomes.push('clear/errors do not execute code; closing and reopening a console preserves the shared page session');
 
   await page.setViewportSize({ width: 390, height: 844 });

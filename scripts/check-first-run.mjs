@@ -25,41 +25,39 @@ try {
   await bounds();
   await page.screenshot({ path: 'output/playwright/guide-welcome-desktop.png' });
   // The real highlighted dock control is usable, not a painted copy.
-  await page.locator('#btn-echo').click();
+  await page.locator('#btn-terminal').click();
   await step(1);
   await page.waitForFunction(() => {
     const spot = document.querySelector('.guide-spot').getBoundingClientRect();
-    const target = document.querySelector('.echo-board-wrap').getBoundingClientRect();
+    const target = document.querySelector('.terminal-anomaly').getBoundingClientRect();
     return spot.left <= target.left && spot.right >= target.right && spot.top <= target.top && spot.bottom >= target.bottom;
   });
   const spotlight = await guide.locator('.guide-spot').boundingBox();
-  const monitor = await page.locator('.private-footage').boundingBox();
+  const monitor = await page.locator('.terminal-anomaly').boundingBox();
   assert.ok(spotlight.x <= monitor.x && spotlight.x + spotlight.width >= monitor.x + monitor.width);
   await bounds();
-  await page.screenshot({ path: 'output/playwright/guide-private-monitor.png' });
+  await page.screenshot({ path: 'output/playwright/guide-terminal-anomaly.png' });
   await next.click();
   await step(2);
   await guide.locator('[data-guide="query"]').click();
-  assert.match(await page.locator('.console-output').textContent(), /PID\s+PPID\s+STATE/);
-  assert.match(await page.locator('.echo-feed-state').textContent(), /\[410\].*live/);
-  const untouched = await page.locator('.farewell-prop').evaluate(el => ({ x: parseFloat(el.style.left) * 6.4, y: parseFloat(el.style.top) * 4.1 }));
-  assert.ok(Math.abs(untouched.x - 430) < .01 && Math.abs(untouched.y - 240) < .01);
+  assert.match(await page.locator('.console-output').textContent(), /Not yet/);
+  assert.equal(await page.locator('.terminal-console').getAttribute('data-terminal-health'), 'haunted');
   await next.click();
   await step(3);
   await next.click();
   await guide.waitFor({ state: 'hidden' });
-  assert.ok(await page.locator('[data-action="rehearse"]').evaluate(el => document.activeElement === el));
-  assert.equal(await page.locator('.echo-scene-container').getAttribute('data-state'), 'editing');
-  outcomes.push('first-run spotlight follows real targets; optional ps reads data without solving, moving scenery or performing');
+  assert.ok(await page.locator('[data-enter-session]').evaluate(el => document.activeElement === el));
+  assert.equal(await page.locator('.terminal-console').getAttribute('data-terminal-health'), 'haunted');
+  outcomes.push('first-run spotlight introduces the actual damaged application; conversation does not solve it');
 
   await page.locator('#btn-guide').click();
   for (let i = 0; i < 3; i++) await next.click();
-  await page.locator('[data-action="rehearse"]').click();
+  await page.locator('[data-enter-session]').click();
   await guide.waitFor({ state: 'hidden' });
-  await echoState('failed');
-  assert.match(await page.locator('.echo-status').textContent(), /self-view is still exposed/);
-  assert.ok(await page.locator('#window-echo').evaluate(el => el.contains(document.activeElement)));
-  outcomes.push('trying the actual rehearsal dismisses guidance and keeps failure feedback and repair controls readable');
+  await page.locator('.legacy-interior').waitFor({ state: 'visible' });
+  assert.equal(await page.locator('.terminal-console').getAttribute('data-terminal-health'), 'haunted');
+  assert.ok(await page.locator('#window-terminal').evaluate(el => el.contains(document.activeElement)));
+  outcomes.push('entering the actual terminal session dismisses coaching without awarding recovery or opening another game window');
 
   await page.reload();
   await guide.waitFor({ state: 'hidden' });
@@ -76,7 +74,7 @@ try {
   await page.locator('#btn-guide').click();
   for (let i = 0; i < 7; i++) {
     await page.keyboard.press('Tab');
-    assert.ok(await page.evaluate(() => !!document.activeElement.closest('#guide-layer, #btn-echo')));
+    assert.ok(await page.evaluate(() => !!document.activeElement.closest('#guide-layer, #btn-terminal')));
   }
   await guide.locator('[data-guide="skip"]').click();
   await guide.waitFor({ state: 'hidden' });
@@ -114,7 +112,7 @@ try {
   await page.locator('#btn-echo').click();
   await page.locator('[data-action="resume"]').click();
   await echoState('complete');
-  assert.match(await page.locator('.desktop-task').textContent(), /ECHO made an entrance/);
+  assert.match(await page.locator('.workshop-task').textContent(), /ECHO made an entrance/);
   await page.locator('[data-action="leave"]').click();
   outcomes.push('opening guidance pauses an active take; dismissal never silently resumes, explicit Resume works');
 
@@ -131,7 +129,7 @@ try {
         assert.ok(card.y + card.height <= consoleWindow.y, 'Mobile coach must not cover terminal output or input');
         await guide.locator('[data-guide="query"]').click();
         const transcript = await page.locator('.console-output').boundingBox();
-        const tableHeader = await page.locator('.console-output .console-line').filter({ hasText: /^PID\s+PPID\s+STATE/ }).last().boundingBox();
+        const tableHeader = await page.locator('.console-output .console-line').filter({ hasText: /TERMINAL: Not yet/ }).last().boundingBox();
         assert.ok(tableHeader.y >= transcript.y && tableHeader.y + tableHeader.height <= transcript.y + transcript.height, 'The mobile ps table header must actually be visible');
         await page.screenshot({ path: 'output/playwright/guide-console-mobile.png' });
       }

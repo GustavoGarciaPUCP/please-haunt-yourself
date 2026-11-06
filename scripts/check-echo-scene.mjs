@@ -8,7 +8,7 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const outcomes = [], errors = [];
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 980 }, reducedMotion: 'no-preference' });
-  await page.addInitScript(() => localStorage.setItem('haunt.guide.v1', 'dismissed'));
+  await page.addInitScript(() => localStorage.setItem('haunt.guide.v2', 'dismissed'));
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(url);
   await page.locator('#btn-echo').click();
@@ -90,7 +90,7 @@ try {
   await action('rehearse').click();
   await state('complete');
   const scare = await actorPose();
-  assert.match(await page.locator('.desktop-task').textContent(), /Both host reactions rehearsed/);
+  assert.match(await page.locator('.workshop-task').textContent(), /Both host reactions rehearsed/);
   assert.notDeepEqual(scare, collapse);
   assert.match(await scene.locator('.echo-caption').textContent(), /supposed to be scared/);
   await page.screenshot({ path: 'output/playwright/echo-scare-desktop.png' });

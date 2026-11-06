@@ -1,5 +1,6 @@
 import { FirstRunGuide } from './first-run';
 import type { RehearsalResult } from './echo-view';
+import { isSettled, type LegacySnapshot } from './legacy-session';
 
 export class DesktopShell {
   readonly guide: FirstRunGuide;
@@ -45,8 +46,13 @@ export class DesktopShell {
 
   markRehearsal(result: RehearsalResult): void {
     this.reactions.add(result.reaction);
+    document.querySelector<HTMLElement>('.workshop-task')!.textContent = `${this.reactions.size === 2 ? '✓ Both host reactions rehearsed.' : '✓ ECHO made an entrance. Try the other host reaction.'}\nLast take: ${result.reaction === 'collapse' ? 'Collapse' : 'Scare back'} / ${result.privacy === 'released' ? 'feed released' : 'monitor covered'}.`;
+  }
+
+  markTerminal(state: LegacySnapshot): void {
     const task = document.querySelector<HTMLElement>('.desktop-task')!;
-    task.dataset.complete = 'true';
-    task.textContent = `${this.reactions.size === 2 ? '✓ Both host reactions rehearsed.' : '✓ ECHO made an entrance. Try the other host reaction.'}\nLast take: ${result.reaction === 'collapse' ? 'Collapse' : 'Scare back'} / ${result.privacy === 'released' ? 'feed released' : 'monitor covered'}.\nTwo apps recovered. Four still missing.`;
+    task.dataset.complete = String(isSettled(state));
+    const message = isSettled(state) ? `✓ TERMINAL recovered.\n${state.archive ? 'A memory kept. An executable loop ended.' : 'A blank archive. A prompt of your own.'}` : 'Recovery task: free TERMINAL from its repeating session.\nEnter the session, then return to check how it is doing.';
+    if (task.textContent !== message) task.textContent = message;
   }
 }

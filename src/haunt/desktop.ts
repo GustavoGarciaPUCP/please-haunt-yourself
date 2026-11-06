@@ -8,6 +8,7 @@ import { initEchoScene, EchoController } from './echo-view';
 import { TerminalController } from './terminal-view';
 import { ProcessSession } from './process-session';
 import { DesktopShell } from './desktop-shell';
+import { LegacySession } from './legacy-session';
 
 type WindowState = 'closed' | 'opening' | 'open' | 'closing' | 'minimized' | 'restoring';
 type AppId = 'echo' | 'terminal';
@@ -25,6 +26,7 @@ interface WindowInstance {
 
 const windows = new Map<AppId, WindowInstance>();
 const processSession = new ProcessSession();
+const legacySession = new LegacySession();
 let nextZIndex = 100;
 let desktopShell: DesktopShell;
 
@@ -35,7 +37,8 @@ export function init(): void {
   const stage = document.getElementById('desktop-stage');
   if (!stage) return;
   desktopShell = new DesktopShell(id => openWindow(id, document.getElementById(`btn-${id}`)),
-    () => windows.forEach(instance => instance.echoController?.pause()));
+    () => windows.forEach(instance => { instance.echoController?.pause(); instance.terminalController?.showShell(); }));
+  legacySession.subscribe(() => desktopShell.markTerminal(legacySession.snapshot()));
 
   // Set up taskbar buttons
   const terminalBtn = document.getElementById('btn-terminal') as HTMLElement;
@@ -145,7 +148,7 @@ function openWindow(id: AppId, trigger: HTMLElement | null): void {
     instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!, processSession, result => desktopShell.markRehearsal(result));
   } else {
     instance.terminalController = new TerminalController(windowEl.querySelector<HTMLElement>('.window-content')!, processSession,
-      () => openWindow('echo', document.getElementById('btn-echo')));
+      () => openWindow('echo', document.getElementById('btn-echo')), legacySession);
   }
   instance.element.style.zIndex = String(instance.zIndex);
   updateTaskbarButton(id, true);

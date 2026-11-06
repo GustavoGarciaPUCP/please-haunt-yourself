@@ -1,5 +1,7 @@
 # PLEASE HAUNT YOURSELF — Planned demo capture
 
+**Historical proposal:** this shared-show capture plan predates the participant's application-recovery correction in task16. It is not the current product pitch or a description of the newly implemented terminal encounter. Retained for provenance; rewrite around observed recovery behavior before preparing a future submission video. Event facts below were not reverified by this implementation turn.
+
 November 6, 2026 · Planning artifact using pitch-timebox · Not a report of working software or a submission-ready video.
 
 **Official context:** asynchronous public YouTube demonstration under three minutes, per [Kiroween rules](https://kiroween.devpost.com/rules). **Production target:**175seconds including a final5second buffer. **Presenter:** the solo participant; no team handoffs or live Q&A slot is assumed. All final narration/captions are English.
