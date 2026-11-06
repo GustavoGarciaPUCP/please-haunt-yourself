@@ -6,6 +6,8 @@ This is Codex's recommendation for participant review, developed with creative a
 
 **Operational closure, November 6:** [09 — Experience contract](09_Experience_Contract.md) now governs the journey, modes, replay/access/visibility rules, completion and ending. This document retains the concept rationale and published competitive comparison. Where the earlier exploration was ambiguous,09 is authoritative; no application implementation or Kiro task was started for this closure.
 
+**Subsequent scene/art review:** [10 — Scenes, art direction and novelty review](10_Scenes_Art_and_Novelty_Review.md) explicitly recognizes that08/09 did not yet justify a beautiful multi-scene experience. It defines four distinct operations/compositions, body extraction and returned-view postcards while retaining09's behavioral guarantees. Refer to10 for current scene/art scope; its images are illustrative concepts, not implemented screens.
+
 ## Value proposition
 
 Build and rehearse a haunted desktop around a recorded version of your own navigation decisions, then make it work for a visitor who behaves differently. Six dead applications become the cast and instruments of a playable production that preserves your choices.

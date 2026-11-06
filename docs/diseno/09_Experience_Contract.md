@@ -4,6 +4,8 @@ November 6, 2026 · Design baseline for later implementation · No application c
 
 This document closes operational ambiguities in proposal08. It governs the journey, modes, replay, access, visibility, completion and review conditions wherever08 differs. It is a written specification and adversarial review, not implemented behavior, a human usability result or evidence of winning quality. The participant's application-coding stop remains in force.
 
+**Later scene/art revision:** [10 — Scenes, art direction and novelty review](10_Scenes_Art_and_Novelty_Review.md) identifies that this behavioral contract alone did not establish memorable scene variety or a beautiful OS.10 governs its explicit additions: four composed tableaux, confirmed body extraction/source gap, returned-view postcards and saved-state art treatment. Modes, genuine departures, replay checkpoint rules and completion remain governed here. The original immediate-selection language below is refined by10's provisional/confirmed extraction contract; current public poster checks use the final body revision while historical envelopes retain theirs.
+
 ## 1. The experience we are committing to
 
 **Build a haunted desktop around a replay of your own visit, discover how the same decisions behave in a changed production, and save the dead applications as a playable Halloween show.**
