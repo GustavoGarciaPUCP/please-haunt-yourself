@@ -35,7 +35,7 @@ try {
   await interior.locator('[data-link="output"]').click();
   await action('return').click();
   await terminal.locator('[data-ask-status]').click();
-  assert.match(await output.textContent(), /silenced its speaker/);
+  assert.match(await output.textContent(), /hushed the whisper/);
   await health('haunted');
   outcomes.push('the same app enters its own trace; stepping shows revival, and silence does not count as recovery');
 

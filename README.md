@@ -6,6 +6,8 @@ The project directory was renamed from `LaVentanaEquivocada` to `PleaseHauntYour
 
 ## Run the haunted desktop
 
+**Current collaborative handoff:** [PROMPT_KIRO_HALLOWEEN.md](PROMPT_KIRO_HALLOWEEN.md) gives Kiro IDE a bounded task to make this same TERMINAL encounter understandable without programming and integrate Halloween into its actions. The narration/SVG scaffolding is prepared; the default renderer has not yet been replaced. The participant will run Kiro IDE manually, then Codex can verify actual files and behavior. See [task17](docs/development/17_Halloween_Without_Programming.md).
+
 Use the existing installed development dependencies, or `npm.cmd ci` for a fresh checkout. Node 22.13.1 was used for local development.
 
 ```powershell

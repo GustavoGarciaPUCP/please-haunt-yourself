@@ -15,7 +15,7 @@ describe('TERMINAL application recovery', () => {
     expect(session.snapshot().trace).toContain('disconnected');
     session.step();
     expect(session.snapshot()).toMatchObject({ cycles: 1, health: 'haunted', pid: 3088 });
-    expect(session.status().join(' ')).toContain('Silence is not a clean exit');
+    expect(session.status().join(' ')).toContain('Quiet is not the same as free');
   });
   it('turns executable memory into retained history after a clean release', () => {
     const session = new LegacySession();

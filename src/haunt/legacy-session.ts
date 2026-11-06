@@ -11,6 +11,7 @@ export interface LegacySnapshot {
   cycles: number;
   health: LegacyHealth;
   trace: string;
+  moment: 'waiting' | 'memory' | 'voice' | 'return' | 'changed' | 'ended';
 }
 export interface LegacyResult extends Omit<ConsoleResult, 'action'> { action?: 'enter-session' | 'return-shell'; }
 export const LAST_LINE = "I'll finish in a minute.";
@@ -24,7 +25,7 @@ export class LegacySession {
   private listeners = new Set<() => void>();
 
   private initial(): LegacySnapshot {
-    return { pid: 3087, output: true, archive: true, restart: true, phase: 0, cycles: 0, health: 'haunted', trace: 'The exit hook is waiting. A finished command keeps returning.' };
+    return { pid: 3087, output: true, archive: true, restart: true, phase: 0, cycles: 0, health: 'haunted', moment: 'waiting', trace: 'The exit hook is waiting. A finished command keeps returning.' };
   }
   snapshot(): LegacySnapshot { return { ...this.state }; }
   canUndo(): boolean { return this.undoStack.length > 0; }
@@ -36,6 +37,7 @@ export class LegacySession {
     if (this.state.pid === null || isSettled(this.state)) return;
     this.remember();
     const phase = this.state.phase;
+    this.state.moment = phase === 0 ? 'memory' : phase === 1 ? 'voice' : 'return';
     this.state.phase = (phase + 1) % 3;
     if (phase === 0) this.state.trace = this.state.archive ? `READ last-session → “${LAST_LINE}”` : 'READ last-session → empty. There is no retained line.';
     if (phase === 1) this.state.trace = this.state.output ? `PRINT → ${this.state.archive ? LAST_LINE : '[empty archive]'}` : 'PRINT → disconnected. Quiet output; the exit callback still exists.';
@@ -53,6 +55,7 @@ export class LegacySession {
     if (isSettled(this.state)) return;
     this.remember();
     this.state[link] = !this.state[link];
+    this.state.moment = 'changed';
     this.state.trace = link === 'output' ? this.state.output ? 'stdout reconnected.' : 'stdout disconnected. A silent loop can still be alive.' :
       link === 'archive' ? this.state.archive ? 'The saved human line is retained again.' : 'The saved line will not be retained. Ending the loop is a separate decision.' :
         this.state.restart ? 'on_exit callback reconnected. It can launch another copy.' : 'on_exit callback disconnected. The current copy still needs a clean exit.';
@@ -67,11 +70,13 @@ export class LegacySession {
       this.state.pid = this.nextPid++;
       this.state.cycles++;
       this.state.phase = 0;
+      this.state.moment = 'return';
       this.state.trace = `${forced ? 'KILL' : 'TERM'} ${old} → on_exit → new PID ${this.state.pid}. Stopping a copy did not remove its callback.`;
       this.notify();
       return { tone: 'warning', lines: [this.state.trace] };
     }
     this.state.pid = null;
+    this.state.moment = 'ended';
     this.state.health = forced ? 'residue' : this.state.archive ? 'remembered' : 'blank';
     this.state.trace = forced ? 'KILL skipped the release handler. The copy is gone; a prompt residue remains.' : this.state.archive ? 'TERM acknowledged. The line became history instead of another command.' : 'TERM acknowledged. The loop ended with a blank archive.';
     this.notify();
@@ -82,6 +87,7 @@ export class LegacySession {
     if (this.state.health !== 'residue') return;
     this.remember();
     this.state.health = 'haunted'; this.state.pid = this.nextPid++; this.state.phase = 0;
+    this.state.moment = 'changed';
     this.state.trace = 'Residue resumed. Your connection choices are kept; a clean exit is still possible.';
     this.notify();
   }
@@ -91,9 +97,9 @@ export class LegacySession {
   status(): string[] {
     if (this.state.health === 'remembered') return ['TERMINAL: Yes. I remember her line. I do not have to repeat it.', 'The prompt is yours now. The saved line can be read with cat last-session.'];
     if (this.state.health === 'blank') return ['TERMINAL: It is quiet now. I cannot remember the line.', 'You chose a blank archive. The prompt is yours.'];
-    if (this.state.health === 'residue') return ['TERMINAL: The process stopped, but it never released the prompt.', 'Enter last.session to resume the residue or undo the forced stop.'];
-    if (!this.state.output) return ['TERMINAL: You silenced its speaker. I can still feel it waiting to return.', 'Silence is not a clean exit.'];
-    return ['TERMINAL: Not yet. Every goodbye becomes another RUN.', 'Someone left a line here. Something keeps treating it as a command.'];
+    if (this.state.health === 'residue') return ['TERMINAL: You pushed it away, but its shadow is still on my screen.', 'Follow the ghost to finish its farewell, or undo your last action.'];
+    if (!this.state.output) return ['TERMINAL: You hushed the whisper. The ghost is still here.', 'Quiet is not the same as free.'];
+    return ['TERMINAL: Not yet. Every goodbye calls it back.', 'Someone left a line here. Something will not let its echo leave.'];
   }
 
   execute(command: string): LegacyResult | null {
