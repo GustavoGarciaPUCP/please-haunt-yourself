@@ -41,6 +41,8 @@ No exact credit debit or remaining balance has been independently verified. The 
 
 ## Competition boundary
 
+On November 6, the participant explicitly requested independent-agent criticism and a defined concept with different interactions per application. Two Codex collaboration agents contributed creative design and critique; Codex consolidated `docs/diseno/07_Ultima_funcion_diseno_completo.md`. These were Codex agents, not additional Kiro CLI tasks, and are not reported as Kiro credit usage or human testing. Only documentation changed during this design phase.
+
 [Official rules, section 4](https://kiroween.devpost.com/rules) accept Kiro CLI and leave sufficiency of Kiro use to the judges. There is no numeric usage threshold stated there. Spending credits alone is not our acceptance criterion.
 
 Before submission, review the actual development contributions and explain how specific Kiro outputs affected the working product. Keep `.kiro/` in the public source, provide the required write-up and ensure it agrees with files, history and demonstrated behavior. We do not claim organizer approval, completed human playtesting or guaranteed eligibility.

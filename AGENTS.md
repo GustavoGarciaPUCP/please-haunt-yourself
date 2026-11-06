@@ -2,6 +2,8 @@
 
 ## Product and sources
 
+Latest design recommendation, November 6: `docs/diseno/07_Ultima_funcion_diseno_completo.md` defines One Last Function, a fictional desktop where three old applications direct a Halloween attraction together and persist as an interactive theme. Each has a different interaction; CMD is the helper/event score. This is Codex's concrete proposal for participant review, not their approval or a tested product. Documents 05/06 are earlier explorations; do not automatically continue their kill/diagnose or transferable-function loops. The application-coding stop remains in force.
+
 Current concept direction, November 5, 2026: the participant explicitly authorized changing the central idea after rejecting the competitiveness and Halloween identity of the paper-bridge concept. They proposed a fictional Halloween operating system with dead programs returning, individual personalities and a helper; closing their unfinished sessions should have distinct causes and consequences.
 
 Read `docs/diseno/05_Programas_muertos_propuesta.md` as a candidate brief, not an accepted implementation specification. Critically review predecessors, causal gameplay, technical fidelity and the complete journey before replacing application code. The original Kiro concept-audit recommendation was rejected and is marked accordingly. Do not treat agent approval as human/competitive evidence.
