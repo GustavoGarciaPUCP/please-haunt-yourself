@@ -83,6 +83,8 @@ try {
  const layers=await page.evaluate(()=>({terminal:Number(document.getElementById("window-terminal").style.zIndex),echo:Number(document.getElementById("window-echo").style.zIndex)}));
  assert.ok(layers.terminal>layers.echo,"keyboard focus brings the correct window forward");
  outcomes.push("keyboard focus: correct window raised without stale completion focus steal");
+ await page.setViewportSize({width:1100,height:800});
+ await inBounds(page);
  await page.setViewportSize({width:390,height:844});
  await page.locator("#btn-echo").click();
  await visible(page,"echo");
@@ -90,7 +92,7 @@ try {
  await page.screenshot({path:"output/playwright/window-foundation-mobile.png"});
  await page.setViewportSize({width:800,height:450});
  await inBounds(page);
- outcomes.push("layout: controls and windows remain in bounds at 390x844 and 800x450");
+ outcomes.push("layout: controls and windows remain in bounds at 1100x800, 390x844 and 800x450");
  assert.deepEqual(errors,[]);
  const report={url:targetUrl,passed:outcomes.length,outcomes,pageErrors:errors};
  await writeFile("output/playwright/window-foundation-results.json",JSON.stringify(report,null,2));

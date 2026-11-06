@@ -5,6 +5,8 @@
 
 import { animateOpen, animateClose, animateMinimize, animateRestore, cancelAllAnimations, onPreferenceChange } from './window-motion';
 import { initEchoScene, EchoController } from './echo-view';
+import { TerminalController } from './terminal-view';
+import { ProcessSession } from './process-session';
 
 type WindowState = 'closed' | 'opening' | 'open' | 'closing' | 'minimized' | 'restoring';
 type AppId = 'echo' | 'terminal';
@@ -17,9 +19,11 @@ interface WindowInstance {
   zIndex: number;
   trigger: HTMLElement | null;
   echoController?: EchoController;
+  terminalController?: TerminalController;
 }
 
 const windows = new Map<AppId, WindowInstance>();
+const processSession = new ProcessSession();
 let nextZIndex = 100;
 
 /**
@@ -133,7 +137,10 @@ function openWindow(id: AppId, trigger: HTMLElement | null): void {
 
   windows.set(id, instance);
   if (id === 'echo') {
-    instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!);
+    instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!, processSession);
+  } else {
+    instance.terminalController = new TerminalController(windowEl.querySelector<HTMLElement>('.window-content')!, processSession,
+      () => openWindow('echo', document.getElementById('btn-echo')));
   }
   instance.element.style.zIndex = String(instance.zIndex);
   updateTaskbarButton(id, true);
@@ -254,6 +261,7 @@ function cancelPendingMotion(instance: WindowInstance): void {
  * Cleanup after close
  */
 function cleanup(instance: WindowInstance): void {
+  instance.terminalController?.dispose();
   // Dispose ECHO controller if present
   if (instance.echoController) {
     instance.echoController.dispose();
@@ -442,11 +450,6 @@ function createWindowElement(id: AppId): HTMLElement {
 
   if (id === 'echo') {
     content.classList.add('echo-scene-container');
-  } else {
-    content.innerHTML = getWindowContent(id);
-    content.querySelector('[data-open-echo]')?.addEventListener('click', () => {
-      openWindow('echo', document.getElementById('btn-echo'));
-    });
   }
 
   win.appendChild(titleBar);
@@ -461,24 +464,6 @@ function createWindowElement(id: AppId): HTMLElement {
   });
 
   return win;
-}
-
-/**
- * Get content HTML for each app
- */
-function getWindowContent(id: AppId): string {
-  if (id === 'terminal') {
-    return `
-      <div class="terminal-message">
-        <p class="console-line"><span aria-hidden="true">&gt;</span> session recovered</p>
-        <h3>Someone left the<br>lights on.</h3>
-        <p>Six deleted applications. One unfinished show.<br>Open ECHO. I'll stay here.</p>
-        <button class="primary-action" data-primary data-open-echo>Open ECHO <span aria-hidden="true">↗</span></button>
-          <p class="terminal-note">ECHO needs a little privacy.<br>Help it make an entrance.</p>
-      </div>
-    `;
-  }
-  return '';
 }
 
 // Initialize on load

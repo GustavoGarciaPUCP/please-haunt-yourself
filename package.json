@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:browser": "playwright test",
     "check:windows": "node scripts/check-haunt-windows.mjs",
-    "check:echo": "node scripts/check-echo-scene.mjs"
+    "check:echo": "node scripts/check-echo-scene.mjs",
+    "check:console": "node scripts/check-process-console.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

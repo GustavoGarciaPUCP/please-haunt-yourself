@@ -2,6 +2,7 @@
 import { createScene, moveProp, setPropPosition, validateCoverage, startPerformance,
   pausePerformance, resumePerformance, returnToEditing, completePerformance,
   failPerformance, setHostReaction, SCENE_CONFIG, type HostReaction } from './echo-scene';
+import { ProcessSession, assessStage } from './process-session';
 
 type Phase = 'idle' | 'appearance' | 'host-reaction' | 'echo-response';
 const durations = { appearance: 280, 'host-reaction': 240, 'echo-response': 160 };
@@ -20,6 +21,8 @@ export class EchoController {
   private phase: Phase = 'idle';
   private timer: number | undefined;
   private disposed = false;
+  private readonly unsubscribe: () => void;
+  private processNotice = false;
   private readonly events = new AbortController();
   private readonly motion = matchMedia('(prefers-reduced-motion: reduce)');
   private readonly prop: HTMLElement;
@@ -29,9 +32,10 @@ export class EchoController {
   private readonly help: HTMLElement;
   private drag: { pointerId: number; x: number; y: number; target: HTMLElement } | undefined;
 
-  constructor(private readonly container: HTMLElement) {
+  constructor(private readonly container: HTMLElement, private readonly session: ProcessSession) {
     const { publicStage: stage, privateView: view } = SCENE_CONFIG;
     container.innerHTML = `
+      <div class="echo-appbar"><span class="echo-brand"><span aria-hidden="true">◉</span> ECHO <span>Capture studio</span></span><span class="echo-transport-state"></span></div>
       <header class="echo-intro"><p class="echo-source">Example entrance</p>
         <h3>Don't let me watch myself.</h3>
         <p>“I can scare a stranger. My own reflection? Absolutely not.”</p></header>
@@ -53,11 +57,12 @@ export class EchoController {
             <path d="M27 251h426" stroke="#aa7b53" stroke-opacity=".5"/>
             <g fill="#c49a63"><circle cx="46" cy="267" r="2"/><circle cx="143" cy="267" r="2"/><circle cx="240" cy="267" r="2"/><circle cx="337" cy="267" r="2"/><circle cx="434" cy="267" r="2"/></g>
           </svg>
+          <rect x="${view.x}" y="${view.y}" width="${view.width}" height="${view.height}" fill="#0f1820"/>
           <svg x="${view.x}" y="${view.y}" width="${view.width}" height="${view.height}" viewBox="0 0 160 110" class="private-footage">
             <rect width="160" height="110" fill="#39434a"/><g transform="translate(-78 -24) scale(.55)">${inkCreature}</g>
           </svg>
           <path d="M450 200h160" stroke="#8d9b9a" stroke-opacity=".25"/>
-          <text x="450" y="218" class="board-note">Only ECHO sees this.</text>
+          <text x="450" y="218" class="board-note" data-private-note>Only ECHO sees this.</text>
           <text x="20" y="365" class="board-note">Keep the stage clear. Give ECHO some privacy.</text>
         </svg>
         <div class="farewell-prop" role="group" aria-label="Farewell panel. Arrow keys move; Shift for fine adjustment." tabindex="0">
@@ -66,6 +71,7 @@ export class EchoController {
         </div>
       </div>
       <p class="echo-caption">The host is waiting. ECHO isn't ready.</p>
+      <p class="echo-feed-state"></p>
       <div class="echo-readiness" aria-label="Set readiness"><span data-private></span><span data-public></span></div>
       <div class="echo-controls" aria-label="Scene controls">
         <div class="control-group">
@@ -133,6 +139,14 @@ export class EchoController {
     this.motion.addEventListener('change', () => {
       if (this.scene.state === 'performing') this.schedule();
     }, options);
+    this.unsubscribe = session.subscribe(() => {
+      this.cancelTimer();
+      this.dragEnd();
+      if (this.scene.state !== 'left') this.scene = returnToEditing(this.scene);
+      this.phase = 'idle';
+      this.processNotice = true;
+      this.render();
+    });
     this.render();
   }
 
@@ -174,12 +188,13 @@ export class EchoController {
   private rehearse(): void {
     if (this.scene.state !== 'editing' && this.scene.state !== 'complete') return;
     this.dragEnd();
-    if (!validateCoverage(this.scene, SCENE_CONFIG).ready) {
+    if (!assessStage(validateCoverage(this.scene, SCENE_CONFIG), this.session.snapshot().frame).ready) {
       this.scene = failPerformance(this.scene);
       this.render();
       return;
     }
     this.cancelTimer();
+    this.processNotice = false;
     // A repeated take starts from the same empty stage, rather than reversing the last pose.
     if (this.scene.state === 'complete') {
       this.scene = returnToEditing(this.scene);
@@ -223,6 +238,7 @@ export class EchoController {
   }
 
   private edit(): void {
+    this.processNotice = false;
     this.cancelTimer();
     this.scene = returnToEditing(this.scene);
     this.phase = 'idle';
@@ -242,22 +258,28 @@ export class EchoController {
   private render(): void {
     const { state, hostReaction, propPosition } = this.scene;
     const coverage = validateCoverage(this.scene, SCENE_CONFIG);
+    const processes = this.session.snapshot();
+    const readiness = assessStage(coverage, processes.frame);
     const editing = state === 'editing';
     this.container.dataset.state = state;
     this.container.dataset.phase = this.phase;
     this.container.dataset.reaction = hostReaction;
+    this.container.dataset.frame = processes.frame;
+    this.container.querySelector('.echo-transport-state')!.textContent = state === 'performing' ? '● Playing example' : state === 'paused' ? 'Ⅱ Paused' : state === 'complete' ? '■ Take complete' : state === 'left' ? '■ Entrance left' : state === 'failed' ? '■ Needs repair' : '■ Edit mode';
+    this.container.querySelector('.echo-feed-state')!.textContent = `Private input: ${processes.mirrorPid === null ? 'no process' : `mirror.watch [${processes.mirrorPid}]`} / ${processes.frame}${processes.frame === 'afterimage' ? ' — last frame retained' : ''}`;
+    this.container.querySelector('[data-private-note]')!.textContent = processes.frame === 'released' ? 'Display released.' : processes.frame === 'afterimage' ? 'Last frame remains.' : 'Only ECHO sees this.';
     this.prop.style.left = `${propPosition.x / 640 * 100}%`;
     this.prop.style.top = `${propPosition.y / 410 * 100}%`;
     this.prop.style.width = `${SCENE_CONFIG.propSize.width / 640 * 100}%`;
     this.prop.style.height = `${SCENE_CONFIG.propSize.height / 410 * 100}%`;
-    this.prop.classList.toggle('coverage-ready', coverage.ready);
-    this.prop.classList.toggle('coverage-invalid', !coverage.ready);
+    this.prop.classList.toggle('coverage-ready', readiness.ready);
+    this.prop.classList.toggle('coverage-invalid', !readiness.ready);
     this.prop.setAttribute('aria-disabled', String(!editing));
-    this.container.querySelector('[data-private]')!.textContent = coverage.privateFullyCovered ? '✓ Private view covered' : '○ Private view exposed';
+    this.container.querySelector('[data-private]')!.textContent = processes.frame === 'released' ? '✓ Private feed released' : coverage.privateFullyCovered ? '✓ Private view covered' : '○ Private view exposed';
     this.container.querySelector('[data-public]')!.textContent = coverage.publicOverlap ? '× Stage blocked' : '✓ Stage clear';
-    const problem = [!coverage.privateFullyCovered ? 'The private self-view is still exposed.' : '', coverage.publicOverlap ? 'The panel blocks the public stage.' : ''].filter(Boolean).join(' ');
+    const problem = [!readiness.privateSafe ? processes.frame === 'afterimage' ? 'A private afterimage is still exposed.' : 'The private self-view is still exposed.' : '', coverage.publicOverlap ? 'The panel blocks the public stage.' : ''].filter(Boolean).join(' ');
     const statuses = {
-      editing: coverage.ready ? 'Set ready. Try the example entrance.' : 'Move the farewell panel. Drag its header or use the arrow controls.',
+      editing: `${this.processNotice ? 'Console changed the set. ' : ''}${readiness.ready ? 'Set ready. Try the example entrance.' : 'Cover the private monitor, or inspect its process in TERMINAL.'}`,
       performing: this.phase === 'appearance' ? 'Example entrance: ECHO appears.' : this.phase === 'host-reaction' ? 'The host reacts.' : 'ECHO answers.',
       paused: 'Entrance paused. Resume explicitly, or edit the set.',
       complete: 'Example entrance complete. Choose Edit set to try another host reaction.',
@@ -268,7 +290,7 @@ export class EchoController {
     this.caption.textContent = state === 'left' ? 'The curtain can wait.' : state === 'failed' ? '“I can still see myself. Please, not yet.”' :
       state === 'complete' || this.phase === 'echo-response' ? hostReaction === 'collapse' ? '“That worked? Oh. That worked!”' : '“Wait. You were supposed to be scared of me.”' :
       this.phase === 'host-reaction' ? hostReaction === 'collapse' ? 'The host folds under pressure.' : 'The host has other plans.' :
-      this.phase === 'appearance' ? 'For one brave second, ECHO takes the stage.' : 'The host is waiting. ECHO isn’t ready.';
+      this.phase === 'appearance' ? 'For one brave second, ECHO takes the stage.' : readiness.ready ? '“It’s quiet now. I think I can do this.”' : 'The host is waiting. ECHO isn’t ready.';
     const responding = this.phase === 'echo-response';
     this.container.querySelector('.public-footage .ink-mouth')!.setAttribute('d', responding
       ? hostReaction === 'collapse' ? 'M278 138q8 15 18 0' : 'M281 141a6 9 0 1 0 12 0a6 9 0 1 0-12 0'
@@ -286,7 +308,8 @@ export class EchoController {
     this.leave();
     this.disposed = true;
     this.events.abort();
+    this.unsubscribe();
   }
 }
 
-export function initEchoScene(container: HTMLElement): EchoController { return new EchoController(container); }
+export function initEchoScene(container: HTMLElement, session: ProcessSession): EchoController { return new EchoController(container, session); }
