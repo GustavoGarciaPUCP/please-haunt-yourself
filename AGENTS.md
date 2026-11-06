@@ -2,6 +2,10 @@
 
 ## Product and sources
 
+Latest build-readiness review, November 6: `docs/diseno/11_Build_Readiness_and_Motion.md` closes canonical first-run navigation, shared `show.entry` admission, motion/state cancellation and save/recovery details. Read11, then10 and09 for the scoped PLEASE HAUNT YOURSELF recommendation. Four skills were installed into the user's Codex skills directory at their explicit request; they are not Kiro skills or Kiro credit usage. Root `PITCH.md` is a planned175second capture with all recordings/rehearsals pending, not submission-ready proof.
+
+Design is ready for native Kiro requirements/design and one polished complete slice once implementation is explicitly requested. This review itself does not resume coding, execute Kiro, certify fun or prove a winning standard. Do not add scenes to avoid testing the existing four. The first production slice must use representative art and the actual interaction; preserve the final four-tableau scope through subsequent increments.
+
 Latest scene/art revision, November 6: `docs/diseno/10_Scenes_Art_and_Novelty_Review.md` responds to the participant's explicit request for a beautiful OS with multiple memorable scenes.09 closed behavioral contradictions but did not establish that visual/experiential quality.10 defines four playable tableaux (exposure, body construction, decision revision, access distribution), a boot and a premiere; these are not six puzzles.10 governs scene presentation, CANVAS extraction/source gap and POSTMAN returned-view postcards;09 continues to govern modes, exits, replay checkpoints, visibility and completion unless explicitly refined by10. Provisional selection versus confirmed extraction and historical versus current public posters are now explicit. Read10 then09. Do not claim concept-art frames are app screenshots or winner-level validation.
 
 The revised direction retains six apps and the shared2D OS. No application coding or Kiro task was started for this request. Additional operational/art details live in `docs/diseno/concept-art/`; generated images are illustrative targets only, with defects/revision status recorded.

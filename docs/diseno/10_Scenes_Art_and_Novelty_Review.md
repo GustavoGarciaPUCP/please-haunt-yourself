@@ -20,6 +20,8 @@ Creative and critical agents exchanged objections; a separate art-direction agen
 
 09 remains authoritative for modes, genuine departure, replay checkpoints, immutable original recordings, visibility, recovery and completion. This document adds the scene compositions, CANVAS's visible extraction, POSTMAN's returned-view postcards and the art treatment of the premiere. These additions are explicit design changes, not implemented features. The application source, tests and existing Kiro specifications remain unchanged.
 
+The later [11 — Build readiness and motion contract](11_Build_Readiness_and_Motion.md) specifies first-run routing, a declared shared admission object for the compatible one-decision branch, code-driven motion ordering and recovery. It recommends starting the existing scoped build rather than adding scenes. Installation of Codex skills in that review is not Kiro usage or evidence of rendered quality.
+
 Four scenes share one fictional OS, its cast and show data. They do not require four unrelated game engines or four campaigns. Each scene needs a dominant visual object, a different operation and a result that persists elsewhere. A maximized inspector or a new wallpaper alone does not meet this definition.
 
 ## Novelty: what we can and cannot claim
