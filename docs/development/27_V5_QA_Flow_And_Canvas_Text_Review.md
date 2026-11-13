@@ -138,4 +138,4 @@ Ignored local evidence:
 
 No new human playtest, audible sound verification, real screen reader, physical touch test, true background-tab test, non-Chrome run, CPU-throttle rerun or human/demo time measurement was performed. The functional checks are evidence for their specific routes, not a blanket 100% QA certification. Official hackathon rules and earlier winners were not rechecked in this local technical review.
 
-No application code, dependency installation, native desktop automation, Kiro credit usage, publication, push or submission is attributed to this Codex review. The next prepared task is `PROMPT_KIRO_06_PRECISION_VISUAL_Y_QA.md`.
+No application code, dependency installation, native desktop automation, Kiro credit usage, publication, push or submission is attributed to this Codex review. The next prepared task is `Kiro brief 06`.

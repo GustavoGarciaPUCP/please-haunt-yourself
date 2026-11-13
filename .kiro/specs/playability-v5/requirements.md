@@ -1,6 +1,6 @@
 # Playability and a visible ending (v5) — requirements
 
-Kiro IDE session, November 8, 2026. Brief: `PROMPT_KIRO_05_JUGABILIDAD_Y_CIERRE_VISIBLE.md`, based on Codex's `docs/development/26_V4_Independent_Review_And_Experience_Priorities.md`. This iteration repairs v4 and improves decisions inside it. It keeps HAUNT OS's visual identity, the four programs, the story of contract 23 and every v4 data contract (`.kiro/specs/os-case-v4/`). Positions on Codex's proposals are in `design-review.md`.
+Kiro IDE session, November 8, 2026. Brief: `Kiro brief 05`, based on Codex's `docs/development/26_V4_Independent_Review_And_Experience_Priorities.md`. This iteration repairs v4 and improves decisions inside it. It keeps HAUNT OS's visual identity, the four programs, the story of contract 23 and every v4 data contract (`.kiro/specs/os-case-v4/`). Positions on Codex's proposals are in `design-review.md`.
 
 ## 1. Baseline reproduced before any change
 

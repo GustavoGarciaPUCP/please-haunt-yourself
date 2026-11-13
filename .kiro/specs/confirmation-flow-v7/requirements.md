@@ -1,6 +1,6 @@
 # POSTMAN's confirmations and QA closure (v7) — requirements
 
-Kiro IDE session, November 9, 2026. Brief: `PROMPT_KIRO_07_CONFIRMACIONES_Y_CIERRE_QA.md`, based on Codex's `docs/development/28_V6_Independent_QA_And_Confirmation_Flow.md`. This iteration repairs POSTMAN's send confirmations inside v6. It keeps the four programs, the story of contract 23, v6's design and drawn-text repairs, and every earlier data contract (`.kiro/specs/os-case-v4/`, `playability-v5/`, `visual-precision-v6/`). Positions on Codex's proposals are in `design-review.md`.
+Kiro IDE session, November 9, 2026. Brief: `Kiro brief 07`, based on Codex's `docs/development/28_V6_Independent_QA_And_Confirmation_Flow.md`. This iteration repairs POSTMAN's send confirmations inside v6. It keeps the four programs, the story of contract 23, v6's design and drawn-text repairs, and every earlier data contract (`.kiro/specs/os-case-v4/`, `playability-v5/`, `visual-precision-v6/`). Positions on Codex's proposals are in `design-review.md`.
 
 ## 1. Baseline reproduced before any change
 

@@ -2,7 +2,7 @@
 
 November 5, 2026. The participant confirmed that this is a first version to improve in subsequent sessions. This is an order of work, not a calendar promise or a claim that the game is ready to win.
 
-**Later update on November 5:** the participant rejected the central concept and explicitly selected changing the idea, then proposed a fictional Halloween OS with dead programs, personalities and a helper. The active next step is now critical review of `docs/diseno/05_Programas_muertos_propuesta.md`, followed by a small causal encounter that can be rejected if it is uninteresting. The remaining sections preserve the earlier roadmap and are not instructions to keep polishing the old bridge game.
+**Later update on November 5:** the participant rejected the central concept and explicitly selected changing the idea, then proposed a fictional Halloween OS with dead programs, personalities and a helper. The active next step is now critical review of `Dead programs proposal`, followed by a small causal encounter that can be rejected if it is uninteresting. The remaining sections preserve the earlier roadmap and are not instructions to keep polishing the old bridge game.
 
 ## Close the first version
 

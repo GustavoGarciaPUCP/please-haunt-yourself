@@ -1,6 +1,6 @@
 # POSTMAN's free text (v8) — requirements
 
-Kiro IDE session, November 9, 2026. Brief: `PROMPT_KIRO_08_TEXTO_LIBRE_Y_CIERRE_VISUAL.md`, based on Codex's `docs/development/29_V7_Deep_QA_And_Long_Text_Layout.md`. This iteration repairs how POSTMAN lays out text the person typed, inside v7. It keeps the four programs, the story of contract 23, v6's drawn-text repairs, v7's confirmations, and every earlier data contract (`.kiro/specs/os-case-v4/`, `playability-v5/`, `visual-precision-v6/`, `confirmation-flow-v7/`). Positions on Codex's proposals are in `design-review.md`.
+Kiro IDE session, November 9, 2026. Brief: `Kiro brief 08`, based on Codex's `docs/development/29_V7_Deep_QA_And_Long_Text_Layout.md`. This iteration repairs how POSTMAN lays out text the person typed, inside v7. It keeps the four programs, the story of contract 23, v6's drawn-text repairs, v7's confirmations, and every earlier data contract (`.kiro/specs/os-case-v4/`, `playability-v5/`, `visual-precision-v6/`, `confirmation-flow-v7/`). Positions on Codex's proposals are in `design-review.md`.
 
 ## 1. Baseline reproduced before any change
 

@@ -1,6 +1,6 @@
 # Reproducible build, keeping v9 — requirements
 
-Kiro IDE session, November 10, 2026. Brief: `PROMPT_KIRO_10_COMPILACION_REPRODUCIBLE_Y_CIERRE_V9.md`, after Codex's review 33 (`docs/development/33_V9_Independent_QA_And_First_Visit.md`). This is a bounded build repair. The game, its four programs and v9's behaviour stay as they are. Design in `design.md`, verification record in `tasks.md`.
+Kiro IDE session, November 10, 2026. Brief: `Kiro brief 10`, after Codex's review 33 (`docs/development/33_V9_Independent_QA_And_First_Visit.md`). This is a bounded build repair. The game, its four programs and v9's behaviour stay as they are. Design in `design.md`, verification record in `tasks.md`.
 
 ## 1. Reproduced before any change
 

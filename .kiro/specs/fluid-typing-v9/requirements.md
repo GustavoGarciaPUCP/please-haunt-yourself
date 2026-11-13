@@ -1,6 +1,6 @@
 # Fluid typing and the active window (v9) — requirements
 
-Kiro IDE session, November 10, 2026 (the brief and the reviews it builds on are dated November 9). Brief: `PROMPT_KIRO_09_ESCRITURA_FLUIDA_SIN_CAMBIAR_EL_JUEGO.md`, sections 1–9. It builds on Codex's `docs/development/30_V8_Functional_Checkpoint_And_Typing_Review.md`, with the event context of reviews 31 and 32.
+Kiro IDE session, November 10, 2026 (the brief and the reviews it builds on are dated November 9). Brief: `Kiro brief 09`, sections 1–9. It builds on Codex's `docs/development/30_V8_Functional_Checkpoint_And_Typing_Review.md`, with the event context of reviews 31 and 32.
 
 This iteration changes two things in the v8 build, and nothing else:
 - the work a keystroke in POSTMAN causes;

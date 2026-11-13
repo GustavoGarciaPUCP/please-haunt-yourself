@@ -4,7 +4,7 @@ import { openingDuration, OPENING_WAYPOINTS, sampleOpening } from './core/openin
 import { decodeSave, encodeSave } from './core/persistence';
 import { tryRoute } from './core/route';
 import { beginEdit, cancelEdit, commitEdit, finishArrival, finishTrial, newGame, pauseTrial, previewEdit, resumeTrial, returnFrameHome, reviewConstruction, startTrial, stopTrial, undo } from './core/state';
-import type { GameState, Locale, Point, Preferences, RouteResult } from './core/types';
+import type { GameState, Point, Preferences, RouteResult } from './core/types';
 import { WorkshopView, type WorkshopAction, type WorkshopModel } from './ui/workshop-view';
 
 const root = document.querySelector<HTMLElement>('#app');
@@ -14,18 +14,17 @@ const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let storageUnavailable = false;
 const read = (key: string): string | null => { try { return localStorage.getItem(key); } catch { storageUnavailable = true; return null; } };
 const write = (key: string, value: string): void => { try { localStorage.setItem(key, value); } catch { storageUnavailable = true; } };
-let manualPreferences: Partial<Preferences> = {};
+const manualPreferences: Partial<Pick<Preferences, 'sound' | 'reducedMotion'>> = {};
 try {
   const raw: unknown = JSON.parse(read(preferencesKey) ?? '{}');
   if (raw && typeof raw === 'object') {
     const value = raw as Record<string, unknown>;
-    if (value.language === 'es' || value.language === 'en') manualPreferences.language = value.language;
     if (typeof value.sound === 'boolean') manualPreferences.sound = value.sound;
     if (typeof value.reducedMotion === 'boolean') manualPreferences.reducedMotion = value.reducedMotion;
   }
 } catch { /* Malformed preferences fall back to the browser. */ }
 const initialPreferences = (): Preferences => ({
-  language: manualPreferences.language ?? ((navigator.languages[0] ?? navigator.language).toLowerCase().startsWith('es') ? 'es' : 'en'),
+  language: 'en',
   sound: manualPreferences.sound ?? false,
   reducedMotion: manualPreferences.reducedMotion ?? motionQuery.matches,
 });
@@ -44,31 +43,30 @@ let endPosition: Point = { x: FIGURE.startX, y: FIGURE.startY };
 let audio: AudioContext | null = null;
 const view = new WorkshopView(root, dispatch);
 
-const translated = (en: string, es: string): string => state.preferences.language === 'es' ? es : en;
 const failureMessage = (reason: string): string => ({
-  gap: translated('The path breaks here. There is not enough support to cross.', 'El camino se interrumpe aquí. Falta apoyo para cruzar.'),
-  slope: translated('This part of the shadow is too steep to walk on.', 'Esta parte de la sombra está demasiado inclinada para caminar.'),
-  step: translated('The next edge is too high to step onto.', 'El siguiente borde está demasiado alto para dar el paso.'),
-  contact: translated('A corner of the frame lost its support. Your previous arrangement is restored.', 'Una esquina del marco perdió su apoyo. Se recuperó tu configuración anterior.'),
-  invalid: translated('This arrangement could not be restored safely. Try a new construction.', 'No se pudo recuperar esta configuración con seguridad. Prueba una nueva construcción.'),
+  gap: 'The path breaks here. There is not enough support to cross.',
+  slope: 'This part of the shadow is too steep to walk on.',
+  step: 'The next edge is too high to step onto.',
+  contact: 'A corner of the frame lost its support. Your previous arrangement is restored.',
+  invalid: 'This arrangement could not be restored safely. Try a new construction.',
 }[reason] ?? '');
 
 function feedback(): string {
   if (hintLevel) {
     const hints = [
-      translated('Watch the edges the figure can actually put its feet on.', 'Observa los bordes en los que la figura puede apoyar los pies.'),
-      translated('The lamp changes where the shadow falls. The paper changes its shape. Look at what the frame is made of, too.', 'La lámpara cambia dónde cae la sombra. El recorte cambia su forma. Mira también de qué está hecho el marco.'),
-      translated('The next hint explains one construction. Ask once more if you want to reveal it.', 'La siguiente pista explica una construcción. Pídela otra vez si quieres descubrirla.'),
-      translated('Rest the paper at its lower stop. Move the light until the shadow meets the starting floor. The frame can rest with one end on the shadow’s flat top and the other on the gallery.', 'Lleva el recorte a su tope inferior. Mueve la luz hasta que la sombra conecte con el suelo inicial. El marco puede apoyar un extremo en la parte plana de la sombra y el otro en la galería.'),
+      'Watch the edges the figure can actually put its feet on.',
+      'The lamp changes where the shadow falls. The paper changes its shape. Look at what the frame is made of, too.',
+      'The next hint explains one construction. Ask once more if you want to reveal it.',
+      'Rest the paper at its lower stop. Move the light until the shadow meets the starting floor. The frame can rest with one end on the shadow’s flat top and the other on the gallery.',
     ];
     return hints[Math.min(hintLevel, 4) - 1]!;
   }
   if (state.failure) return failureMessage(state.failure.reason);
   if (state.phase === 'trial' && elapsed >= duration && state.route?.failure) return failureMessage(state.route.failure.reason);
-  if (notice === 'invalid-save') return translated('The saved scene could not be read. You can begin a new performance.', 'No se pudo leer la escena guardada. Puedes empezar una nueva función.');
-  if (storageUnavailable) return translated('Saving is unavailable in this browser. You can still play this session.', 'Este navegador no permite guardar. Puedes seguir jugando en esta sesión.');
-  if (notice === 'cancelled') return translated('The tentative change was put back.', 'Se deshizo el cambio provisional.');
-  if (state.phase === 'editing') return translated('Take your time. The figure will wait while you prepare the scene.', 'Tómate tu tiempo. La figura espera mientras preparas la escena.');
+  if (notice === 'invalid-save') return 'The saved scene could not be read. You can begin a new performance.';
+  if (storageUnavailable) return 'Saving is unavailable in this browser. You can still play this session.';
+  if (notice === 'cancelled') return 'The tentative change was put back.';
+  if (state.phase === 'editing') return 'Take your time. The figure will wait while you prepare the scene.';
   return '';
 }
 
@@ -107,7 +105,7 @@ function render(): void {
     : state.phase === 'opening' ? sampleOpening(OPENING_WAYPOINTS, Math.min(1, openingElapsed / openingDurationValue), state.preferences.reducedMotion)
     : ['arrival', 'final'].includes(state.phase) ? endPosition : { x: FIGURE.startX, y: FIGURE.startY };
   const model: WorkshopModel = {
-    phase: state.phase, locale: state.preferences.language, sound: state.preferences.sound, reducedMotion: state.preferences.reducedMotion,
+    phase: state.phase, sound: state.preferences.sound, reducedMotion: state.preferences.reducedMotion,
     hasSave: !!savedState, canUndo: !!state.history.length, lampX: config.lampX, angle: config.angle, lampMin: LAMP.min, lampMax: LAMP.max,
     shadow: project(config), cutout: CUTOUT, frame: { centerX: config.frame.x, bottomY: config.frame.y, atHome: config.frame.mode === 'home', held: state.phase === 'final', leftContact: contact.left, rightContact: contact.right },
     figure, feedback: feedback(), failurePoint: state.failure?.point ?? (state.phase === 'trial' && elapsed >= duration ? state.route?.failure?.point : undefined),
@@ -140,10 +138,10 @@ function tone(kind: 'edit' | 'trial' | 'arrival'): void {
 
 function askRestart(): void {
   const dialog = document.createElement('dialog'); dialog.className = 'help-dialog';
-  const heading = document.createElement('h2'); heading.textContent = translated('Begin a new performance?', '¿Empezar una nueva función?');
-  const text = document.createElement('p'); text.textContent = translated('This replaces the saved construction. Your preferences will stay.', 'Se sustituirá la construcción guardada. Se conservarán tus preferencias.');
-  const confirm = document.createElement('button'); confirm.type = 'button'; confirm.className = 'primary'; confirm.textContent = translated('Begin again', 'Empezar de nuevo');
-  const cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'quiet'; cancel.textContent = translated('Keep this construction', 'Conservar esta construcción');
+  const heading = document.createElement('h2'); heading.textContent = 'Begin a new performance?';
+  const text = document.createElement('p'); text.textContent = 'This replaces the saved construction. Your preferences will stay.';
+  const confirm = document.createElement('button'); confirm.type = 'button'; confirm.className = 'primary'; confirm.textContent = 'Begin again';
+  const cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'quiet'; cancel.textContent = 'Keep this construction';
   cancel.style.color = '#49362e'; cancel.style.marginLeft = '10px';
   confirm.addEventListener('click', () => { dialog.close(); dialog.remove(); beginNewGame(); });
   cancel.addEventListener('click', () => { dialog.close(); dialog.remove(); });
@@ -191,9 +189,7 @@ function dispatch(action: WorkshopAction): void {
   }
   if (action.type === 'preference') {
     state = cancelEdit(state);
-    if (action.key === 'language' && (action.value === 'en' || action.value === 'es')) manualPreferences.language = action.value as Locale;
-    if (action.key === 'sound' && typeof action.value === 'boolean') manualPreferences.sound = action.value;
-    if (action.key === 'reducedMotion' && typeof action.value === 'boolean') manualPreferences.reducedMotion = action.value;
+    manualPreferences[action.key] = action.value;
     state = { ...state, preferences: initialPreferences() };
 
     // If disabling reduced motion during opening, restart animation

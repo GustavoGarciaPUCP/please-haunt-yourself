@@ -1,6 +1,6 @@
 # POSTMAN's free text (v8) — tasks and verification record
 
-Kiro IDE session, November 9, 2026. Brief: `PROMPT_KIRO_08_TEXTO_LIBRE_Y_CIERRE_VISUAL.md`. Requirements in `requirements.md`, design in `design.md`, positions on Codex's proposals in `design-review.md`.
+Kiro IDE session, November 9, 2026. Brief: `Kiro brief 08`. Requirements in `requirements.md`, design in `design.md`, positions on Codex's proposals in `design-review.md`.
 
 ## Tasks
 

@@ -1,6 +1,6 @@
 # OS and complete case v4 — requirements
 
-Kiro IDE session, November 7, 2026. Brief: `PROMPT_KIRO_04_SO_REAL_Y_CASO_COMPLETO.md` (sections 1–14), with `docs/development/24_V3_Critical_Review_And_Real_OS_Direction.md` and `25_Consistency_Across_The_Four_Programs.md` (Codex). Story authority remains contract 23. This file records the Kiro agent's decisions for this run. It is not consensus, approval or a human study.
+Kiro IDE session, November 7, 2026. Brief: `Kiro brief 04` (sections 1–14), with `docs/development/24_V3_Critical_Review_And_Real_OS_Direction.md` and `25_Consistency_Across_The_Four_Programs.md` (Codex). Story authority remains contract 23. This file records the Kiro agent's decisions for this run. It is not consensus, approval or a human study.
 
 ## 1. Scope
 

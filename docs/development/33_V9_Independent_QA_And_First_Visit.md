@@ -40,7 +40,7 @@ tests/fluid-typing-v9.test.ts(105,25): error TS7006: Parameter 'file' implicitly
 
 Vitest executing these tests successfully does not imply the separate TypeScript build step passes. Likewise, an already generated `dist` can run while rebuilding its current source fails. The cause of the Kiro report's earlier successful-build statement was not established; do not invent a different environment, misreport or chronology to explain it.
 
-The prepared [prompt10](../../PROMPT_KIRO_10_COMPILACION_REPRODUCIBLE_Y_CIERRE_V9.md) asks Kiro to reproduce this exact result and choose a minimal repair: correctly declared Node test types or an equally meaningful check supported by the declared test environment. Preserve strict checking and the actual v9 behavior. No source repair or dependency installation was performed by Codex.
+The prepared prompt10 asks Kiro to reproduce this exact result and choose a minimal repair: correctly declared Node test types or an equally meaningful check supported by the declared test environment. Preserve strict checking and the actual v9 behavior. No source repair or dependency installation was performed by Codex.
 
 ## What v9 demonstrably improved
 

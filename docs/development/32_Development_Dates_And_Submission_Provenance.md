@@ -14,11 +14,13 @@ Source: [official rules, section 4](https://kiroween.devpost.com/rules). The rul
 
 `git log --all` lists **20 reachable commits**. The repository reports `--is-shallow-repository=false`. Both author and committer timestamps were checked against the opening instant; none of those commits predates it.
 
+The evidence table cites commit IDs from the original local checkout. The public history uses GitHub’s private author email and preserves the same author and committer timestamps. The corresponding public commit IDs are shown alongside the local IDs.
+
 | Evidence | Recorded date, Lima | Meaning and limit |
 | --- | --- | --- |
-| Earliest retained commit `17e8097` | 5 November 2026, 20:17:01 | Records the V3/R1 handoff and development setup. Not independent proof of every file's original creation date. |
-| First playable paper-theatre commit `ecfc1d1` | 5 November 2026, 21:16:25 | Documents the older prototype, after the opening. It is not the current four-app narrative. |
-| Dead-program desktop direction `03407bd` | 5 November 2026, 22:13:03 | Documents reopening the concept around the participant's desktop proposal, also after the opening. |
+| Earliest retained commit `17e8097` (public c252cb7) | 5 November 2026, 20:17:01 | Records the V3/R1 handoff and development setup. Not independent proof of every file's original creation date. |
+| First playable paper-theatre commit `ecfc1d1` (public 3a41c93) | 5 November 2026, 21:16:25 | Documents the older prototype, after the opening. It is not the current four-app narrative. |
+| Dead-program desktop direction `03407bd` (public 18546e4) | 5 November 2026, 22:13:03 | Documents reopening the concept around the participant's desktop proposal, also after the opening. |
 | Subsequent retained development | 6 November 2026 | Desktop/window/terminal/ECHO work is recorded after the opening. Later uncommitted Kiro iterations need their existing contribution records as well. |
 
 This chronology supports development within the period. It does not certify that no file, design or asset ever existed elsewhere earlier. The factual work log identifies conceptual planning before the first Kiro task. Preserve those notes and their real dates; distinguish them from the current implementation and accurately disclose any incorporated prior work. A later import or commit cannot by itself establish originality or eligibility.

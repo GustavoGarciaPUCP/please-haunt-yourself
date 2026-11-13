@@ -101,4 +101,4 @@ Ignored local artifacts:
 
 No app-source changes, dependency installation, native desktop control, new Kiro run/credit spend, human play, real screen reader, audible speaker verification, physical touch, true background-tab test, Firefox/Safari run, new throttled run, measured human/demo timing, publication, push or submission is claimed. Official rules and past winners were not rechecked in this local QA review.
 
-The prepared next participant-operated task is `PROMPT_KIRO_08_TEXTO_LIBRE_Y_CIERRE_VISUAL.md`. It asks Claude to reproduce and critique the new finding and repair this bounded layout case while preserving v7. PITCH's local build/evidence status is refreshed; its timing and narration remain a plan.
+The prepared next participant-operated task is `Kiro brief 08`. It asks Claude to reproduce and critique the new finding and repair this bounded layout case while preserving v7. PITCH's local build/evidence status is refreshed; its timing and narration remain a plan.

@@ -1,7 +1,7 @@
 # TERMINAL experience v2 — requirements
 
 **Authored:** November 6, 2026, Kiro IDE session (the session context reports Claude Opus 5.5; the effort setting and credits were not visible and are not claimed).
-**Inputs:** `PROMPT_KIRO_02_EXPERIENCIA.md` and `docs/development/18_Opus_Experience_Review.md` (both Codex-authored), plus the task17 delivery at commit `739c548`. The task17 spec in `.kiro/specs/terminal-halloween/` stays unchanged as history.
+**Inputs:** `Kiro brief 02` and `docs/development/18_Opus_Experience_Review.md` (both Codex-authored), plus the task17 delivery at commit `739c548`. The task17 spec in `.kiro/specs/terminal-halloween/` stays unchanged as history.
 **Scope:** TERMINAL only. ECHO, the process console, `src/core` and the paper-bridge `index.html` are out of scope.
 
 Everything in sections 1–3 was observed before any source change. Sections 4–8 are the plan; `tasks.md` records what was actually implemented and verified.

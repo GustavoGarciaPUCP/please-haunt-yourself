@@ -52,4 +52,4 @@ Design consequences: make the haunting communicate cause; demonstrate a complete
 
 ## Next handoff
 
-`PROMPT_KIRO_02_EXPERIENCIA.md` is the participant's next IDE task. It includes the above evidence, allows Opus to challenge the proposed direction and compare alternatives, and prioritizes verified cancellation defects, first-use hierarchy, a genuine mobile flow and meaningful closure. It does not authorize adding other programs, installing frameworks or publishing. The current delivered Kiro source is deliberately left intact for this review/handoff; these defects have not been silently fixed in Codex.
+`Kiro brief 02` is the participant's next IDE task. It includes the above evidence, allows Opus to challenge the proposed direction and compare alternatives, and prioritizes verified cancellation defects, first-use hierarchy, a genuine mobile flow and meaningful closure. It does not authorize adding other programs, installing frameworks or publishing. The current delivered Kiro source is deliberately left intact for this review/handoff; these defects have not been silently fixed in Codex.

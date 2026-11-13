@@ -108,7 +108,7 @@ Fix the visual marker without stealing focus, changing the accessible close/rest
 
 ## Next decision
 
-1. If another Kiro polish pass is desired, run the prepared [prompt09](../../PROMPT_KIRO_09_ESCRITURA_FLUIDA_SIN_CAMBIAR_EL_JUEGO.md). It targets these two bounded findings and preserves v8's scope.
+1. If another Kiro polish pass is desired, run the prepared prompt09. It targets these two bounded findings and preserves v8's scope.
 2. Use the existing [first-visit protocol](../../.kiro/specs/confirmation-flow-v7/first-visit-protocol.md) on this coherent baseline. Observe what the person thinks the bell does, what is being transferred between apps, whether they can recover without coaching, and how they interpret the receipt/ending. Record actual hesitation and understanding before adding help or another mechanic.
 3. Rehearse/record the real demo separately, with an actual timer. Passing the game checks is not evidence of a successful timed explanation or of submission readiness.
 

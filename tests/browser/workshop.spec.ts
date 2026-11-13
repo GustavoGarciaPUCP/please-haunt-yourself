@@ -3,11 +3,11 @@ import { expect, test, type Page } from '@playwright/test';
 async function dismissOpening(page: Page): Promise<void> {
   const opening = page.locator('[data-opening-overlay]');
   await expect(opening).toBeVisible();
-  await opening.getByRole('button', { name: /^(Skip|Continue|Omitir|Continuar)$/ }).click();
+  await opening.getByRole('button', { name: /^(Skip|Continue)$/ }).click();
 }
 
 async function keyboardConstruction(page: Page): Promise<void> {
-  await page.goto('/');
+  await page.goto('/workshop.html');
   await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
   await dismissOpening(page);
   await expect(page.locator('[data-home-aperture]')).toBeVisible();
@@ -60,7 +60,7 @@ test('keyboard construction, safe rejection, final reload and review', async ({ 
 });
 
 test('mouse and click placement produce a working route without a preset', async ({ page }) => {
-  await page.goto('/'); await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
+  await page.goto('/workshop.html'); await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
   await dismissOpening(page);
   const cutout = await svgPoint(page, '[data-cutout-svg]', 190, 124);
   await page.mouse.click(cutout.x, cutout.y);
@@ -85,19 +85,24 @@ test('pause and help do not resume the route automatically', async ({ page }) =>
   await expect(page.locator('[data-figure]')).toHaveAttribute('transform', pose!);
 });
 
-test('Spanish cover and a narrow viewport keep controls usable', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/'); await page.getByRole('button', { name: 'ES', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'La ventana equivocada', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Entrar al taller', exact: true }).click();
-  await dismissOpening(page);
-  await expect(page.getByRole('button', { name: 'Colocar el marco', exact: true })).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: 'test-results/workshop-mobile.png', fullPage: true });
+test.describe('Browser set to Spanish', () => {
+  test.use({ locale: 'es-PE' });
+
+  test('Narrow viewport keeps English controls usable', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/workshop.html');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { name: 'The Wrong Window', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
+    await dismissOpening(page);
+    await expect(page.getByRole('button', { name: 'Place frame', exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: 'test-results/workshop-mobile.png', fullPage: true });
+  });
 });
 
 test('opening demonstration is skippable, persists introSeen, and focuses lamp', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/workshop.html');
   await page.getByRole('checkbox', { name: /reduced motion/i }).uncheck();
   await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
   // Opening should be visible
@@ -121,7 +126,7 @@ test('opening demonstration is skippable, persists introSeen, and focuses lamp',
 });
 
 test('Help during opening finishes safely without replay or auto-trial', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/workshop.html');
   await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
   await expect(page.getByText('Black edges support from above.')).toBeVisible();
 
@@ -143,27 +148,26 @@ test('Help during opening finishes safely without replay or auto-trial', async (
   await expect(page.getByRole('button', { name: 'Pause', exact: true })).not.toBeVisible();
 });
 
-test('Spanish opening with explicit continue after introSeen does not replay', async ({ page }) => {
-  await page.goto('/');
-  await page.getByRole('button', { name: 'ES', exact: true }).click();
-  await page.getByRole('button', { name: 'Entrar al taller', exact: true }).click();
+test('Opening with explicit continue after introSeen does not replay', async ({ page }) => {
+  await page.goto('/workshop.html');
+  await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
 
-  // Should see Spanish opening text
-  await expect(page.getByText('Los trazos negros sostienen desde arriba.')).toBeVisible();
-  await page.locator('[data-opening-overlay]').getByRole('button', { name: 'Continuar', exact: true }).click();
+  // Opening explains how black edges support the figure.
+  await expect(page.getByText('Black edges support from above.')).toBeVisible();
+  await page.locator('[data-opening-overlay]').getByRole('button', { name: 'Continue', exact: true }).click();
 
   // Should complete to editing
-  await expect(page.getByRole('button', { name: 'Probar el recorrido', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Try the route', exact: true })).toBeVisible();
 
   // Reload and continue - no replay
   await page.reload();
-  await page.getByRole('button', { name: 'Continuar', exact: true }).click();
-  await expect(page.getByText('Los trazos negros sostienen desde arriba.')).not.toBeVisible();
-  await expect(page.getByRole('button', { name: 'Probar el recorrido', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page.getByText('Black edges support from above.')).not.toBeVisible();
+  await expect(page.getByRole('button', { name: 'Try the route', exact: true })).toBeVisible();
 });
 
 test('normal motion opening completes naturally with focus transfer', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/workshop.html');
   // Ensure reduced motion is off
   await page.getByRole('checkbox', { name: /reduced motion/i }).uncheck();
   await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();
@@ -185,7 +189,7 @@ test('normal motion opening completes naturally with focus transfer', async ({ p
 });
 
 test('reduced motion holds contact pose until explicit continue with focus transfer', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/workshop.html');
   // Enable reduced motion
   await page.getByRole('checkbox', { name: /reduced motion/i }).check();
   await page.getByRole('button', { name: 'Enter the workshop', exact: true }).click();

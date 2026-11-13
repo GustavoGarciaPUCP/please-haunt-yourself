@@ -1,6 +1,6 @@
 # Visual precision and QA of the v5 route (v6) — requirements
 
-Kiro IDE session, November 9, 2026. Brief: `PROMPT_KIRO_06_PRECISION_VISUAL_Y_QA.md`, based on Codex's `docs/development/27_V5_QA_Flow_And_Canvas_Text_Review.md`. This iteration repairs drawn-image layout and wording inside v5. It keeps the four programs, the story of contract 23, v5's design and flow, and every earlier data contract (`.kiro/specs/os-case-v4/`, `.kiro/specs/playability-v5/`). Positions on Codex's proposals are in `design-review.md`.
+Kiro IDE session, November 9, 2026. Brief: `Kiro brief 06`, based on Codex's `docs/development/27_V5_QA_Flow_And_Canvas_Text_Review.md`. This iteration repairs drawn-image layout and wording inside v5. It keeps the four programs, the story of contract 23, v5's design and flow, and every earlier data contract (`.kiro/specs/os-case-v4/`, `.kiro/specs/playability-v5/`). Positions on Codex's proposals are in `design-review.md`.
 
 ## 1. Baseline reproduced before any change
 

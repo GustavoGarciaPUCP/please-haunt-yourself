@@ -6,7 +6,7 @@ November 6, 2026. Codex's narrative-closure review, requested by the participant
 
 The previous design had a useful program sequence but still deferred the actual request, message and recipient. It also offered competing causes for the bell: source updates versus an unfinished request being restarted. CANVAS could consequently become an arbitrary processing step, and a glass apparition could look like a second unrelated threat.
 
-This contract supplies one default explanation, actual fictional content and a consistent ending. It supersedes conflicting story examples in reviews20–22. Their PC, interaction, motion, timing and evidence requirements remain relevant. The previous exploratory prompt is archived as PROMPT_03_Pre_Narrative_Closure.md; the consolidated root prompt is the current instruction.
+This contract supplies one default explanation, actual fictional content and a consistent ending. It supersedes conflicting story examples in reviews20–22. Their PC, interaction, motion, timing and evidence requirements remain relevant. The previous exploratory prompt is archived as earlier Kiro brief 03; the consolidated root prompt is the current instruction.
 
 ## The story in one paragraph
 

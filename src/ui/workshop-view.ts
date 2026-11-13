@@ -1,18 +1,16 @@
 import './workshop.css';
 
-export type Locale = 'en' | 'es';
 export type EditKind = 'lamp' | 'cutout' | 'frame';
 export type Point = { x: number; y: number };
 export type WorkshopAction =
   | { type: 'start' | 'continue' | 'trial' | 'pause' | 'resume' | 'stop' | 'undo' | 'home' | 'review' | 'restart' | 'hint' | 'help' | 'close-help' | 'skip-opening' }
-  | { type: 'preference'; key: 'language' | 'sound' | 'reducedMotion'; value: Locale | boolean }
+  | { type: 'preference'; key: 'sound' | 'reducedMotion'; value: boolean }
   | { type: 'begin'; kind: EditKind }
   | { type: 'preview'; lampX?: number; angle?: number; frameX?: number; frameY?: number }
   | { type: 'commit' | 'cancel' };
 
 export interface WorkshopModel {
   phase: 'cover' | 'opening' | 'editing' | 'tentative' | 'trial' | 'paused' | 'failed' | 'arrival' | 'final';
-  locale: Locale;
   sound: boolean;
   reducedMotion: boolean;
   hasSave: boolean;
@@ -32,43 +30,24 @@ export interface WorkshopModel {
 }
 
 const copy = {
-  en: {
-    title: 'The Wrong Window', subtitle: 'A paper-theatre mystery', language: 'Language', soundOff: 'Sound off', soundOn: 'Sound on', motion: 'Reduced motion',
-    quote: '“There’s a way out. The path is missing.”', note: 'A note from Vera', enter: 'Enter the workshop', continue: 'Continue', newGame: 'Begin again',
-    objective: 'Help the little figure reach the high gallery.', introduction: 'A lamp. A piece of paper. Something that looks like a way through.',
-    lamp: 'Move the light', cutout: 'Turn the paper', lampControl: 'Lamp carriage', cutoutControl: 'Paper pivot', frameControl: 'Movable frame',
-    frame: 'The frame', place: 'Place frame', confirm: 'Set it down', cancel: 'Cancel', home: 'Return to the wall',
-    frameHint: 'Drag the frame, or choose Place frame and a spot on the stage.', placingHint: 'Choose a place. Enter sets it down; Escape cancels.',
-    trial: 'Try the route', pause: 'Pause', resume: 'Continue walking', stop: 'Back to the table', undo: 'Undo', help: 'How to play', hint: 'A small hint',
-    floor: 'The workshop', gallery: 'The gallery', status: 'Workshop observations', stage: 'Paper stage with a lamp’s shadow, a frame and the figure’s destination',
-    finalTitle: 'The way was yours to make.', finalText: 'The shadow stays. The frame comes with you.', review: 'Look at your construction', restart: 'A new performance',
-    helpTitle: 'A few things about this workshop', helpText: 'Black edges support the figure from above. Try moving the light and turning the paper, then watch what happens to the shadow. The gallery stays where it is.',
-    helpKeys: 'Tab moves between controls. Arrow keys move the selected mechanism. Home and End take the lamp or paper to their stops. For the frame, Enter confirms and Escape cancels.',
-    close: 'Back to the workshop', trialStatus: 'The figure is trying your construction.', pausedStatus: 'The performance is paused.',
-    frameKeys: 'Arrow keys move the frame; Enter sets it down; Escape cancels.', rest: 'Resting', raised: 'Raised',
-    skipOpening: 'Skip', openingObservation1: 'Black edges support from above.', openingObservation2: 'Their sides are not walls.',
-    continueFromOpening: 'Continue',
-  },
-  es: {
-    title: 'La ventana equivocada', subtitle: 'Un misterio de teatro de papel', language: 'Idioma', soundOff: 'Sonido apagado', soundOn: 'Sonido encendido', motion: 'Movimiento reducido',
-    quote: '«Hay salida. Falta camino».', note: 'Una nota de Vera', enter: 'Entrar al taller', continue: 'Continuar', newGame: 'Empezar de nuevo',
-    objective: 'Ayuda a la pequeña figura a llegar a la galería alta.', introduction: 'Una lámpara. Un recorte. Algo que parece una salida.',
-    lamp: 'Mueve la luz', cutout: 'Gira el recorte', lampControl: 'Carro de la lámpara', cutoutControl: 'Pivote del recorte', frameControl: 'Marco móvil',
-    frame: 'El marco', place: 'Colocar el marco', confirm: 'Dejar aquí', cancel: 'Cancelar', home: 'Volver a la pared',
-    frameHint: 'Arrastra el marco o elige Colocar el marco y un lugar del escenario.', placingHint: 'Elige un lugar. Enter lo confirma; Escape cancela.',
-    trial: 'Probar el recorrido', pause: 'Pausar', resume: 'Seguir caminando', stop: 'Volver a la mesa', undo: 'Deshacer', help: 'Cómo jugar', hint: 'Una pequeña pista',
-    floor: 'El taller', gallery: 'La galería', status: 'Observaciones del taller', stage: 'Escenario de papel con una sombra, un marco y el destino de la figura',
-    finalTitle: 'El camino lo hiciste tú.', finalText: 'La sombra se queda. El marco viene contigo.', review: 'Revisar tu construcción', restart: 'Una nueva función',
-    helpTitle: 'Unas cosas sobre este taller', helpText: 'Los trazos negros sostienen a la figura desde arriba. Prueba a mover la luz y girar el recorte; observa qué cambia en la sombra. La galería permanece en su sitio.',
-    helpKeys: 'Tab cambia de control. Las flechas mueven el mecanismo seleccionado. Inicio y Fin llevan la luz o el recorte a sus topes. En el marco, Enter confirma y Escape cancela.',
-    close: 'Volver al taller', trialStatus: 'La figura está probando tu construcción.', pausedStatus: 'La función está en pausa.',
-    frameKeys: 'Las flechas mueven el marco; Enter confirma; Escape cancela.', rest: 'En reposo', raised: 'Alzado',
-    skipOpening: 'Omitir', openingObservation1: 'Los trazos negros sostienen desde arriba.', openingObservation2: 'Sus lados no son muros.',
-    continueFromOpening: 'Continuar',
-  },
+  title: 'The Wrong Window', subtitle: 'A paper-theatre mystery', soundOff: 'Sound off', soundOn: 'Sound on', motion: 'Reduced motion',
+  quote: '“There’s a way out. The path is missing.”', note: 'A note from Vera', enter: 'Enter the workshop', continue: 'Continue', newGame: 'Begin again',
+  objective: 'Help the little figure reach the high gallery.', introduction: 'A lamp. A piece of paper. Something that looks like a way through.',
+  lamp: 'Move the light', cutout: 'Turn the paper', lampControl: 'Lamp carriage', cutoutControl: 'Paper pivot', frameControl: 'Movable frame',
+  frame: 'The frame', place: 'Place frame', confirm: 'Set it down', cancel: 'Cancel', home: 'Return to the wall',
+  frameHint: 'Drag the frame, or choose Place frame and a spot on the stage.', placingHint: 'Choose a place. Enter sets it down; Escape cancels.',
+  trial: 'Try the route', pause: 'Pause', resume: 'Continue walking', stop: 'Back to the table', undo: 'Undo', help: 'How to play', hint: 'A small hint',
+  floor: 'The workshop', gallery: 'The gallery', status: 'Workshop observations', stage: 'Paper stage with a lamp’s shadow, a frame and the figure’s destination',
+  finalTitle: 'The way was yours to make.', finalText: 'The shadow stays. The frame comes with you.', review: 'Look at your construction', restart: 'A new performance',
+  helpTitle: 'A few things about this workshop', helpText: 'Black edges support the figure from above. Try moving the light and turning the paper, then watch what happens to the shadow. The gallery stays where it is.',
+  helpKeys: 'Tab moves between controls. Arrow keys move the selected mechanism. Home and End take the lamp or paper to their stops. For the frame, Enter confirms and Escape cancels.',
+  close: 'Back to the workshop', trialStatus: 'The figure is trying your construction.', pausedStatus: 'The performance is paused.',
+  frameKeys: 'Arrow keys move the frame; Enter sets it down; Escape cancels.', rest: 'Resting', raised: 'Raised',
+  skipOpening: 'Skip', openingObservation1: 'Black edges support from above.', openingObservation2: 'Their sides are not walls.',
+  continueFromOpening: 'Continue',
 } as const;
 
-type CopyKey = keyof typeof copy.en;
+type CopyKey = keyof typeof copy;
 type Drag = { kind: EditKind; pointer: number; element: Element; offset: Point };
 
 export class WorkshopView {
@@ -86,7 +65,6 @@ export class WorkshopView {
         <header class="masthead">
           <div class="brand"><span class="brand-window" aria-hidden="true"></span><div><h1 data-copy="title"></h1><p data-copy="subtitle"></p></div></div>
           <div class="preferences" aria-label="Preferences">
-            <div class="languages" role="group" data-language-group><button type="button" data-locale="es" lang="es">ES</button><button type="button" data-locale="en" lang="en">EN</button></div>
             <button type="button" class="quiet sound-button" data-action="sound"></button>
             <label class="motion-control"><input type="checkbox" data-motion><span data-copy="motion"></span></label>
           </div>
@@ -230,9 +208,6 @@ export class WorkshopView {
       });
     }
     this.helpDialog.addEventListener('cancel', () => this.emit({ type: 'close-help' }));
-    for (const button of this.root.querySelectorAll<HTMLButtonElement>('[data-locale]')) {
-      button.addEventListener('click', () => this.emit({ type: 'preference', key: 'language', value: button.dataset.locale as Locale }));
-    }
     this.get<HTMLInputElement>('[data-motion]').addEventListener('change', (event) => this.emit({ type: 'preference', key: 'reducedMotion', value: (event.target as HTMLInputElement).checked }));
     window.addEventListener('blur', () => { this.drag = null; this.placing = false; this.emit({ type: 'cancel' }); });
   }
@@ -343,14 +318,11 @@ export class WorkshopView {
 
   update(model: WorkshopModel): void {
     this.model = model;
-    const labels = copy[model.locale];
-    document.documentElement.lang = model.locale;
+    const labels = copy;
     document.title = labels.title;
     this.root.classList.toggle('reduce-motion', model.reducedMotion);
     this.root.dataset.phase = model.phase;
     for (const element of this.root.querySelectorAll<HTMLElement>('[data-copy]')) this.setText(element, labels[element.dataset.copy as CopyKey]);
-    this.get('[data-language-group]').setAttribute('aria-label', labels.language);
-    for (const button of this.root.querySelectorAll<HTMLButtonElement>('[data-locale]')) button.setAttribute('aria-pressed', String(button.dataset.locale === model.locale));
     this.setText(this.get('[data-action="sound"]'), model.sound ? labels.soundOn : labels.soundOff);
     this.get<HTMLButtonElement>('[data-action="sound"]').setAttribute('aria-pressed', String(model.sound));
     this.get<HTMLInputElement>('[data-motion]').checked = model.reducedMotion;

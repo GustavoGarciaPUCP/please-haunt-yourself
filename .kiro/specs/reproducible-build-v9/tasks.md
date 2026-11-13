@@ -1,6 +1,6 @@
 # Reproducible build, keeping v9 — tasks and verification record
 
-Kiro IDE session, November 10, 2026. Brief: `PROMPT_KIRO_10_COMPILACION_REPRODUCIBLE_Y_CIERRE_V9.md`. Requirements and findings in `requirements.md`, design and positions on Codex's proposals in `design.md`.
+Kiro IDE session, November 10, 2026. Brief: `Kiro brief 10`. Requirements and findings in `requirements.md`, design and positions on Codex's proposals in `design.md`.
 
 ## Tasks
 

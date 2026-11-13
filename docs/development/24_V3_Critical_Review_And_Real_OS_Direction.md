@@ -133,7 +133,7 @@ Keep existing charcoal/petrol/bone/copper materials but replace placeholder grad
 
 ## Next delivery and acceptance
 
-PROMPT_KIRO_04_SO_REAL_Y_CASO_COMPLETO.md is prepared as the next participant-operated IDE task. It should proceed through: fix actual usability/input defects; establish the desktop/window design; resolve the full-negative/crop contract; improve the signature presence; complete CANVAS/POSTMAN/receipt; and verify the connected case. It is not an executed Kiro run or a new source implementation by Codex.
+Kiro brief 04 is prepared as the next participant-operated IDE task. It should proceed through: fix actual usability/input defects; establish the desktop/window design; resolve the full-negative/crop contract; improve the signature presence; complete CANVAS/POSTMAN/receipt; and verify the connected case. It is not an executed Kiro run or a new source implementation by Codex.
 
 Acceptance needs more than the previous 67 routes: selected Bell controls actionable without auto-scroll; radio keys correct; startup reads as a desktop; source/framing and resized windows agree; a negative/letter contains only actual captured data; editing invalidates stale receipts; Guest Inbox and restored TERMINAL show real resolution; pointer and keyboard can each complete the case; reload resumes correctly; and the final film can show a real end-to-end route. A first-use non-programmer session remains needed; a source-informed agent is not that participant.
 

@@ -1,6 +1,6 @@
 # PC agency v3 — requirements
 
-Kiro IDE session, November 6, 2026. Source brief: `PROMPT_KIRO_03_PC_Y_JUGABILIDAD.md` and `docs/development/23_The_Unsent_Letter_Narrative_Contract.md` (Codex). This spec was written by the Kiro agent during the run. It records the agent's design choices; it is not Codex's approval, a human playtest or consensus.
+Kiro IDE session, November 6, 2026. Source brief: `Kiro brief 03` and `docs/development/23_The_Unsent_Letter_Narrative_Contract.md` (Codex). This spec was written by the Kiro agent during the run. It records the agent's design choices; it is not Codex's approval, a human playtest or consensus.
 
 ## 1. Scope
 

@@ -37,7 +37,7 @@ An unfamiliar player must be able to use the buttons to: observe the ghost, hush
 
 ## Participant-requested Kiro IDE handoff
 
-The participant offered to open Kiro IDE and paste a concrete task. Codex therefore prepared `PROMPT_KIRO_HALLOWEEN.md`, semantic model moments, draft plain-language presentation and original code-native SVG assets. These are scaffolding, not an integrated Halloween redesign. The current renderer is still the task16 implementation. Tests expecting the earlier status wording were updated to the equivalent plain-language explanation; model outcomes are preserved.
+The participant offered to open Kiro IDE and paste a concrete task. Codex therefore prepared `Kiro TERMINAL Halloween brief`, semantic model moments, draft plain-language presentation and original code-native SVG assets. These are scaffolding, not an integrated Halloween redesign. The current renderer is still the task16 implementation. Tests expecting the earlier status wording were updated to the equivalent plain-language explanation; model outcomes are preserved.
 
 Kiro IDE has not yet been operated or inspected by Codex, and its available models, credit state and execution remain unverified. A different IDE entitlement/account context is a possibility, not an established diagnosis of the CLI error. The user will select an available model and run the brief; no computer-use automation is authorized or needed. Genuine Kiro-generated specs/code/checks can be reviewed afterward from the shared project files.
 

@@ -1,7 +1,7 @@
 # TERMINAL Halloween encounter — requirements
 
 **Authored:** November 6, 2026, in a Kiro IDE session. The IDE session context reports the model as Claude Opus 5.5. The reasoning-effort setting and any credit consumption were not visible in the session and are not claimed.
-**Scope:** task17 (`PROMPT_KIRO_HALLOWEEN.md`, `docs/development/17_Halloween_Without_Programming.md`). TERMINAL only.
+**Scope:** task17 (`Kiro TERMINAL Halloween brief`, `docs/development/17_Halloween_Without_Programming.md`). TERMINAL only.
 **Inputs inherited from Codex (not Kiro work):** the brief, task16's recovery model and views, the semantic `moment` field, draft narration in `haunting-presentation.ts`, and the original SVG drawings in `specter-art.ts`.
 
 ## 1. Critique of the brief
@@ -12,7 +12,7 @@ The brief asks the player to "infer cause from visible actions and feedback", bu
 
 - A failed **Guide it out** (the bell is still active) and a natural **Watch the next moment** return both produce the same semantic moment, `return`. The draft narration therefore says "The bell answers the farewell" in both cases. A player who tries to guide the ghost out first sees "it came back" and cannot tell whether their action did anything.
 - Every object change produces the same moment, `changed`, which erases which object changed. The draft narration for `changed` describes the bell even after the player fades the note.
-- Nothing in the brief requires the bell itself to carry evidence. If the only sign of the bell's role is a sentence, a first-time player falls back to pressing every button until something works. `docs/development/dead-programs-review.md` already identified that button-guessing risk.
+- Nothing in the brief requires the bell itself to carry evidence. If the only sign of the bell's role is a sentence, a first-time player falls back to pressing every button until something works. `Kiro dead programs review` already identified that button-guessing risk.
 
 ### The improvement (concrete and implemented in this task)
 

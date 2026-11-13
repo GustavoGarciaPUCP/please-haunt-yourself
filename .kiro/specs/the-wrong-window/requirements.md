@@ -1,4 +1,6 @@
-# The Wrong Window / La ventana equivocada — Requirements
+# The Wrong Window — Requirements
+
+The requirements below record the prototype at its original checkpoint. In the public release, the prototype is available at /workshop.html with English text.
 
 **Spec type:** Feature Spec (Requirements-First)
 **Status:** Draft for review — no technical design, tasks or game code have been created yet.
@@ -15,7 +17,7 @@
 ## 1. Purpose and scope
 
 Build a complete, browser-based paper-theatre puzzle game for **Kiroween 2026**, in the
-**Costume Contest** category, working title **La ventana equivocada / The Wrong Window**. The
+**Costume Contest** category, working title **The Wrong Window**. The
 final product must feel like an eerie paper-theatre workshop whose visual materials and
 interactions make the puzzle understandable. Solo developer.
 
@@ -29,9 +31,9 @@ Designation key for each requirement:
 - **Check type** — `[S]` software-checkable by automated tests/properties;
   `[H]` requires observation with people; `[S+H]` has both a software component and a
   human-judgement component.
-- **Sources** — `01-§N` = section N of `01_Experiencia_y_sistema.md`;
-  `02-§N` = section N of `02_Geometria_y_revision_independiente.md`;
-  `03-§N` = section N of `03_Requisitos_oficiales_y_cierre.md`;
+- **Sources** — `01-§N` = section N of `Experience and system design`;
+  `02-§N` = section N of `Geometry and independent review`;
+  `03-§N` = section N of `Official requirements and final audit`;
   `impl-§` = `docs/development/implementation-decisions.md`;
   `vis-§` = `docs/development/visual-direction.md`.
 - **Verification** — `N01`–`N12` = the validation items in `01-§8`.
@@ -43,10 +45,10 @@ Designation key for each requirement:
 The current design is **V3/R1**. The three Spanish design documents are the authoritative
 sources for experience, geometry and event rules:
 
-- `01_Experiencia_y_sistema.md` — experience, rules, controls, states, N01–N12.
-- `02_Geometria_y_revision_independiente.md` — authoritative geometric constants, valid
+- `Experience and system design` — experience, rules, controls, states, N01–N12.
+- `Geometry and independent review` — authoritative geometric constants, valid
   configurations, counterexamples, and limits of the prior review.
-- `03_Requisitos_oficiales_y_cierre.md` — event requirements as reviewed; check official
+- `Official requirements and final audit` — event requirements as reviewed; check official
   sources when event facts matter.
 
 Earlier recorded-gesture and tray ("Bandeja") mechanics are obsolete and **not** part of this
@@ -75,11 +77,11 @@ authorization and require a separate reviewable decision. (Source: `03-§"Estado
 | --- | --- | --- |
 | Model coordinates | Internal coordinates with **y upward**; separate from screen/SVG coordinates. | `02-§3`, `AGENTS.md` |
 | Cutout / template (plantilla) | Paper cutout on a pivot; its orientation, projected by light, produces the shadow. | `01-§3` |
-| Lamp (lámpara) | Light source on a horizontal rail; moving it translates the shadow without rotating or scaling it. | `01-§3`, `02-§3` |
-| Shadow (proyección) | The projected profile of the cutout; a walkable black surface that supports the figure from above. | `01-§2`, `01-§3` |
+| Lamp | Light source on a horizontal rail; moving it translates the shadow without rotating or scaling it. | `01-§3`, `02-§3` |
+| Shadow | The projected profile of the cutout; a walkable black surface that supports the figure from above. | `01-§2`, `01-§3` |
 | Frame (marco) | A rigid, black, complete, always-recognizable physical object; known as an opening in a wall, but outside a wall it retains material and can act as a bridge. | `01-§3`, `02-§6` |
 | Figure (figura) | The small body that must reach the fixed gallery; it does not jump. | `01-§3`, `02-§3` |
-| Gallery (galería) | The fixed, visible high destination; **not** "any exit". | `01-§4`, `02-§6` |
+| Gallery | The fixed, visible high destination; **not** "any exit". | `01-§4`, `02-§6` |
 | Footprint (huella) | The figure's contact width; included within the single total horizontal tolerance, not added separately. | `01-§3`, `02-§3`, `AGENTS.md` |
 | Contact tolerance | Total horizontal reach at a contact, including footprint and any automatic correction; bounded by **48** model units, not additive. | `02-§3`, `AGENTS.md` |
 | Step | A small ascending or descending height change the figure can traverse; max **20** model units. | `01-§3`, `02-§3`, `impl-§` |
@@ -317,8 +319,7 @@ entire footprint is on the fixed gallery **and** it has left the frame's right e
 Its support cannot depend on the piece it is about to lift. Then it turns, takes the frame
 from the reached side and carries it away — removing the bridge, not pretending to close a
 second wall. The final is saved before the collection is represented; reload recovers the
-final result, not a figure mid-support. — Sources: `01-§6`, `01-§7`, `03-§"Cierres de la
-auditoría final"` item 3. Verification: **N12**. Check type: `[S]`.
+final result, not a figure mid-support. — Sources: `01-§6`, `01-§7`, `03-§"Final audit findings"` item 3. Verification: **N12**. Check type: `[S]`.
 
 ### 4.10 State recovery
 
@@ -395,8 +396,7 @@ decisions and preserve meaning. (Restates FR-K01/FR-K02 under accessibility.) �
 `01-§5`, `AGENTS.md`. Verification: **N09**. Check type: `[S+H]`.
 
 **FR-A04 — Bilingual text.** Game text is provided in English and Spanish. Source and
-submission documents are in English. — Sources: `AGENTS.md`, `03-§"Lista operativa de
-entrega"`. Check type: `[S]`.
+submission documents are in English. — Sources: `AGENTS.md`, `03-§"Submission checklist"`. Check type: `[S]`.
 
 ---
 
@@ -420,8 +420,7 @@ requirement and cannot be replaced by an agent. — Sources: `AGENTS.md`, `02-§
 
 **NF-05 — No fabricated evidence.** Do not fabricate tool sessions, test results, user
 research, usage statistics or prize claims. Distinguish planning, implemented behavior,
-automated checks and human observation. — Sources: `AGENTS.md`, `03-§"Cierres de la
-auditoría final"`. Check type: `[S]`.
+automated checks and human observation. — Sources: `AGENTS.md`, `03-§"Final audit findings"`. Check type: `[S]`.
 
 ---
 
@@ -579,7 +578,7 @@ matter for submission. Not a design contradiction; a process reminder.
 
 The V2-era issues (shortcut without frame, frame levitation after light change, collection
 while still supported) were explicitly corrected in R1 (`02-§5` regression section, `03-§
-"Cierres de la auditoría final"`). No further material contradiction between `01`, `02` and
+"Final audit findings"`). No further material contradiction between `01`, `02` and
 `03` was found. If implementation reveals one, it will be raised with a concrete reference
 rather than patched with a new mechanic, per `AGENTS.md`.
 
@@ -587,11 +586,13 @@ rather than patched with a new mechanic, per `AGENTS.md`.
 
 ## 9. References
 
-- `docs/diseno/01_Experiencia_y_sistema.md` — experience, rules, controls, states, N01–N12.
-- `docs/diseno/02_Geometria_y_revision_independiente.md` — geometric constants, solutions,
+The numbered early design records are available in the repository history.
+
+- `Experience and system design` — experience, rules, controls, states, N01–N12.
+- `Geometry and independent review` — geometric constants, solutions,
   counterexamples, review limits.
-- `docs/diseno/03_Requisitos_oficiales_y_cierre.md` — event requirements and audit closures.
-- `docs/diseno/04_Preparacion_e_instalacion.md` — setup and submission checklist.
+- `Official requirements and final audit` — event requirements and audit closures.
+- `Setup and submission checklist` — setup and submission checklist.
 - `docs/development/implementation-decisions.md` — numerical implementation choices for V3/R1
   (prepared through Codex, 2026-11-05).
 - `docs/development/visual-direction.md` — interface direction for the first playable build

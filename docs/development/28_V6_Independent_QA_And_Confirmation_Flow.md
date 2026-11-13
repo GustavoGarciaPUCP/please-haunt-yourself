@@ -108,6 +108,6 @@ Ignored local evidence:
 - `session-default.png`, `incomplete-replacement-loop.png`, `original-still-finishes.png` and `synthetic-negative-controls.png` in that directory.
 - `settled-ending.json` / `settled-ending.png`: settled state after minimum/Arrange/Finish.
 
-Prepared next task: `PROMPT_KIRO_07_CONFIRMACIONES_Y_CIERRE_QA.md`. It asks Claude to reproduce and critique this finding and implement a bounded repair, not redesign the game.
+Prepared next task: `Kiro brief 07`. It asks Claude to reproduce and critique this finding and implement a bounded repair, not redesign the game.
 
 No new app-source changes, dependency installation, Kiro run/credit usage, human play, screen reader, audible sound, physical touch, true background-tab, real missing-font system, non-Chrome run, measured first-use/demo time, publication, push or submission is attributed to this review. Official rules and comparative winners were not rechecked. `PITCH.md`'s local build/evidence status is refreshed; its narration/timing remains a plan, not a recording.

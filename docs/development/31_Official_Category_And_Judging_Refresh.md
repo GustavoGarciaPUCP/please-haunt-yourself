@@ -63,7 +63,7 @@ No full eligibility/IP/security/license audit or remote publication inspection w
 
 ## Bounded next steps
 
-1. Keep the current four-app scope and execute the prepared [prompt09](../../PROMPT_KIRO_09_ESCRITURA_FLUIDA_SIN_CAMBIAR_EL_JUEGO.md) if not yet run. This refresh adds context, not another gameplay requirement.
+1. Keep the current four-app scope and execute the prepared prompt09 if not yet run. This refresh adds context, not another gameplay requirement.
 2. Independently check that the resulting build preserves the case and fixes only justified polish issues.
 3. Then run the authorized **agent first-visit simulation** against a fresh profile, giving only the playable interface and a neutral invitation to explore. Do not give it source, the solution, the chain above or QA instructions. Record actual choices, mistaken expectations, requests for help and ending interpretation. Agent comments on enjoyment remain simulated opinions, not human research or an audience percentage.
 4. Follow with people when available, and use the existing first-visit protocol. Neither a simulated successful route nor passing regression checks proves human comprehension or fun.
