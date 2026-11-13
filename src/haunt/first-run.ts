@@ -1,162 +1,102 @@
-export const GUIDE_STORAGE_KEY = 'haunt.guide.v2';
-type App = 'terminal' | 'echo';
-const steps = [
-  { title: 'Something is haunting TERMINAL.', copy: 'A ghost keeps writing someone’s last words on this screen. You can set it free without typing anything. Open TERMINAL to begin.', target: '#btn-terminal', next: 'Open TERMINAL', app: undefined },
-  { title: 'A farewell that writes itself.', copy: 'A presence behind this text writes an old note again and again. Hushing it, keeping or fading the note, and letting it go are different choices. TERMINAL will remember what you choose.', target: '.terminal-anomaly', next: 'Check how it is doing', app: 'terminal' },
-  { title: 'Ask before you act.', copy: 'Press Are you okay? or type ask are you okay. TERMINAL answers from what is really happening. This tour never frees the ghost for you.', target: '.terminal-console', next: 'Find the way inside', app: 'terminal' },
-  { title: 'Follow the ghost.', copy: 'This turns the same window into the ghost’s room. Watch what happens, change one thing at a time and see what follows. You can come back to the prompt whenever you like; leaving early does not fix anything.', target: '[data-enter-session]', next: 'Start exploring', app: 'terminal' },
-] as const;
+import { prefersReducedMotion } from './ghost-writing';
 
-/** Coach UI points at real app surfaces; it never repairs scenery or process state. */
-export class FirstRunGuide {
-  private index = 0;
-  private active = false;
+/**
+ * The first minute (.kiro/specs/os-case-v4 R1.5, design §5): a short "Restoring last session…" entry on a fresh run only,
+ * and one optional callout at the anomaly. Both can be skipped at once and neither changes the case. The v2 spotlight
+ * tour is retired: it asked people to open a program that was already open.
+ */
+export const GUIDE_KEY = 'haunt.guide.v4';
+const BOOT_MS = 1200;
+
+const read = (key: string): string | null => { try { return localStorage.getItem(key); } catch { return null; } };
+const write = (key: string, value: string): void => { try { localStorage.setItem(key, value); } catch { /* The callout simply shows again next time. */ } };
+
+/** Plays the entry, then calls `done` exactly once. Any key or click skips it. */
+export function playBoot(element: HTMLElement, done: () => void): void {
+  let finished = false;
+  const controller = new AbortController();
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    controller.abort();
+    element.classList.add('is-leaving');
+    window.setTimeout(() => { element.hidden = true; element.classList.remove('is-leaving'); }, prefersReducedMotion() ? 0 : 220);
+    done();
+  };
+  element.hidden = false;
+  element.dataset.motion = prefersReducedMotion() ? 'reduced' : 'full';
+  const options = { signal: controller.signal, capture: true };
+  addEventListener('keydown', event => { event.preventDefault(); finish(); }, options);
+  addEventListener('pointerdown', finish, options);
+  window.setTimeout(finish, prefersReducedMotion() ? 700 : BOOT_MS);
+}
+
+/**
+ * One callout, pointing at TERMINAL's Look inside: the single most useful first action. It follows the window, hides
+ * when TERMINAL is not visible and never returns once dismissed (or once the player looks inside on their own).
+ */
+export class FirstVisitCoach {
+  private element: HTMLElement | null = null;
+  private target: HTMLElement | null = null;
   private frame = 0;
-  private returnFocus: HTMLElement | null = null;
-  private target: Element | null = null;
-  private readonly layer: HTMLElement;
-  private readonly card: HTMLElement;
-  private readonly shades: HTMLElement[];
-  private readonly spot: HTMLElement;
+  private readonly events = new AbortController();
 
-  constructor(private readonly launch: (app: App) => void, private readonly pause: () => void) {
-    this.layer = document.createElement('div');
-    this.layer.id = 'guide-layer';
-    this.layer.hidden = true;
-    this.layer.innerHTML = `<div class="guide-shade" aria-hidden="true"></div><div class="guide-shade" aria-hidden="true"></div><div class="guide-shade" aria-hidden="true"></div><div class="guide-shade" aria-hidden="true"></div>
-      <div class="guide-spot" aria-hidden="true"></div>
-      <section class="guide-card" role="dialog" aria-labelledby="guide-title" aria-describedby="guide-copy" tabindex="-1">
-        <div class="guide-heading"><span>Recovery assistant</span><select aria-label="Guide topic"><option value="0">Desktop</option><option value="1">The ghost</option><option value="2">Check-in</option><option value="3">Inside</option></select><button data-guide="skip">Skip tour</button></div>
-        <p class="guide-count"></p><h2 id="guide-title"></h2><p id="guide-copy"></p>
-        <button class="guide-query" data-guide="query">Ask: are you okay?</button>
-        <div class="guide-actions"><button data-guide="back">Back</button><button data-guide="next"></button></div>
-      </section>`;
-    document.body.append(this.layer);
-    this.card = this.layer.querySelector<HTMLElement>('.guide-card')!;
-    this.shades = [...this.layer.querySelectorAll<HTMLElement>('.guide-shade')];
-    this.spot = this.layer.querySelector<HTMLElement>('.guide-spot')!;
-    this.card.querySelector('select')!.addEventListener('change', event => this.show(Number((event.target as HTMLSelectElement).value)));
-    this.layer.addEventListener('click', event => {
-      const action = (event.target as Element).closest<HTMLElement>('[data-guide]')?.dataset.guide;
-      if (action === 'skip') this.finish();
-      if (action === 'back') this.show(this.index - 1);
-      if (action === 'next') this.index === steps.length - 1 ? this.finish() : this.show(this.index + 1);
-      if (action === 'query') {
-        document.querySelector<HTMLButtonElement>('[data-ask-status]')?.click();
-        const output = document.querySelector<HTMLElement>('.console-output');
-        const command = output?.querySelectorAll<HTMLElement>('.console-entered');
-        const latest = command?.[command.length - 1];
-        // A short mobile transcript should reveal the new table's beginning, not only its footer.
-        if (output && latest) output.scrollTop += latest.getBoundingClientRect().top - output.getBoundingClientRect().top - 8;
-        this.layer.querySelector<HTMLElement>('.guide-query')!.textContent = 'Read TERMINAL’s reply below.';
-      }
-    });
-    document.addEventListener('click', event => {
-      if (this.active && this.index === 0 && (event.target as Element).closest('#btn-terminal')) this.show(1);
-      else if (this.active && this.index === 3 && (event.target as Element).closest('[data-enter-session]')) this.finish(document.getElementById('window-terminal')!);
-    });
-    document.addEventListener('keydown', event => this.handleKey(event), true);
-    addEventListener('resize', () => this.refresh());
-    document.addEventListener('scroll', () => this.refresh(), true);
-    new ResizeObserver(() => this.refresh()).observe(this.card);
-  }
+  constructor(private readonly stage: HTMLElement) {}
 
-  startIfNew(): void {
-    try { if (localStorage.getItem(GUIDE_STORAGE_KEY)) return; } catch { /* Private storage can be unavailable. */ }
-    this.start();
-  }
+  get seen(): boolean { return read(GUIDE_KEY) !== null; }
 
-  start(): void {
-    if (!this.active) this.returnFocus = document.activeElement as HTMLElement | null;
-    this.pause();
-    this.active = true;
-    this.layer.hidden = false;
-    this.show(0);
-  }
-
-  private show(index: number): void {
-    this.index = Math.max(0, Math.min(index, steps.length - 1));
-    const step = steps[this.index]!;
-    if (step.app) this.launch(step.app);
-    this.layer.dataset.step = String(this.index);
-    document.body.dataset.guideStep = String(this.index);
-    this.card.querySelector('.guide-count')!.textContent = `${this.index + 1} of ${steps.length}`;
-    this.card.querySelector('select')!.value = String(this.index);
-    this.card.querySelector('#guide-title')!.textContent = step.title;
-    this.card.querySelector('#guide-copy')!.textContent = step.copy;
-    this.card.querySelector<HTMLButtonElement>('[data-guide="next"]')!.textContent = step.next;
-    this.card.querySelector<HTMLButtonElement>('[data-guide="back"]')!.disabled = this.index === 0;
-    const query = this.card.querySelector<HTMLButtonElement>('[data-guide="query"]')!;
-    query.hidden = this.index !== 2;
-    query.textContent = 'Ask: are you okay?';
-    this.target = document.querySelector(step.target);
-    this.target?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    this.position();
-    this.card.querySelector<HTMLButtonElement>('[data-guide="next"]')!.focus({ preventScroll: true });
+  /** Shows the callout next to `target` if this desk has not seen it. */
+  show(target: HTMLElement | null): void {
+    if (this.seen || !target || this.element) return;
+    this.target = target;
+    const element = document.createElement('div');
+    element.className = 'coach';
+    element.setAttribute('role', 'note');
+    element.innerHTML = `<p>Something in TERMINAL is still running from 1987. <strong>Look inside</strong> to see what it keeps trying to finish.</p>
+      <button type="button" data-coach-close>Got it</button>`;
+    this.stage.append(element);
+    this.element = element;
+    const options = { signal: this.events.signal };
+    element.querySelector('button')!.addEventListener('click', () => { this.dismiss(); target.focus({ preventScroll: true }); }, options);
+    document.addEventListener('haunt:session-entered', () => this.dismiss(), options);
+    document.addEventListener('haunt:window-moved', () => this.refresh(), options);
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && this.element) this.dismiss(); }, options);
+    addEventListener('resize', () => this.refresh(), options);
+    // The window is still opening; place the callout once it has settled, then whenever windows change.
+    this.frame = window.setTimeout(() => this.refresh(), 280);
     this.refresh();
   }
 
-  private refresh(): void {
-    if (!this.active) return;
-    cancelAnimationFrame(this.frame);
-    this.frame = requestAnimationFrame(() => {
-      this.position();
-      // Track opening motion only, not an idle per-frame layout loop.
-      if (this.target?.closest('.window')?.getAnimations().some(animation => animation.playState === 'running')) this.refresh();
-    });
-  }
-
-  private position(): void {
-    if (!this.active) return;
-    const cardWidth = this.card.offsetWidth, cardHeight = this.card.offsetHeight;
-    document.body.style.setProperty('--guide-card-height', `${cardHeight}px`);
-    const rect = this.target?.getBoundingClientRect();
-    const width = innerWidth, height = innerHeight;
-    const hole = rect ? { left: Math.max(5, rect.left - 6), top: Math.max(5, rect.top - 6), right: Math.min(width - 5, rect.right + 6), bottom: Math.min(height - 5, rect.bottom + 6) } : { left: width / 2, right: width / 2 + 1, top: height / 2, bottom: height / 2 + 1 };
-    const place = (element: HTMLElement, left: number, top: number, w: number, h: number) => {
-      Object.assign(element.style, { left: `${left}px`, top: `${top}px`, width: `${Math.max(0, w)}px`, height: `${Math.max(0, h)}px` });
-    };
-    place(this.shades[0]!, 0, 0, width, hole.top);
-    place(this.shades[1]!, 0, hole.bottom, width, height - hole.bottom);
-    place(this.shades[2]!, 0, hole.top, hole.left, hole.bottom - hole.top);
-    place(this.shades[3]!, hole.right, hole.top, width - hole.right, hole.bottom - hole.top);
-    place(this.spot, hole.left, hole.top, hole.right - hole.left, hole.bottom - hole.top);
-    let left = hole.right + 18, top = hole.top;
-    if (width <= 650) {
-      left = (width - cardWidth) / 2;
-      top = this.index === 2 && height >= 650 ? 44 : (hole.top + hole.bottom) / 2 > height / 2 ? 44 : height - cardHeight - 12;
-    } else if (left + cardWidth > width - 12) {
-      left = hole.left - cardWidth - 18;
-      if (left < 12) { left = (width - cardWidth) / 2; top = hole.bottom + 16; }
+  /** Follows TERMINAL: called on window moves, focus changes and viewport changes. */
+  refresh(): void {
+    const element = this.element, target = this.target;
+    if (!element || !target) return;
+    const rect = target.getBoundingClientRect(), stage = this.stage.getBoundingClientRect();
+    const win = target.closest<HTMLElement>('.window');
+    const visible = !!win && document.body.contains(target) && rect.width > 0 && !win.inert && win.style.display !== 'none' && !target.closest('[hidden]');
+    element.hidden = !visible;
+    if (!visible) return;
+    const width = element.offsetWidth, box = win!.getBoundingClientRect();
+    // Beside the window when there is room, so it covers nothing inside TERMINAL; otherwise just under the button.
+    const side = stage.right - box.right >= width + 28;
+    element.classList.toggle('is-side', side);
+    if (side) {
+      element.style.left = `${box.right - stage.left + 14}px`;
+      element.style.top = `${Math.max(8, rect.top - stage.top + rect.height / 2 - 26)}px`;
+    } else {
+      const left = Math.max(8, Math.min(stage.width - width - 8, rect.left - stage.left + rect.width / 2 - 32));
+      element.style.left = `${left}px`;
+      element.style.top = `${rect.bottom - stage.top + 12}px`;
+      element.style.setProperty('--arrow-x', `${rect.left - stage.left + rect.width / 2 - left}px`);
     }
-    this.card.style.left = `${Math.max(12, Math.min(left, width - cardWidth - 12))}px`;
-    this.card.style.top = `${Math.max(12, Math.min(top, height - cardHeight - 12))}px`;
+    element.style.zIndex = String((Number(win!.style.zIndex) || 100) + 1);
   }
 
-  private handleKey(event: KeyboardEvent): void {
-    if (!this.active) return;
-    if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); this.finish(); return; }
-    if (event.key !== 'Tab') return;
-    const selector = 'button:enabled, input:enabled, select:enabled, [tabindex="0"]';
-    const candidates: HTMLElement[] = [...this.card.querySelectorAll<HTMLElement>(selector)];
-    if (this.target?.matches(selector)) candidates.push(this.target as HTMLElement);
-    candidates.push(...(this.target?.querySelectorAll<HTMLElement>(selector) ?? []));
-    const allowed = [...new Set(candidates)].filter(el => !el.closest('[hidden], [inert]') && el.getClientRects().length > 0);
-    const current = allowed.indexOf(document.activeElement as HTMLElement);
-    if (!allowed.length) return;
-    event.preventDefault();
-    allowed[(current + (event.shiftKey ? -1 : 1) + allowed.length) % allowed.length]?.focus({ preventScroll: true });
-  }
-
-  private finish(focusOverride?: HTMLElement): void {
-    this.active = false;
-    cancelAnimationFrame(this.frame);
-    this.layer.hidden = true;
-    delete document.body.dataset.guideStep;
-    document.body.style.removeProperty('--guide-card-height');
-    try { localStorage.setItem(GUIDE_STORAGE_KEY, 'dismissed'); } catch { /* Guide remains usable without persistence. */ }
-    const preferred = focusOverride ?? (this.index === 3 && this.target instanceof HTMLElement && !this.target.matches(':disabled') ? this.target : this.index === 3 ? document.getElementById('window-terminal') : this.returnFocus);
-    const focus = preferred?.isConnected && !preferred.closest('[inert], [aria-hidden="true"]') && preferred.getClientRects().length ? preferred : document.getElementById('btn-guide');
-    focus?.focus({ preventScroll: true });
+  dismiss(): void {
+    write(GUIDE_KEY, 'seen');
+    window.clearTimeout(this.frame);
+    this.events.abort();
+    this.element?.remove();
+    this.element = null;
   }
 }

@@ -1,194 +1,120 @@
-import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { PC_SIZES, box, caseSave, frameHand, glassIdle, pixelDiff, reachGlass, settled, start, terminal } from './haunt-helpers.mjs';
+// ECHO v4 (.kiro/specs/os-case-v4 R4): native source radios, the full negative plus a separate photo frame, the
+// subjects in words, captures that never change, the wipe cursor, Discard with Undo and the eight-capture limit.
 
-await mkdir('output/playwright', { recursive: true });
-const url = new URL('/haunt.html', process.env.HAUNT_BASE_URL ?? 'http://127.0.0.1:5174').href;
-const browser = await chromium.launch({ channel: 'chrome', headless: true });
-const outcomes = [], errors = [];
+const { browser, outcomes, open, finish } = await start('echo-scene');
+const pixels = page => page.locator('#window-echo .capture-picture').evaluate(canvas => [...canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data]);
 try {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 980 }, reducedMotion: 'no-preference' });
-  await page.addInitScript(() => localStorage.setItem('haunt.guide.v2', 'dismissed'));
-  page.on('pageerror', error => errors.push(error.message));
-  await page.goto(url);
-  await page.locator('#btn-echo').click();
-  const scene = page.locator('.echo-scene-container');
-  const prop = scene.locator('.farewell-prop');
-  const action = name => scene.locator(`[data-action="${name}"]`);
-  const state = expected => page.waitForFunction(value => document.querySelector('.echo-scene-container')?.dataset.state === value, expected);
-  const phase = expected => page.waitForFunction(value => document.querySelector('.echo-scene-container')?.dataset.phase === value, expected);
-  const position = () => prop.evaluate(el => ({ x: parseFloat(el.style.left) * 6.4, y: parseFloat(el.style.top) * 4.1 }));
-  const place = async (x, y) => {
-    await scene.locator('.prop-header').scrollIntoViewIfNeeded();
-    const header = await scene.locator('.prop-header').boundingBox();
-    const board = await scene.locator('.echo-board-wrap').boundingBox();
-    const panel = await prop.boundingBox();
-    const offsetX = header.x + header.width / 2 - panel.x;
-    const offsetY = header.y + header.height / 2 - panel.y;
-    await page.mouse.move(panel.x + offsetX, panel.y + offsetY);
-    await page.mouse.down();
-    await page.mouse.move(board.x + x * board.width / 640 + offsetX, board.y + y * board.height / 410 + offsetY, { steps: 5 });
-    await page.mouse.up();
-  };
-  const aligned = async () => {
-    if (await scene.locator('#echo-help').isHidden()) await action('help').click();
-    await action('align').click();
-    await action('help').click();
-  };
-  const actorPose = () => scene.locator('.public-footage .actor').evaluateAll(elements => elements.map(el => ({ transform: getComputedStyle(el).transform, opacity: getComputedStyle(el).opacity })));
+  const p = await open({ viewport: PC_SIZES[1] });
+  await p.click('#btn-echo');
+  await settled(p, 'echo');
 
-  await state('editing');
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: 'output/playwright/echo-edit-desktop.png' });
-  await action('rehearse').click();
-  await state('failed');
-  assert.match(await scene.locator('.echo-status').textContent(), /self-view is still exposed/);
-  assert.equal(await scene.locator('#echo').evaluate(el => getComputedStyle(el).opacity), '0');
-  assert.ok(await action('rehearse').isDisabled());
-  await action('edit').click();
-  outcomes.push('exposed self-view: explicit failure, no appearance, Edit required');
+  // 1. The review-24 defect: arrow keys did not move between the two sources. Native radios now do.
+  const checked = () => p.locator('#window-echo .echo-sources input:checked').getAttribute('value');
+  await p.locator('#window-echo .echo-sources input:checked').focus();
+  await p.keyboard.press('ArrowRight');
+  assert.equal(await checked(), 'glass');
+  assert.equal(await p.evaluate(() => document.activeElement?.value), 'glass', 'focus moves with the selection');
+  await p.keyboard.press('ArrowLeft');
+  assert.equal(await checked(), 'session');
+  assert.equal(await p.locator('#window-echo .echo-sources input').evaluateAll(inputs => inputs.filter(input => input.tabIndex >= 0 && !input.checked).length === 1 && inputs.every(input => input.type === 'radio')), true);
+  outcomes.push('Source selection uses native radios: ArrowRight/ArrowLeft move focus and selection between Session window and Desktop glass (the v3 buttons left both at tabIndex 0 and ignored arrows).');
 
-  await place(451, 70);
-  assert.ok(Math.abs((await position()).x - 451) < .01);
-  await action('rehearse').click();
-  await state('failed');
-  assert.match(await scene.locator('[data-private]').textContent(), /exposed/);
-  await action('edit').click();
-  await place(440, 60);
-  assert.match(await scene.locator('[data-private]').textContent(), /covered/);
-  const geometry = await scene.evaluate(el => {
-    const p = el.querySelector('.farewell-prop').getBoundingClientRect();
-    const v = el.querySelector('.private-footage').getBoundingClientRect();
-    const s = el.querySelector('.public-footage').getBoundingClientRect();
-    return { covered: p.left <= v.left && p.top <= v.top && p.right >= v.right && p.bottom >= v.bottom, clear: p.left >= s.right || p.right <= s.left || p.top >= s.bottom || p.bottom <= s.top };
-  });
-  assert.deepEqual(geometry, { covered: true, clear: true });
-  await prop.focus();
-  await page.keyboard.press('Shift+ArrowRight');
-  assert.ok(Math.abs((await position()).x - 442) < .01);
-  await scene.getByRole('button', { name: 'Move left', exact: true }).click();
-  assert.ok(Math.abs((await position()).x - 432) < .01);
-  outcomes.push('real pointer drag, fine keyboard and click controls share geometry; one-unit gap rejected');
+  // 2. Before the milestone: the session window shows the figure, a glass capture is bare glass.
+  await p.click('#window-echo [data-echo="capture"]');
+  assert.match(await p.locator('#window-echo .capture-title').textContent(), /The same minute/);
+  // visual-precision-v6 R4: the window shows Mara's unfinished note, so the words say so (v4/v5 said "no writing").
+  assert.match(await p.locator('#window-echo .capture-verdict').textContent(), /its note stops at “PER—”\. No handprint\./);
+  assert.deepEqual(await p.locator('#window-echo .capture-head .subject-chip').allTextContents(), ['The figure, repeating', 'Unfinished note', 'No handprint']);
+  const sessionNegative = (await caseSave(p)).echo.captures.at(-1).negative;
+  assert.equal(sessionNegative.kind, 'session');
+  assert.equal('writing' in sessionNegative, false, 'a session capture still keeps no writing layer');
+  await p.click('#window-echo [role="tab"][data-tab="live"]');
+  await p.locator('#window-echo .echo-sources label:has(input[value="glass"])').click();
+  await p.click('#window-echo [data-echo="capture"]');
+  assert.match(await p.locator('#window-echo .capture-title').textContent(), /Bare glass/);
+  outcomes.push('Before the milestone: a session-window capture is “The same minute”, says where its note stops (“PER—”) and that it has no handprint, and keeps no writing layer; a glass capture is Bare glass.');
 
-  await place(200, 100);
-  await action('rehearse').click();
-  await state('failed');
-  assert.match(await scene.locator('.echo-status').textContent(), /blocks the public stage/);
-  await action('edit').click();
-  await aligned();
-  await action('rehearse').click();
-  await state('performing');
-  assert.ok(await scene.locator('select').isDisabled());
-  assert.ok(await scene.getByRole('button', { name: 'Move left', exact: true }).isDisabled());
-  await state('complete');
-  const collapse = await actorPose();
-  assert.equal(collapse[1].opacity, '1');
-  assert.match(await scene.locator('.echo-caption').textContent(), /That worked/);
-  await page.screenshot({ path: 'output/playwright/echo-collapse-desktop.png' });
-  await action('edit').click();
-  await scene.locator('select').selectOption('scare');
-  await action('rehearse').click();
-  await state('complete');
-  const scare = await actorPose();
-  assert.match(await page.locator('.workshop-task').textContent(), /Both host reactions rehearsed/);
-  assert.notDeepEqual(scare, collapse);
-  assert.match(await scene.locator('.echo-caption').textContent(), /supposed to be scared/);
-  await page.screenshot({ path: 'output/playwright/echo-scare-desktop.png' });
-  outcomes.push('public obstruction rejected; both host choices produce distinct actor poses and narrative responses');
+  // 3. After the milestone: a wrong source holds no writing; the glass holds the full note wherever the frame is.
+  await p.click('#btn-terminal');
+  await settled(p, 'terminal');
+  await reachGlass(p);
+  await terminal(p).back();
+  await p.click('#btn-echo');
+  await settled(p, 'echo');
+  await p.click('#window-echo [role="tab"][data-tab="live"]');
+  await p.locator('#window-echo .echo-sources label:has(input[value="session"])').click();
+  await p.click('#window-echo [data-echo="capture"]');
+  // visual-precision-v6 R4: the window is not empty — the unfinished note is still there (v4/v5: "The window is empty").
+  assert.match(await p.locator('#window-echo .capture-ghost').textContent(), /Only the note is left here\. The mark is on the glass\./);
+  assert.match(await p.locator('#window-echo .capture-title').textContent(), /The note left behind/);
+  await frameHand(p);
+  const chips = await p.locator('#window-echo .echo-readout .subject-chip').allTextContents();
+  assert.ok(chips.includes('Handprint'), `live chips name the handprint: ${chips}`);
+  await p.click('#window-echo [data-echo="capture"]');
+  let save = await caseSave(p);
+  const glassCapture = save.echo.captures.at(-1);
+  assert.equal(glassCapture.negative.kind, 'glass');
+  assert.equal(glassCapture.negative.writing.length, 5, 'the negative keeps the writing layer');
+  assert.equal(save.echo.captures.at(-2).negative.kind, 'session');
+  assert.match(await p.locator('#window-echo .capture-caption').textContent(), /Full image kept\. This frame becomes the picture\./);
+  outcomes.push('After the milestone: a session-window capture is “The note left behind” and says “Only the note is left here. The mark is on the glass.”; it keeps no writing layer. A glass capture framed on the hand keeps the full negative with all five lines, and its caption says “Full image kept. This frame becomes the picture.”');
 
-  for (const checkpoint of ['appearance', 'host-reaction', 'echo-response']) {
-    await action('edit').click();
-    await action('rehearse').click();
-    await phase(checkpoint);
-    await action('leave').evaluate(el => el.click());
-    await state('left');
-    await page.waitForTimeout(750);
-    assert.equal(await scene.getAttribute('data-state'), 'left');
-    assert.equal(await scene.locator('#echo').evaluate(el => getComputedStyle(el).opacity), '0');
-  }
-  outcomes.push('Leave interrupts each of the three phases; no delayed appearance or completion');
+  // 4. The capture never changes when the glass does: wipe on the monitor, breathe, then compare the stored negative and the picture.
+  const before = { negative: JSON.stringify(glassCapture.negative), picture: await pixels(p) };
+  await p.click('#window-echo [role="tab"][data-tab="live"]');
+  const monitor = await box(p, '#window-echo .echo-screen');
+  await p.mouse.move(monitor.x + monitor.w * 0.3, monitor.y + monitor.h * 0.4);
+  await p.mouse.down();
+  await p.mouse.move(monitor.x + monitor.w * 0.7, monitor.y + monitor.h * 0.6, { steps: 12 });
+  await p.mouse.up();
+  save = await caseSave(p);
+  assert.notEqual(save.glass.fog, JSON.parse(before.negative).fog, 'the wipe changed the live glass (and was saved at the end of the stroke)');
+  await p.click('#window-echo [data-echo="breathe"]');
+  await p.click('#window-echo [role="tab"][data-tab="captures"]');
+  await p.locator(`#window-echo .capture-item[data-capture="${glassCapture.id}"]`).click();
+  save = await caseSave(p);
+  assert.equal(JSON.stringify(save.echo.captures.find(item => item.id === glassCapture.id).negative), before.negative, 'the stored negative is unchanged');
+  assert.ok(pixelDiff(before.picture, await pixels(p)) < 0.5, 'the picture renders the same pixels');
+  outcomes.push('Wiping on the monitor and breathing on the glass changed the live glass (saved when the stroke ended) but left the earlier capture’s stored negative and its rendered picture unchanged.');
 
-  await action('edit').click();
-  const preserved = await position();
-  await action('rehearse').click();
-  await phase('host-reaction');
-  await page.locator('#window-echo [aria-label="Minimize"]').evaluate(el => el.click());
-  await state('paused');
-  await page.locator('#btn-echo').click();
-  await page.waitForTimeout(800);
-  assert.equal(await scene.getAttribute('data-state'), 'paused');
-  assert.deepEqual(await position(), preserved);
-  await action('resume').click();
-  await state('complete');
-  outcomes.push('minimize pauses at checkpoint; restoring does not silently resume; explicit Resume completes');
+  // 5. The photo frame moves by keyboard without a new exposure; Discard has one Undo.
+  const frameBefore = (await caseSave(p)).echo.captures.find(item => item.id === glassCapture.id).frame;
+  await p.locator('#window-echo .photo-frame').focus();
+  await p.keyboard.press('ArrowLeft');
+  await p.keyboard.press('Shift+ArrowUp');
+  await p.keyboard.press('-');
+  const frameAfter = (await caseSave(p)).echo.captures.find(item => item.id === glassCapture.id).frame;
+  // Left was clamped at the edge of the negative; Shift+Up moved it up; − shrinks it around its centre.
+  assert.ok(frameAfter.y < frameBefore.y && frameAfter.w < frameBefore.w, `the frame moved and shrank: ${JSON.stringify({ frameBefore, frameAfter })}`);
+  assert.equal((await caseSave(p)).echo.captures.length, 4, 'reframing makes no new capture');
+  await p.click('#window-echo [data-echo="discard"]');
+  assert.equal((await caseSave(p)).echo.captures.length, 3);
+  await p.click('#window-echo .capture-undo');
+  assert.equal((await caseSave(p)).echo.captures.length, 4, 'Undo discard brings it back');
+  outcomes.push('The photo frame moves and resizes with the arrow keys and − (no new exposure, same capture count); Discard removes a capture and Undo discard restores it.');
 
-  await action('edit').click();
-  await action('rehearse').click();
-  await page.locator('#window-echo [aria-label="Close"]').evaluate(el => el.click());
-  await page.locator('#window-echo').waitFor({ state: 'detached' });
-  await page.locator('#btn-echo').click();
-  await state('editing');
-  const fresh = await position();
-  assert.ok(Math.abs(fresh.x - 430) < .01 && Math.abs(fresh.y - 240) < .01);
-  await page.waitForTimeout(750);
-  assert.equal(await scene.getAttribute('data-state'), 'editing');
-  outcomes.push('close disposes the old scene; reopen starts fresh with no stale completion');
+  // 6. Eight captures at most; a ninth is explained, not silently dropped.
+  await p.click('#window-echo [role="tab"][data-tab="live"]');
+  for (let i = 0; i < 4; i++) { await p.click('#window-echo [data-echo="capture"]'); await p.click('#window-echo [role="tab"][data-tab="live"]'); }
+  await p.click('#window-echo [data-echo="capture"]');
+  assert.match(await p.locator('#window-echo .echo-status').textContent(), /up to 8 captures/);
+  assert.equal((await caseSave(p)).echo.captures.length, 8);
+  outcomes.push('With eight captures kept, Capture explains the limit (“ECHO keeps up to 8 captures…”) and keeps exactly eight.');
 
-  await aligned();
-  await action('rehearse').click();
-  // Deterministic handler test: headless Chrome keeps pages visible despite tab focus.
-  // This does not claim an observed operating-system background-tab transition.
-  await page.evaluate(() => {
-    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
-    document.dispatchEvent(new Event('visibilitychange'));
-  });
-  await state('paused');
-  await page.evaluate(() => {
-    delete document.hidden;
-    document.dispatchEvent(new Event('visibilitychange'));
-  });
-  await page.waitForTimeout(750);
-  assert.equal(await scene.getAttribute('data-state'), 'paused');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.waitForTimeout(200);
-  assert.equal(await scene.getAttribute('data-state'), 'paused');
-  await action('edit').click();
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  outcomes.push('simulated visibility event pauses; visible return and live reduced motion cannot silently complete a paused run');
-
-  await aligned();
-  await action('rehearse').click();
-  await phase('host-reaction');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await state('complete');
-  assert.equal(await scene.locator('#host').evaluate(el => getComputedStyle(el).transitionDuration), '0s');
-  await action('edit').click();
-  await action('rehearse').click();
-  await action('leave').evaluate(el => el.click());
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.waitForTimeout(750);
-  assert.equal(await scene.getAttribute('data-state'), 'left');
-  outcomes.push('live reduced-motion uses stable poses and cannot revive a departed run');
-
-  await action('edit').click();
-  await page.setViewportSize({ width: 390, height: 844 });
-  await place(440, 60);
-  assert.match(await scene.locator('[data-private]').textContent(), /covered/);
-  const mobile = await position();
-  assert.ok(Math.abs(mobile.x - 440) < .01 && Math.abs(mobile.y - 60) < .01);
-  await action('rehearse').click();
-  await state('complete');
-  await page.screenshot({ path: 'output/playwright/echo-mobile.png' });
-  await page.setViewportSize({ width: 800, height: 450 });
-  await action('edit').click();
-  await scene.locator('select').selectOption('scare');
-  await action('rehearse').click();
-  await state('complete');
-  assert.equal(await scene.evaluate(el => el.scrollWidth <= el.clientWidth + 1), true);
-  outcomes.push('390px pointer placement retains logical coordinates; controls reachable on mobile and short screens');
-  assert.deepEqual(errors, []);
-  const report = { url, passed: outcomes.length, outcomes, pageErrors: errors, limitations: ['Visibility coverage uses a simulated document.hidden event, not an observed real background-tab transition.', 'Automated checks do not validate enjoyment or competition quality.'] };
-  await writeFile('output/playwright/echo-results.json', JSON.stringify(report, null, 2));
-  console.log(JSON.stringify(report, null, 2));
-} catch (error) { console.error(error); process.exitCode = 1; }
-finally { await browser.close(); }
+  // 7. Maximize, resize the viewport: the captured data and the picture do not change.
+  await p.click('#window-echo [role="tab"][data-tab="captures"]');
+  await p.locator(`#window-echo .capture-item[data-capture="${glassCapture.id}"]`).click();
+  const kept = JSON.stringify((await caseSave(p)).echo.captures.find(item => item.id === glassCapture.id));
+  await p.click('#window-echo [data-window="maximize"]');
+  await p.setViewportSize(PC_SIZES[0]);
+  await p.waitForTimeout(300);
+  assert.equal(JSON.stringify((await caseSave(p)).echo.captures.find(item => item.id === glassCapture.id)), kept, 'maximize and a smaller screen keep the capture as it was');
+  await glassIdle(p);
+  outcomes.push('Maximizing ECHO and changing the viewport to 1366×768 left the capture’s negative and frame untouched.');
+  await p.close();
+} finally {
+  await browser.close();
+  await finish();
+}

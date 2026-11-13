@@ -1,17 +1,22 @@
 /** Bounded spectral handwriting. The letters are decorative; callers keep accessible text elsewhere. */
 const motion = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
 export const prefersReducedMotion = (): boolean => motion?.matches ?? false;
+/** Live preference changes must settle script-started motion; CSS media queries alone cannot cancel it. */
+export function onReducedMotionChange(listener: () => void, signal: AbortSignal): void {
+  motion?.addEventListener('change', listener, { signal });
+}
 
 const LETTER_DELAY_MS = 42;
 /** Caps the stagger so a reveal always ends in under two seconds, whatever the text length. */
 const MAX_STAGGERED_LETTERS = 30;
 
 /**
- * Writes `text` into `target`. When animated, each letter fades in once with a staggered delay; nothing repeats,
- * focus is never moved and no live region is touched. With reduced motion (or `animate = false`) the complete
- * text appears immediately.
+ * Writes `text` into `target`. When animated, each letter fades in once with a staggered delay (after an optional
+ * base delay, to sit inside a longer cue); nothing repeats, focus is never moved and no live region is touched.
+ * With reduced motion (or `animate = false`) the complete text appears immediately. Calling it again replaces any
+ * reveal still in progress, so the newest text always wins.
  */
-export function writeGhostly(target: HTMLElement, text: string, animate: boolean): void {
+export function writeGhostly(target: HTMLElement, text: string, animate: boolean, baseDelayMs = 0): void {
   target.replaceChildren();
   if (!animate || !text || prefersReducedMotion()) {
     target.textContent = text;
@@ -27,7 +32,7 @@ export function writeGhostly(target: HTMLElement, text: string, animate: boolean
       const letter = document.createElement('span');
       letter.className = 'ghost-letter';
       letter.textContent = character;
-      letter.style.animationDelay = `${Math.min(index++, MAX_STAGGERED_LETTERS) * LETTER_DELAY_MS}ms`;
+      letter.style.animationDelay = `${baseDelayMs + Math.min(index++, MAX_STAGGERED_LETTERS) * LETTER_DELAY_MS}ms`;
       word.append(letter);
     }
     target.append(word);

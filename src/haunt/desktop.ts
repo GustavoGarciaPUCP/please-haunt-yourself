@@ -1,486 +1,73 @@
 /**
- * PLEASE HAUNT YOURSELF — Desktop window management foundation
- * Window lifecycle, focus management, keyboard control
+ * PLEASE HAUNT YOURSELF — HAUNT OS 4 (.kiro/specs/os-case-v4). One case store shared by TERMINAL, ECHO, CANVAS and
+ * POSTMAN; one window manager; the desktop glass painted behind every window; the shell around them.
  */
-
-import { animateOpen, animateClose, animateMinimize, animateRestore, cancelAllAnimations, onPreferenceChange } from './window-motion';
-import { initEchoScene, EchoController } from './echo-view';
-import { TerminalController } from './terminal-view';
-import { ProcessSession } from './process-session';
+import { CaseStore } from './case-store';
+import { loadCase } from './case-save';
+import { placeImpression, type Box } from './glass-model';
+import { GlassView } from './glass-view';
+import { WindowManager, type AppEntry } from './window-manager';
+import type { AppKind } from './window-geometry';
 import { DesktopShell } from './desktop-shell';
-import { LegacySession } from './legacy-session';
+import { FirstVisitCoach, playBoot } from './first-run';
+import { TerminalController } from './terminal-view';
+import { EchoController } from './echo-view';
+import { CanvasController } from './canvas-view';
+import { PostmanController } from './postman-view';
+import { FIGURE_MASK } from './specter-art';
 
-type WindowState = 'closed' | 'opening' | 'open' | 'closing' | 'minimized' | 'restoring';
-type AppId = 'echo' | 'terminal';
-
-interface WindowInstance {
-  id: AppId;
-  state: WindowState;
-  element: HTMLElement;
-  operationGen: number;
-  zIndex: number;
-  trigger: HTMLElement | null;
-  echoController?: EchoController;
-  terminalController?: TerminalController;
-}
-
-const windows = new Map<AppId, WindowInstance>();
-const processSession = new ProcessSession();
-const legacySession = new LegacySession();
-let nextZIndex = 100;
-let desktopShell: DesktopShell;
-
-/**
- * Initialize desktop and start TERMINAL
- */
 export function init(): void {
   const stage = document.getElementById('desktop-stage');
   if (!stage) return;
-  desktopShell = new DesktopShell(id => openWindow(id, document.getElementById(`btn-${id}`)),
-    () => windows.forEach(instance => { instance.echoController?.pause(); instance.terminalController?.showShell(); }));
-  legacySession.subscribe(() => desktopShell.markTerminal(legacySession.snapshot()));
+  document.documentElement.style.setProperty('--figure-mask', FIGURE_MASK);
+  const loaded = loadCase();
+  // The entry plays only for a desk that has never held this case; a reload goes straight back to work.
+  const fresh = loaded.save === null && loaded.notice === null;
+  const store = new CaseStore(loaded);
+  const glassView = new GlassView(stage, store.glass, { wipeEnded: () => store.persist(), revealSeen: () => store.persist() });
+  if (store.glass.placement) glassView.finishReveal();
 
-  // Set up taskbar buttons
-  const terminalBtn = document.getElementById('btn-terminal') as HTMLElement;
-  const echoBtn = document.getElementById('btn-echo') as HTMLElement;
+  const registry = new Map<AppKind, AppEntry>([
+    ['terminal', { id: 'terminal', title: 'TERMINAL', icon: 'terminal', create: (content, context) => new TerminalController(content, store, context, { takeNotice: () => store.takeNotice(), glassView }) }],
+    ['echo', { id: 'echo', title: 'ECHO', icon: 'echo', create: (content, context) => new EchoController(content, store, context, { stage, glassView }) }],
+    ['canvas', { id: 'canvas', title: 'CANVAS', icon: 'canvas', create: (content, context) => new CanvasController(content, store, context) }],
+    ['postman', { id: 'postman', title: 'POSTMAN', icon: 'postman', create: (content, context) => new PostmanController(content, store, context) }],
+  ]);
+  let shell: DesktopShell | null = null;
+  const coach = new FirstVisitCoach(stage);
+  const manager = new WindowManager(stage, registry, () => { shell?.setContext(null); coach.refresh(); });
+  shell = new DesktopShell(store, manager, { arrange: () => manager.arrange() });
+  manager.onChange(() => coach.refresh());
 
-  if (terminalBtn) {
-    terminalBtn.addEventListener('click', () => toggleWindow('terminal', terminalBtn));
-  }
-  if (echoBtn) {
-    echoBtn.addEventListener('click', () => toggleWindow('echo', echoBtn));
-  }
-
-  // Global keyboard handlers
-  document.addEventListener('keydown', handleGlobalKeyboard);
-
-  // Focus-in brings windows forward
-  document.addEventListener('focusin', handleFocusIn);
-
-  // Handle reduced-motion changes
-  onPreferenceChange(handleMotionPreferenceChange);
-
-  // Start with TERMINAL open
-  if (terminalBtn) {
-    openWindow('terminal', terminalBtn);
-  }
-  desktopShell.guide.startIfNew();
-}
-
-/**
- * Toggle window open/closed/minimized
- */
-function toggleWindow(id: AppId, trigger: HTMLElement): void {
-  const instance = windows.get(id);
-
-  if (!instance || instance.state === 'closed') {
-    openWindow(id, trigger);
-  } else if (instance.state === 'open' || instance.state === 'opening' || instance.state === 'restoring') {
-    bringToFront(instance);
-    focusWindow(instance);
-  } else if (instance.state === 'minimized') {
-    restoreWindow(id);
-  } else if (instance.state === 'closing') {
-    // Reopen while closing
-    openWindow(id, trigger);
-  }
-}
-
-/**
- * Open a window
- */
-function openWindow(id: AppId, trigger: HTMLElement | null): void {
-  let instance = windows.get(id);
-
-  // If closing or minimized, cancel and reopen
-  if (instance) {
-    if (instance.state === 'closing' || instance.state === 'minimized') {
-      cancelPendingMotion(instance);
-      instance.state = 'opening';
-      instance.operationGen++;
-      instance.trigger = trigger;
-      instance.zIndex = nextZIndex++;
-      instance.element.style.zIndex = String(instance.zIndex);
-      instance.element.style.display = '';
-      instance.element.style.pointerEvents = '';
-      instance.element.inert = false;
-      instance.element.removeAttribute('aria-hidden');
-      updateTaskbarButton(id, true);
-
-      const opGen = instance.operationGen;
-      const animation = animateOpen(instance.element, trigger);
-      focusWindow(instance);
-
-      animation.finished
-        .then(() => {
-          if (instance && instance.operationGen === opGen && instance.state === 'opening') {
-            instance.state = 'open';
-          }
-        })
-        .catch(() => {});
-      return;
-    } else if (instance.state === 'opening' || instance.state === 'open' || instance.state === 'restoring') {
-      // Already opening or open, just bring to front
-      bringToFront(instance);
-      focusWindow(instance);
-      return;
-    }
-  }
-
-  const stage = document.getElementById('desktop-stage');
-  if (!stage) return;
-
-  // Create window element
-  const windowEl = createWindowElement(id);
-  stage.appendChild(windowEl);
-
-  instance = {
-    id,
-    state: 'opening',
-    element: windowEl,
-    operationGen: 1,
-    zIndex: nextZIndex++,
-    trigger
+  const stageBox = (element: Element): Box => {
+    const rect = element.getBoundingClientRect(), origin = stage.getBoundingClientRect();
+    return { x: rect.left - origin.left, y: rect.top - origin.top, w: rect.width, h: rect.height };
   };
-
-  windows.set(id, instance);
-  if (id === 'echo') {
-    instance.echoController = initEchoScene(windowEl.querySelector<HTMLElement>('.window-content')!, processSession, result => desktopShell.markRehearsal(result));
-  } else {
-    instance.terminalController = new TerminalController(windowEl.querySelector<HTMLElement>('.window-content')!, processSession,
-      () => openWindow('echo', document.getElementById('btn-echo')), legacySession);
-  }
-  instance.element.style.zIndex = String(instance.zIndex);
-  updateTaskbarButton(id, true);
-
-  const opGen = instance.operationGen;
-  const animation = animateOpen(windowEl, trigger);
-  focusWindow(instance);
-
-  animation.finished
-    .then(() => {
-      if (instance && instance.operationGen === opGen && instance.state === 'opening') {
-        instance.state = 'open';
-      }
-    })
-    .catch(() => {});
-}
-
-/**
- * Close a window
- */
-function closeWindow(id: AppId): void {
-  const instance = windows.get(id);
-  if (!instance || instance.state === 'closed' || instance.state === 'closing') return;
-
-  cancelPendingMotion(instance);
-
-  instance.state = 'closing';
-  desktopShell.setContext(findActiveWindow()?.id);
-  instance.echoController?.leave();
-  instance.operationGen++;
-
-  // Restore focus and disable interactions immediately
-  restoreFocusToTrigger(instance);
-  instance.element.style.pointerEvents = 'none';
-  instance.element.inert = true;
-  instance.element.setAttribute('aria-hidden', 'true');
-
-  const opGen = instance.operationGen;
-  const animation = animateClose(instance.element);
-
-  animation.finished
-    .then(() => {
-      if (instance.operationGen === opGen && instance.state === 'closing') {
-        cleanup(instance);
-      }
-    })
-    .catch(() => {});
-}
-
-/**
- * Minimize a window
- */
-function minimizeWindow(id: AppId): void {
-  const instance = windows.get(id);
-  if (!instance || (instance.state !== 'open' && instance.state !== 'opening' && instance.state !== 'restoring')) return;
-
-  cancelPendingMotion(instance);
-
-  instance.state = 'minimized';
-  desktopShell.setContext(findActiveWindow()?.id);
-  instance.echoController?.pause();
-  instance.operationGen++;
-
-  // Restore focus and disable interactions immediately
-  restoreFocusToTrigger(instance);
-  instance.element.style.pointerEvents = 'none';
-  instance.element.inert = true;
-  instance.element.setAttribute('aria-hidden', 'true');
-
-  const opGen = instance.operationGen;
-  const animation = animateMinimize(instance.element, instance.trigger);
-
-  animation.finished
-    .then(() => {
-      if (instance.operationGen === opGen && instance.state === 'minimized') {
-        instance.element.style.display = 'none';
-      }
-    })
-    .catch(() => {});
-}
-
-/**
- * Restore a minimized window
- */
-function restoreWindow(id: AppId): void {
-  const instance = windows.get(id);
-  if (!instance || instance.state !== 'minimized') return;
-
-  cancelPendingMotion(instance);
-
-  instance.state = 'restoring';
-  instance.operationGen++;
-  instance.element.style.display = '';
-  instance.element.style.pointerEvents = '';
-  instance.element.inert = false;
-  instance.element.removeAttribute('aria-hidden');
-
-  const opGen = instance.operationGen;
-  const animation = animateRestore(instance.element, instance.trigger);
-  bringToFront(instance);
-  focusWindow(instance);
-
-  animation.finished
-    .then(() => {
-      if (instance.operationGen === opGen && instance.state === 'restoring') {
-        instance.state = 'open';
-      }
-    })
-    .catch(() => {});
-}
-
-/**
- * Cancel pending motion for an instance
- */
-function cancelPendingMotion(instance: WindowInstance): void {
-  cancelAllAnimations(instance.element);
-}
-
-/**
- * Cleanup after close
- */
-function cleanup(instance: WindowInstance): void {
-  instance.terminalController?.dispose();
-  // Dispose ECHO controller if present
-  if (instance.echoController) {
-    instance.echoController.dispose();
-    instance.echoController = undefined;
-  }
-
-  instance.element.remove();
-  windows.delete(instance.id);
-  instance.state = 'closed';
-  updateTaskbarButton(instance.id, false);
-}
-
-/**
- * Bring window to front
- */
-function bringToFront(instance: WindowInstance): void {
-  instance.zIndex = nextZIndex++;
-  instance.element.style.zIndex = String(instance.zIndex);
-  desktopShell.setContext(instance.id);
-}
-
-/**
- * Focus window
- */
-function focusWindow(instance: WindowInstance): void {
-  desktopShell.setContext(instance.id);
-  const focusTarget = instance.element.querySelector<HTMLElement>('[data-primary]')
-    ?? instance.element.querySelector<HTMLElement>('[autofocus], button, [tabindex="0"]');
-  if (focusTarget) {
-    focusTarget.focus();
-  } else {
-    instance.element.focus();
-  }
-}
-
-/**
- * Restore focus to trigger button
- */
-function restoreFocusToTrigger(instance: WindowInstance): void {
-  if (instance.trigger && document.body.contains(instance.trigger)) {
-    instance.trigger.focus();
-  }
-}
-
-/**
- * Check if window is currently active (topmost)
- */
-function isActiveWindow(instance: WindowInstance): boolean {
-  let maxZ = 0;
-  windows.forEach(w => {
-    if (['open', 'opening', 'restoring'].includes(w.state) && w.zIndex > maxZ) {
-      maxZ = w.zIndex;
-    }
+  // The impression is pressed against TERMINAL's real edge, avoiding the other windows when it can.
+  store.setPlacer(() => {
+    const terminal = manager.isOpen('terminal') ? manager.element('terminal') : null;
+    const occluders = (['echo', 'canvas', 'postman'] as const).filter(id => manager.isOpen(id)).map(id => stageBox(manager.element(id)!));
+    return placeImpression(glassView.stageSize, terminal ? stageBox(terminal) : null, occluders);
   });
-  return instance.zIndex === maxZ;
-}
-
-/**
- * Update taskbar button state
- */
-function updateTaskbarButton(id: AppId, isActive: boolean): void {
-  const button = document.getElementById(`btn-${id}`);
-  if (button) {
-    button.classList.toggle('active', isActive);
-    button.setAttribute('aria-pressed', String(isActive));
-  }
-}
-
-/**
- * Global keyboard handler
- */
-function handleGlobalKeyboard(e: KeyboardEvent): void {
-  if (e.key === 'Escape') {
-    // Close the currently focused/active window
-    const activeWindow = findActiveWindow();
-    if (activeWindow && (activeWindow.state === 'open' || activeWindow.state === 'opening' || activeWindow.state === 'restoring')) {
-      closeWindow(activeWindow.id);
-      e.preventDefault();
-    }
-  }
-}
-
-/**
- * Focus-in handler to bring windows forward
- */
-function handleFocusIn(e: FocusEvent): void {
-  const target = e.target as HTMLElement;
-
-  // Find which window received focus
-  for (const instance of windows.values()) {
-    if (['open', 'opening', 'restoring'].includes(instance.state) && instance.element.contains(target)) {
-      if (!isActiveWindow(instance)) {
-        bringToFront(instance);
-      }
-      break;
-    }
-  }
-}
-
-/**
- * Handle motion preference changes
- */
-function handleMotionPreferenceChange(): void {
-  // Settle all active operations
-  windows.forEach(instance => {
-    if (instance.state === 'opening' || instance.state === 'closing' ||
-        instance.state === 'minimized' || instance.state === 'restoring') {
-      cancelPendingMotion(instance);
-
-      // Settle to target state
-      if (instance.state === 'opening' || instance.state === 'restoring') {
-        instance.state = 'open';
-        instance.element.style.opacity = '1';
-        instance.element.style.transform = '';
-        instance.element.style.display = '';
-        instance.element.style.pointerEvents = '';
-        instance.element.inert = false;
-        instance.element.removeAttribute('aria-hidden');
-      } else if (instance.state === 'closing') {
-        cleanup(instance);
-      } else if (instance.state === 'minimized') {
-        instance.element.style.opacity = '0';
-        instance.element.style.transform = '';
-        instance.element.style.display = 'none';
-      }
-    }
+  store.glass.subscribe(change => {
+    if (change !== 'place') return;
+    // TERMINAL's pane renders after this listener in the same notification; read its cue length once it has.
+    queueMicrotask(() => {
+      const pane = manager.element('terminal')?.querySelector<HTMLElement>('.session-pane');
+      const delay = pane && !pane.closest('[hidden]') ? Number(pane.dataset.impressDelay ?? 0) : 0;
+      glassView.startReveal(Number.isFinite(delay) ? delay : 0);
+    });
   });
+  store.onOpen(target => manager.open(target.app, document.getElementById(`btn-${target.app}`), target));
+
+  const start = () => {
+    manager.open('terminal', document.getElementById('btn-terminal'));
+    if (store.phase === 'repeating') coach.show(manager.element('terminal')?.querySelector<HTMLElement>('[data-enter-session]') ?? null);
+  };
+  const boot = document.getElementById('boot');
+  if (fresh && boot) playBoot(boot, start);
+  else start();
 }
 
-/**
- * Find the currently active (topmost open) window
- */
-function findActiveWindow(): WindowInstance | null {
-  let active: WindowInstance | null = null;
-  let maxZ = 0;
-
-  windows.forEach(instance => {
-    if (['open', 'opening', 'restoring'].includes(instance.state) && instance.zIndex > maxZ) {
-      maxZ = instance.zIndex;
-      active = instance;
-    }
-  });
-
-  return active;
-}
-
-/**
- * Create window DOM element
- */
-function createWindowElement(id: AppId): HTMLElement {
-  const win = document.createElement('div');
-  win.className = 'window';
-  win.id = `window-${id}`;
-  win.setAttribute('role', 'dialog');
-  win.setAttribute('aria-labelledby', `${id}-title`);
-  win.tabIndex = -1;
-
-  const titleBar = document.createElement('div');
-  titleBar.className = 'window-titlebar';
-
-  const title = document.createElement('h2');
-  title.id = `${id}-title`;
-  title.className = 'window-title';
-  title.textContent = id.toUpperCase();
-
-  const controls = document.createElement('div');
-  controls.className = 'window-controls';
-
-  const minimizeBtn = document.createElement('button');
-  minimizeBtn.className = 'window-btn';
-  minimizeBtn.setAttribute('aria-label', 'Minimize');
-  minimizeBtn.innerHTML = '−';
-  minimizeBtn.addEventListener('click', () => minimizeWindow(id));
-
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'window-btn window-btn-close';
-  closeBtn.setAttribute('aria-label', 'Close');
-  closeBtn.innerHTML = '×';
-  closeBtn.addEventListener('click', () => closeWindow(id));
-
-  controls.appendChild(minimizeBtn);
-  controls.appendChild(closeBtn);
-  titleBar.appendChild(title);
-  titleBar.appendChild(controls);
-
-  const content = document.createElement('div');
-  content.className = 'window-content';
-
-  if (id === 'echo') {
-    content.classList.add('echo-scene-container');
-  }
-
-  win.appendChild(titleBar);
-  win.appendChild(content);
-
-  // Make window clickable to bring to front
-  win.addEventListener('mousedown', () => {
-    const instance = windows.get(id);
-    if (instance && instance.state === 'open') {
-      bringToFront(instance);
-    }
-  });
-
-  return win;
-}
-
-// Initialize on load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();

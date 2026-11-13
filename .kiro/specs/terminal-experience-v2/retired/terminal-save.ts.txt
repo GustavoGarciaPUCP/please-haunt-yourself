@@ -1,0 +1,40 @@
+import { isSettled, type LegacySnapshot, type SavedOutcome } from './legacy-session';
+
+/**
+ * A small, versioned, TERMINAL-only restore point. Only a completed ending is remembered; an unfinished
+ * haunting starts over on reload by design. Stored data is untrusted: anything unexpected is ignored and removed.
+ * Audio consent, animations, the open panel and the guide are never stored here.
+ */
+export const TERMINAL_SAVE_KEY = 'haunt.terminal.v1';
+type Store = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+const defaultStore = (): Store | null => { try { return globalThis.localStorage ?? null; } catch { return null; } };
+
+export function parseTerminalSave(raw: string | null): SavedOutcome | null {
+  if (raw === null || raw.length > 200) return null;
+  let value: unknown;
+  try { value = JSON.parse(raw); } catch { return null; }
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return null;
+  const { v, outcome, returns } = value as Record<string, unknown>;
+  if (v !== 1 || (outcome !== 'remembered' && outcome !== 'blank')) return null;
+  if (typeof returns !== 'number' || !Number.isInteger(returns) || returns < 0 || returns > 999) return null;
+  return { outcome, returns };
+}
+
+export function loadTerminalOutcome(store: Store | null = defaultStore()): SavedOutcome | null {
+  if (!store) return null;
+  try {
+    const raw = store.getItem(TERMINAL_SAVE_KEY);
+    const saved = parseTerminalSave(raw);
+    if (raw !== null && !saved) store.removeItem(TERMINAL_SAVE_KEY);
+    return saved;
+  } catch { return null; }
+}
+
+/** Writes a completed ending; any other state removes the restore point, so Undo out of an ending forgets it. */
+export function saveTerminalOutcome(state: LegacySnapshot, store: Store | null = defaultStore()): void {
+  if (!store) return;
+  try {
+    if (isSettled(state)) store.setItem(TERMINAL_SAVE_KEY, JSON.stringify({ v: 1, outcome: state.health, returns: Math.min(999, state.cycles) }));
+    else store.removeItem(TERMINAL_SAVE_KEY);
+  } catch { /* Private or full storage: the encounter still works, it just will not survive a reload. */ }
+}

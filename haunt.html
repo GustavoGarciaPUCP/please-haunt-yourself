@@ -2,102 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Please Haunt Yourself — Recovery desktop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HAUNT OS</title>
+  <meta name="haunt-build" content="v9">
+  <meta name="description" content="Please Haunt Yourself: a fictional Halloween desktop. One unfinished job from 1987, four programs, one letter.">
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/src/haunt/desktop.css">
-  <style>
-    :root {
-      --bone: #ede6d8;
-      --charcoal: #171b20;
-      --petrol: #305b62;
-      --oxblood: #7d303a;
-      --copper: #b5794a;
-      --glass: rgba(29, 44, 47, 0.96);
-      --shadow-1: rgba(0, 0, 0, 0.12);
-      --shadow-2: rgba(0, 0, 0, 0.24);
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: radial-gradient(ellipse at 74% 62%, #65342e66, transparent 57%),
-        radial-gradient(ellipse at 20% 12%, #305b6238, transparent 55%), #131a1f;
-      color: var(--bone);
-      overflow: hidden;
-      height: 100vh;
-    }
-  </style>
 </head>
 <body>
   <div id="desktop-root">
-    <header class="os-menubar" aria-label="System menu bar">
-      <span class="os-brand"><span aria-hidden="true">⌘</span> HAUNT OS</span>
-      <details class="os-session-menu"><summary>Session</summary><div class="os-menu-panel" role="group" aria-label="Session actions">
-        <button data-launch="terminal">Open Terminal</button><button data-launch="echo">Open Echo Studio</button><button data-open-guide>Show guide</button>
-      </div></details>
-      <span id="os-app-context">Desktop</span>
-      <button id="btn-guide" aria-label="Open desktop guide">Guide <span aria-hidden="true">?</span></button>
-      <time class="os-clock" aria-label="Local time"></time>
-    </header>
-    <main id="desktop-stage" role="main" aria-label="Recovery desktop">
-      <header class="desktop-masthead">
-        <p class="session-label"><span aria-hidden="true">✦</span> Recovery session</p>
-        <h1>Please haunt yourself.</h1>
-        <p class="desktop-task" aria-live="polite">Recovery task: free the ghost haunting TERMINAL.<br>Follow it inside, then come back and ask how TERMINAL is doing.</p>
-        <p class="workshop-task">ECHO capture workshop available separately.</p>
-      </header>
-      <nav class="desktop-shortcuts" aria-label="Desktop shortcuts">
-        <button data-launch="terminal"><span class="desktop-icon terminal-icon" aria-hidden="true">&gt;_</span><span>Terminal</span></button>
-        <button data-launch="echo"><span class="desktop-icon echo-icon" aria-hidden="true">◉</span><span>Echo Studio</span></button>
-      </nav>
-      <!-- Windows rendered here -->
+    <main id="desktop-stage" aria-label="Desktop">
+      <h1 class="sr-only">HAUNT OS, the desk of guest</h1>
+      <p id="glass-description" class="sr-only">A quiet night behind the desktop glass.</p>
+      <nav class="desktop-files" aria-label="Desktop files"><ul></ul></nav>
     </main>
 
-    <footer id="taskbar" role="navigation" aria-label="Applications">
-      <div class="taskbar-apps">
-        <button
-          id="btn-terminal"
-          class="taskbar-btn active"
-          aria-label="TERMINAL - Recovery console"
-          aria-pressed="true"
-          data-app="terminal">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <rect x="2" y="3" width="16" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M5 7l3 3-3 3M9 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <span>TERMINAL</span>
-        </button>
-
-        <button
-          id="btn-echo"
-          class="taskbar-btn"
-          aria-label="ECHO - Video application"
-          aria-pressed="false"
-          data-app="echo">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
-            <circle cx="8" cy="9" r="1.5" fill="currentColor"/>
-            <circle cx="12" cy="9" r="1.5" fill="currentColor"/>
-            <path d="M7 13c1 1.5 5 1.5 6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <span>ECHO</span>
-        </button>
-
-        <div class="taskbar-separator"></div>
-
-        <div class="taskbar-labels">
-          <span class="app-label" title="Not recovered yet">CANVAS</span>
-          <span class="app-label" title="Farewell scenery available inside ECHO; app not recovered yet">UNINSTALL</span>
-          <span class="app-label" title="Not recovered yet">REPLAY</span>
-          <span class="app-label" title="Not recovered yet">POSTMAN</span>
-        </div>
+    <footer id="taskbar" aria-label="Taskbar">
+      <button type="button" id="btn-launcher" class="launcher" aria-haspopup="menu" aria-expanded="false" aria-controls="launcher-menu" title="HAUNT menu">
+        <span class="launcher-glyph" data-icon="haunt" aria-hidden="true"></span><span class="launcher-label">HAUNT</span>
+      </button>
+      <div class="taskbar-apps" role="group" aria-label="Programs">
+        <button type="button" id="btn-terminal" class="task-btn" data-app="terminal" aria-pressed="false"><span data-icon="terminal" aria-hidden="true"></span><span class="task-label">TERMINAL</span></button>
+        <button type="button" id="btn-echo" class="task-btn" data-app="echo" aria-pressed="false"><span data-icon="echo" aria-hidden="true"></span><span class="task-label">ECHO</span></button>
+        <button type="button" id="btn-canvas" class="task-btn" data-app="canvas" aria-pressed="false"><span data-icon="canvas" aria-hidden="true"></span><span class="task-label">CANVAS</span></button>
+        <button type="button" id="btn-postman" class="task-btn" data-app="postman" aria-pressed="false"><span data-icon="postman" aria-hidden="true"></span><span class="task-label">POSTMAN</span></button>
       </div>
-
-      <div class="taskbar-status">
-        <span class="status-text">Local rehearsal</span>
+      <!-- Notifications live in the taskbar's free middle, so they never cover a window or its controls. -->
+      <div id="toasts" class="toasts" aria-live="polite"></div>
+      <div class="tray">
+        <span class="tray-session-only" title="This browser did not keep the save. The case lives in this tab only." hidden>Session only</span>
+        <button type="button" id="btn-phase" class="tray-phase" aria-haspopup="dialog" aria-expanded="false" aria-controls="phase-popover">
+          <span class="phase-dot" aria-hidden="true"></span><span class="phase-label">Repeating</span>
+        </button>
+        <button type="button" id="btn-sound" class="tray-icon" aria-pressed="false" aria-label="Bell sound: off"></button>
+        <span class="tray-user" title="Signed in at this desk">guest</span>
+        <time class="tray-clock"></time>
       </div>
     </footer>
+
+    <div id="launcher-menu" class="launcher-menu" role="menu" aria-label="HAUNT" hidden>
+      <p class="launcher-head" role="presentation">HAUNT OS <small>guest@haunt</small></p>
+      <button type="button" role="menuitem" data-launch="terminal"><span data-icon="terminal" aria-hidden="true"></span><span>TERMINAL<small>the job that is still open</small></span></button>
+      <button type="button" role="menuitem" data-launch="echo"><span data-icon="echo" aria-hidden="true"></span><span>ECHO<small>capture studio</small></span></button>
+      <button type="button" role="menuitem" data-launch="canvas"><span data-icon="canvas" aria-hidden="true"></span><span>CANVAS<small>pictures and letters</small></span></button>
+      <button type="button" role="menuitem" data-launch="postman"><span data-icon="postman" aria-hidden="true"></span><span>POSTMAN<small>mail at this desk</small></span></button>
+      <div class="menu-separator" role="separator"></div>
+      <button type="button" role="menuitem" data-arrange>Arrange windows</button>
+      <button type="button" role="menuitem" data-help>Help with this step</button>
+      <button type="button" role="menuitem" data-about>About HAUNT OS</button>
+      <div class="menu-separator" role="separator"></div>
+      <button type="button" role="menuitem" data-start-over>Start the case over…</button>
+    </div>
+
+    <section id="phase-popover" class="phase-popover" role="dialog" aria-labelledby="phase-title" hidden>
+      <p class="phase-eyebrow">last.job · Mara · 31 Oct 1987</p>
+      <h2 id="phase-title" class="phase-title"></h2>
+      <p class="phase-pending"></p>
+      <p class="phase-question"></p>
+      <p class="phase-hint" hidden></p>
+      <div class="phase-buttons">
+        <button type="button" data-phase-hint>Show me</button>
+        <button type="button" data-phase-answer hidden>Tell me exactly</button>
+        <button type="button" data-phase-close>Close</button>
+      </div>
+      <ol class="phase-steps" aria-label="Phases of the job"></ol>
+    </section>
+
+    <div id="boot" class="boot" hidden>
+      <div class="boot-card">
+        <span class="boot-glyph" data-icon="haunt" aria-hidden="true"></span>
+        <p class="boot-name">HAUNT OS</p>
+        <p class="boot-line" role="status">Restoring last session…</p>
+        <span class="boot-bar" aria-hidden="true"><span></span></span>
+        <p class="boot-skip">Press any key to skip</p>
+      </div>
+    </div>
+
+    <dialog id="about-dialog" class="os-dialog" aria-labelledby="about-title">
+      <div class="dialog-head"><span data-icon="haunt" aria-hidden="true"></span><h2 id="about-title">About HAUNT OS</h2></div>
+      <p class="about-version">HAUNT OS 4 · build v9 · <span data-about="phase"></span></p>
+      <p>A fictional Halloween desktop made for Kiroween 2026. One unfinished job from 31 October 1987, four programs, one letter.</p>
+      <h3>What is real here</h3>
+      <p>The programs, the windows and everything you make in them. Mara, her 1987 session, the glass and the mail are fiction. Nothing leaves this browser: there is no real mail, network, camera or access to your computer’s programs.</p>
+      <h3>Storage</h3>
+      <p data-about="storage"></p>
+      <h3>Keyboard</h3>
+      <ul>
+        <li>Tab moves between controls. Escape closes menus and panels; it never closes a window.</li>
+        <li>A window’s icon opens its menu: Move and Size use the arrow keys (Shift for larger steps), Enter to finish.</li>
+        <li>ECHO’s wipe cursor: arrow keys move it; hold Space to wipe. A photo frame: arrow keys move it, + and − resize it.</li>
+        <li>CANVAS: Ctrl+Z and Ctrl+Y undo and redo the letter. In “The photograph keeps”, the arrow keys choose an option.</li>
+        <li>A panel that does not fit its window scrolls; Tab reaches it, and the arrow keys scroll it.</li>
+      </ul>
+      <h3>Made by</h3>
+      <p>Story contract, reviews and prompts: Codex. This version’s design decisions and implementation: the Kiro agent in Kiro IDE. Original drawings and synthesized sound; no external images, fonts or audio.</p>
+      <div class="dialog-buttons"><button type="button" class="is-primary" data-close>Close</button></div>
+    </dialog>
+
+    <dialog id="start-over-dialog" class="os-dialog" aria-labelledby="start-over-title">
+      <h2 id="start-over-title">Start the case over?</h2>
+      <p>Mara’s job starts again from its first minute. The glass, ECHO’s captures and the letter in CANVAS are cleared. Letters you sent move to POSTMAN’s Archive, and their receipts stay with that earlier session.</p>
+      <div class="dialog-buttons"><button type="button" class="is-danger" data-confirm>Start over</button><button type="button" class="is-primary" data-cancel autofocus>Keep this case</button></div>
+    </dialog>
   </div>
 
   <script type="module" src="/src/haunt/desktop.ts"></script>

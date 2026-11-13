@@ -1,0 +1,159 @@
+import { describe, expect, it } from 'vitest';
+import { LegacySession, LAST_LINE } from '../src/haunt/legacy-session';
+import { doorCopy, handoverLines, primaryAction, roomHint, shellIntro } from '../src/haunt/haunting-presentation';
+import { TERMINAL_SAVE_KEY, loadTerminalOutcome, parseTerminalSave, saveTerminalOutcome } from '../src/haunt/terminal-save';
+
+const TECHNICAL = /\b(PID|stdout|BASIC|TERM|KILL|SIGTERM|callback|on_exit)\b/;
+class MemoryStore {
+  values = new Map<string, string>();
+  getItem(key: string): string | null { return this.values.get(key) ?? null; }
+  setItem(key: string, value: string): void { this.values.set(key, value); }
+  removeItem(key: string): void { this.values.delete(key); }
+}
+
+describe('TERMINAL experience v2 model', () => {
+  it('observes one complete attempt to leave as the same transitions as stepping, undone in one step', () => {
+    const stepped = new LegacySession();
+    stepped.step(); stepped.step(); stepped.step();
+    const observed = new LegacySession();
+    const initial = observed.snapshot();
+    observed.observe();
+    const { lastAction: a, ...steppedProcess } = stepped.snapshot();
+    const { lastAction: b, ...observedProcess } = observed.snapshot();
+    expect([a, b]).toEqual(['step', 'observe']);
+    expect(observedProcess).toEqual(steppedProcess);
+    expect(observed.snapshot()).toMatchObject({ pid: 3088, cycles: 1, moment: 'recalled' });
+    observed.undo();
+    expect(observed.snapshot()).toEqual(initial);
+    expect(observed.canUndo()).toBe(false);
+  });
+
+  it('with the bell quiet an observation ends waiting at the door, and repeating it changes nothing about the process', () => {
+    const session = new LegacySession();
+    session.toggle('restart');
+    session.observe();
+    const waiting = session.snapshot();
+    expect(waiting).toMatchObject({ moment: 'threshold', cycles: 0, pid: 3087, phase: 2 });
+    session.observe();
+    expect(session.snapshot()).toMatchObject({ moment: 'threshold', cycles: 0, pid: 3087, phase: 2 });
+  });
+
+  it('records a monotonic event outside the snapshot, so Undo and reset are new events that restore old state', () => {
+    const session = new LegacySession();
+    const before = session.snapshot();
+    expect(session.lastEvent()).toEqual({ id: 0, kind: 'start' });
+    session.observe();
+    const first = session.lastEvent();
+    session.toggle('restart');
+    expect(session.lastEvent()).toMatchObject({ kind: 'restart' });
+    session.undo(); session.undo();
+    const undone = session.lastEvent();
+    expect(undone.kind).toBe('undo');
+    expect(undone.id).toBeGreaterThan(first.id);
+    expect(session.snapshot()).toEqual(before);
+    session.terminate();
+    session.reset();
+    expect(session.lastEvent().kind).toBe('reset');
+    expect(session.snapshot()).toEqual(before);
+  });
+
+  it('restores a completed ending from a saved outcome and can still start the haunting over', () => {
+    const blank = new LegacySession({ outcome: 'blank', returns: 4 });
+    expect(blank.snapshot()).toMatchObject({ health: 'blank', pid: null, archive: false, restart: false, cycles: 4, moment: 'ended' });
+    expect(blank.canUndo()).toBe(false);
+    expect(blank.status().join(' ')).toContain('cannot remember');
+    expect(blank.execute('cat last-session')?.lines.join(' ')).toContain('blank');
+    expect(blank.execute('echo mine')?.lines).toEqual(['mine']);
+    const kept = new LegacySession({ outcome: 'remembered', returns: 0 });
+    expect(kept.execute('cat last-session')?.lines).toContain(LAST_LINE);
+    expect(kept.status().join(' ')).toContain('remember her line');
+    kept.reset();
+    expect(kept.snapshot()).toMatchObject({ health: 'haunted', pid: 3087, restart: true, cycles: 0 });
+  });
+});
+
+describe('TERMINAL v2 save', () => {
+  it('accepts only the current version and the two completed outcomes', () => {
+    expect(parseTerminalSave('{"v":1,"outcome":"remembered","returns":2}')).toEqual({ outcome: 'remembered', returns: 2 });
+    expect(parseTerminalSave('{"v":1,"outcome":"blank","returns":0}')).toEqual({ outcome: 'blank', returns: 0 });
+    for (const raw of [null, '', 'not json', '[]', 'null', '{"v":0,"outcome":"blank","returns":0}', '{"v":1,"outcome":"haunted","returns":0}',
+      '{"v":1,"outcome":"residue","returns":0}', '{"v":1,"outcome":"blank","returns":-1}', '{"v":1,"outcome":"blank","returns":1.5}',
+      '{"v":1,"outcome":"blank","returns":1000}', '{"v":1,"outcome":"blank"}', `{"v":1,"outcome":"blank","returns":0,"pad":"${'x'.repeat(220)}"}`]) {
+      expect(parseTerminalSave(raw)).toBeNull();
+    }
+  });
+
+  it('removes corrupt data, saves only completed endings and forgets an ending that was undone', () => {
+    const store = new MemoryStore();
+    store.setItem(TERMINAL_SAVE_KEY, '{"v":1,"outcome":"<img src=x onerror=alert(1)>","returns":0}');
+    expect(loadTerminalOutcome(store)).toBeNull();
+    expect(store.getItem(TERMINAL_SAVE_KEY)).toBeNull();
+    const session = new LegacySession();
+    saveTerminalOutcome(session.snapshot(), store);
+    expect(store.getItem(TERMINAL_SAVE_KEY)).toBeNull();
+    session.observe(); session.toggle('restart'); session.terminate();
+    saveTerminalOutcome(session.snapshot(), store);
+    expect(loadTerminalOutcome(store)).toEqual({ outcome: 'remembered', returns: 1 });
+    session.undo();
+    saveTerminalOutcome(session.snapshot(), store);
+    expect(store.getItem(TERMINAL_SAVE_KEY)).toBeNull();
+  });
+
+  it('never throws when storage is unavailable', () => {
+    const broken = { getItem: () => { throw new Error('denied'); }, setItem: () => { throw new Error('denied'); }, removeItem: () => { throw new Error('denied'); } };
+    expect(loadTerminalOutcome(broken)).toBeNull();
+    expect(() => saveTerminalOutcome(new LegacySession({ outcome: 'blank', returns: 0 }).snapshot(), broken)).not.toThrow();
+    expect(loadTerminalOutcome(null)).toBeNull();
+  });
+});
+
+describe('TERMINAL v2 presentation', () => {
+  it('offers exactly one contextual primary action for each stage of the encounter', () => {
+    const session = new LegacySession();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'observe', label: 'Watch it try to leave' });
+    session.observe();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'observe', label: 'Watch it try again' });
+    session.toggle('restart'); session.observe();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'door', label: 'Go to the way out' });
+    session.terminate(true);
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'resume', label: 'Call the shadow back' });
+    session.resumeResidue(); session.terminate();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'handover', label: 'Take back the prompt' });
+  });
+
+  it('hints teach observation first and give the explicit answer only when asked again', () => {
+    const session = new LegacySession();
+    const observation = [roomHint(session.snapshot(), false)];
+    session.observe();
+    observation.push(roomHint(session.snapshot(), false));
+    for (const hint of observation) expect(hint).not.toMatch(/quiet|guide/i);
+    expect(observation[1]).toMatch(/rang/);
+    expect(roomHint(session.snapshot(), true)).toMatch(/Bell.*quiet.*guide/i);
+    session.toggle('restart');
+    expect(roomHint(session.snapshot(), true)).toMatch(/already quiet.*Way out/);
+  });
+
+  it('opens a recovered shell honestly and hands the prompt back in plain words', () => {
+    const haunted = new LegacySession();
+    const recovered = new LegacySession({ outcome: 'remembered', returns: 2 });
+    expect(shellIntro(haunted.snapshot()).map(([text]) => text).join(' ')).toMatch(/still writing/);
+    const intro = shellIntro(recovered.snapshot()).map(([text]) => text).join(' ');
+    expect(intro).toMatch(/Welcome back/);
+    expect(intro).not.toMatch(/still writing/);
+    expect(handoverLines(recovered.snapshot()).map(([text]) => text).join(' ')).toMatch(/yours again.*own words/);
+    expect(doorCopy(recovered.snapshot())).toMatch(/just a door/);
+  });
+
+  it('keeps the new v2 surfaces free of process vocabulary', () => {
+    const session = new LegacySession();
+    const states = [session.snapshot()];
+    session.observe(); states.push(session.snapshot());
+    session.toggle('restart'); session.observe(); states.push(session.snapshot());
+    session.terminate(true); states.push(session.snapshot());
+    session.resumeResidue(); session.toggle('archive'); session.terminate(); states.push(session.snapshot());
+    for (const state of states) {
+      const texts = [primaryAction(state).label, roomHint(state, false), roomHint(state, true), doorCopy(state), ...shellIntro(state).map(([text]) => text), ...handoverLines(state).map(([text]) => text)];
+      for (const text of texts) expect(text).not.toMatch(TECHNICAL);
+    }
+  });
+});

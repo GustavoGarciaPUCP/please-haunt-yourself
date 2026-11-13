@@ -17,7 +17,20 @@
     "check:console": "node scripts/check-process-console.mjs",
     "check:guide": "node scripts/check-first-run.mjs",
     "check:recovery": "node scripts/check-terminal-recovery.mjs",
-    "check:halloween": "node scripts/check-terminal-halloween.mjs"
+    "check:halloween": "node scripts/check-terminal-halloween.mjs",
+    "check:drag": "node scripts/check-window-drag.mjs",
+    "check:letter": "node scripts/check-letter.mjs",
+    "check:case": "node scripts/check-case.mjs",
+    "check:keys": "node scripts/check-keys.mjs",
+    "check:drawn": "node scripts/check-drawn-text.mjs",
+    "check:paths": "node scripts/check-paths.mjs",
+    "check:confirm": "node scripts/check-confirmations.mjs",
+    "check:text": "node scripts/check-free-text.mjs",
+    "check:typing": "node scripts/check-fluid-typing.mjs",
+    "check:active": "node scripts/check-active-window.mjs",
+    "review:v4": "node scripts/review-v4.mjs",
+    "review:v5": "node scripts/review-v5.mjs",
+    "review:v6": "node scripts/review-v6.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

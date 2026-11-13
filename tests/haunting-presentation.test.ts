@@ -1,139 +1,138 @@
 import { describe, expect, it } from 'vitest';
-import { LegacySession, LAST_LINE, type LegacySnapshot } from '../src/haunt/legacy-session';
-import { desktopTask, ghostPose, hauntingNarration, interiorHint, justRang, objectCopy, shellPresentation, whisperText } from '../src/haunt/haunting-presentation';
+import { CALL_STOPPED, FINAL_LINE, LAST_LINE, LegacySession, NOTE_START, type LegacySnapshot } from '../src/haunt/legacy-session';
+import {
+  FINISH_LINES, OBJECTS, bootLines, eventLines, figurePose, jobStrip, objectCopy, phaseLines, primaryAction, recordedClock, sessionHint, sessionNarration, whisperText,
+} from '../src/haunt/haunting-presentation';
+import { PHASES } from '../src/haunt/case-phase';
 
-const TECHNICAL = /\b(PID|stdout|BASIC|TERM|KILL|SIGTERM|callback|on_exit)\b/;
+const TECHNICAL = /\b(PID|stdout|BASIC|TERM|KILL|SIGTERM|callback|on_exit|on_finish|RETRY)\b/;
+/** Default surfaces a non-programmer reads. Under the hood and typed commands are allowed to be technical. */
 const surfaces = (state: LegacySnapshot): string[] => {
-  const shell = shellPresentation(state), objects = objectCopy(state);
-  return [hauntingNarration(state), interiorHint(state), desktopTask(state), shell.label, shell.condition, shell.prefix, shell.line, shell.lineSr, shell.enter, shell.footer,
-    ...Object.values(objects).flatMap(copy => [copy.state, copy.action])];
+  const copy = objectCopy(state), strip = jobStrip(state);
+  return [sessionNarration(state), sessionHint(state, false), sessionHint(state, true), primaryAction(state).label, strip.phase, strip.next, copy.muffle, copy.call,
+    ...OBJECTS.flatMap(object => [copy[object].state, copy[object].quote]), ...bootLines(state).map(([text]) => text)];
+};
+const journey = (): LegacySnapshot[] => {
+  const session = new LegacySession(), states = [session.snapshot()];
+  session.observe(); states.push(session.snapshot());
+  session.toggleMuffle(); session.observe(); states.push(session.snapshot());
+  session.toggleRetry(); session.setCasePhase('call-stopped'); states.push(session.snapshot());
+  session.terminate(true); states.push(session.snapshot());
+  session.resumeResidue(); states.push(session.snapshot());
+  session.observe(); states.push(session.snapshot());
+  session.setCasePhase('capture-retained'); states.push(session.snapshot());
+  return states;
 };
 
-describe('TERMINAL Halloween presentation', () => {
-  it('keeps the process outcome of a long sequence identical while attributing each moment', () => {
+describe('TERMINAL v4 presentation', () => {
+  it('offers exactly one contextual primary action at every stage of the job', () => {
     const session = new LegacySession();
-    session.step(); session.step(); session.step();
-    session.toggle('output');
-    session.step(); session.step(); session.step();
-    session.terminate();
-    session.toggle('restart');
-    for (let i = 0; i < 4; i++) session.step();
-    expect(session.snapshot()).toMatchObject({ pid: 3090, cycles: 3, phase: 2, health: 'haunted', moment: 'threshold', lastAction: 'step' });
-    session.terminate();
-    expect(session.snapshot()).toMatchObject({ pid: null, cycles: 3, phase: 2, health: 'remembered', moment: 'ended', lastAction: 'term' });
-  });
-
-  it('names the bell as the cause of every return, including the player’s own failed farewell', () => {
-    const session = new LegacySession();
-    session.step(); session.step(); session.step();
-    let state = session.snapshot();
-    expect(state).toMatchObject({ moment: 'recalled', lastAction: 'step', cycles: 1 });
-    expect(justRang(state)).toBe(true);
-    expect(ghostPose(state)).toBe('present');
-    expect(hauntingNarration(state)).toMatch(/bell rings.*pulled back.*once/);
-    session.terminate();
-    state = session.snapshot();
-    expect(state).toMatchObject({ moment: 'recalled', lastAction: 'term', cycles: 2, health: 'haunted' });
-    expect(hauntingNarration(state)).toMatch(/^You guided it.*bell rang.*twice/);
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'observe', label: 'Watch it try to finish' });
+    session.observe();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'observe', label: 'Watch it try again' });
+    session.toggleRetry();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'observe', label: 'Let it finish this time' });
     session.terminate(true);
-    expect(hauntingNarration(session.snapshot())).toMatch(/^You forced it out, but the bell rang/);
-    expect(shellPresentation(session.snapshot()).condition).toContain('3 times');
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'resume', label: 'Call it back' });
+    session.resumeResidue(); session.observe();
+    expect(primaryAction(session.snapshot())).toEqual({ intent: 'detach', label: 'Back to the prompt' });
   });
 
-  it('hushing silences the words but the ghost stays, in the room and behind the shell text', () => {
+  it('names the call as the cause and the bell only as its sound', () => {
     const session = new LegacySession();
-    session.toggle('output');
-    const state = session.snapshot();
-    expect(whisperText(state)).toBe('');
-    expect(ghostPose(state)).toBe('present');
-    expect(shellPresentation(state)).toMatchObject({ ghost: 'hushed', lineKind: 'hushed' });
-    expect(hauntingNarration(state)).toMatch(/hushed the whisper.*still here/);
-    expect(objectCopy(state).output.action).toBe('Let it whisper');
-    expect(desktopTask(state)).not.toContain('recovered');
+    session.observe();
+    expect(sessionNarration(session.snapshot())).toMatch(new RegExp(`${NOTE_START}.*nothing delivered.*bell rang.*same minute again.*once`));
+    session.toggleMuffle(); session.observe();
+    expect(sessionNarration(session.snapshot())).toMatch(/muffled bell made no sound, but it still started the same minute again.*twice/);
+    expect(objectCopy(session.snapshot()).bell.state).toMatch(/cord pulls the job back.*muffled, so it makes no sound/);
+    session.toggleRetry();
+    expect(sessionNarration(session.snapshot())).toContain(CALL_STOPPED);
+    expect(objectCopy(session.snapshot()).bell.state).toMatch(/unhooked/);
+    expect(objectCopy(session.snapshot()).call).toBe('Hook the call back on');
   });
 
-  it('object changes never move the ghost or erase what it last did', () => {
+  it('hints teach observation first; the explicit answer only when asked, and it distinguishes muffling from stopping', () => {
     const session = new LegacySession();
-    session.toggle('restart');
-    session.step(); session.step(); session.step();
-    expect(session.snapshot().moment).toBe('threshold');
-    expect(ghostPose(session.snapshot())).toBe('leaving');
-    session.toggle('archive');
-    let state = session.snapshot();
-    expect(state).toMatchObject({ moment: 'threshold', lastAction: 'archive', archive: false });
-    expect(ghostPose(state)).toBe('leaving');
-    expect(justRang(state)).toBe(false);
-    expect(hauntingNarration(state)).toMatch(/let the note fade.*does not free it/);
-    session.toggle('restart');
-    expect(ghostPose(session.snapshot())).toBe('leaving');
-    expect(justRang(session.snapshot())).toBe(false);
+    expect(sessionHint(session.snapshot(), false)).toMatch(/end of the minute/);
+    session.observe();
+    expect(sessionHint(session.snapshot(), false)).not.toMatch(/stop the call/i);
+    expect(sessionHint(session.snapshot(), false)).toMatch(/rings above the way out/);
+    expect(sessionHint(session.snapshot(), true)).toMatch(/Stop the call\. Muffling the bell only silences it/);
+    session.toggleRetry(); session.observe();
+    expect(sessionHint(session.snapshot(), true)).toMatch(/move TERMINAL aside.*ECHO/);
+  });
+
+  it('the job strip uses the case’s phase words, the same table as the tray and help', () => {
+    const session = new LegacySession();
+    expect(jobStrip(session.snapshot())).toEqual({ phase: PHASES.repeating.label, next: `Next: ${PHASES.repeating.pending}` });
+    session.toggleRetry(); session.setCasePhase('call-stopped');
+    expect(jobStrip(session.snapshot()).phase).toBe('Call stopped · letter pending');
+    session.observe(); session.setCasePhase('ready-to-finish');
+    expect(jobStrip(session.snapshot())).toEqual({ phase: 'Delivered · ready to finish', next: 'Next: Finish the session in TERMINAL.' });
+    session.finish(); session.setCasePhase('finished');
+    expect(jobStrip(session.snapshot()).phase).toBe('Session finished');
+  });
+
+  it('poses, whispers and the recorded clock follow the session’s own moments', () => {
+    const session = new LegacySession();
+    expect(recordedClock(session.snapshot())).toEqual({ date: '31 Oct 1987', time: '23:59', ended: false });
     session.step();
-    state = session.snapshot();
-    expect(state).toMatchObject({ moment: 'recalled', cycles: 1 });
-    expect(justRang(state)).toBe(true);
-    expect(whisperText(state)).toBe('. . .');
+    expect(figurePose(session.snapshot())).toBe('reading');
+    session.step();
+    expect(figurePose(session.snapshot())).toBe('writing');
+    expect(whisperText(session.snapshot())).toBe(NOTE_START);
+    session.step();
+    expect(whisperText(session.snapshot(), session.lastEvent())).toBe('HELP ME.');
+    expect(whisperText(session.snapshot())).toBe(LAST_LINE);
+    session.toggleRetry(); session.observe();
+    expect(figurePose(session.snapshot())).toBe('gone');
+    expect(whisperText(session.snapshot())).toBe('');
+    expect(recordedClock(session.snapshot())).toEqual({ date: '1 Nov 1987', time: '00:00:00', ended: true });
   });
 
-  it('gives the kept note and the blank page different, presence-free endings', () => {
-    const kept = new LegacySession();
-    kept.toggle('restart'); kept.terminate();
-    const blank = new LegacySession();
-    blank.toggle('archive'); blank.toggle('restart'); blank.terminate();
-    const a = kept.snapshot(), b = blank.snapshot();
-    expect([a.health, b.health]).toEqual(['remembered', 'blank']);
-    for (const state of [a, b]) {
-      expect(ghostPose(state)).toBe('gone');
-      expect(shellPresentation(state).ghost).toBe('gone');
-      expect(whisperText(state)).toBe('');
-      expect(desktopTask(state)).toMatch(/^✓ TERMINAL recovered\./);
+  it('adds transcript lines only for real changes, once per event, and leaves the finish to its own lines', () => {
+    const session = new LegacySession();
+    let previous = session.snapshot();
+    session.observe();
+    expect(eventLines(session.snapshot(), session.lastEvent(), previous).map(([text]) => text)).toEqual([
+      '↺ last.session started the same minute again · the bell rang · returns: 1', 'MARA@1987> HELP ME.']);
+    previous = session.snapshot();
+    session.toggleRetry();
+    expect(eventLines(session.snapshot(), session.lastEvent(), previous)).toEqual([[`TERMINAL: ${CALL_STOPPED}`, 'success']]);
+    previous = session.snapshot();
+    session.observe();
+    expect(eventLines(session.snapshot(), session.lastEvent(), previous).map(([text]) => text).join(' ')).toMatch(/last impression is on the glass.*ECHO can capture/);
+    previous = session.snapshot();
+    session.finish();
+    expect(eventLines(session.snapshot(), session.lastEvent(), previous)).toEqual([]);
+    expect(FINISH_LINES.map(([text]) => text)).toContain(`MARA@1987> ${FINAL_LINE}`);
+  });
+
+  it('reports progress from the other programs only when the phase moves forward', () => {
+    expect(phaseLines('capture-retained', 'call-stopped').map(([text]) => text).join(' ')).toMatch(/ECHO captured the glass, writing and all/);
+    expect(phaseLines('ready-to-finish', 'draft-ready').map(([text]) => text).join(' ')).toMatch(/Its receipt is here/);
+    expect(phaseLines('call-stopped', 'capture-retained')).toEqual([]);
+    expect(phaseLines('finished', 'ready-to-finish')).toEqual([]);
+  });
+
+  it('the opening transcript is ordinary, tells the truth after a reload and reports a migration once', () => {
+    const fresh = bootLines(new LegacySession().snapshot(), 'migrated-v1').map(([text]) => text).join(' ');
+    expect(fresh).toMatch(/Restored 1 session: last\.session \(Mara, recorded 31 Oct 1987 23:59\)/);
+    expect(fresh).toMatch(/older version belongs to an earlier story/);
+    expect(bootLines(new LegacySession().snapshot(), 'migrated-v3').map(([text]) => text).join(' ')).toMatch(/limited captures: their picture only, no writing/);
+    const restored = new LegacySession({ retry: false, muffled: false, attempts: 2, presence: 'glass', said: ['help', 'same-minute'] });
+    const intro = bootLines(restored.snapshot()).map(([text]) => text);
+    expect(intro.join(' ')).toMatch(/finished its minute.*glass/);
+    expect(intro).toContain('MARA@1987> HELP ME.');
+    const closed = new LegacySession({ retry: false, muffled: false, attempts: 2, presence: 'released', said: ['help', 'next-person'] });
+    expect(bootLines(closed.snapshot()).map(([text]) => text)).toContain(`MARA@1987> ${FINAL_LINE}`);
+    expect(bootLines(new LegacySession().snapshot(), 'corrupt').map(([text]) => text).join(' ')).toMatch(/could not be read/);
+  });
+
+  it('keeps every default surface free of process vocabulary and never claims the letter arrived early', () => {
+    for (const state of journey()) for (const text of surfaces(state)) {
+      expect(text).not.toMatch(TECHNICAL);
+      expect(text).not.toMatch(/at peace|recovered|you win|session complete|You were the next person|The letter arrived/i);
     }
-    expect(shellPresentation(a)).toMatchObject({ lineKind: 'kept', line: `“${LAST_LINE}”` });
-    expect(shellPresentation(b)).toMatchObject({ lineKind: 'blank', line: '(a blank page)' });
-    expect(hauntingNarration(a)).not.toBe(hauntingNarration(b));
-    expect(desktopTask(a)).not.toBe(desktopTask(b));
-    expect(kept.status()).not.toEqual(blank.status());
-  });
-
-  it('a forced exit leaves a shadow that is not a recovery and can be called back', () => {
-    const session = new LegacySession();
-    session.toggle('restart'); session.terminate(true);
-    let state = session.snapshot();
-    expect(ghostPose(state)).toBe('shadow');
-    expect(shellPresentation(state)).toMatchObject({ ghost: 'shadow', enter: 'Follow the shadow' });
-    expect(desktopTask(state)).not.toContain('recovered');
-    session.resumeResidue();
-    state = session.snapshot();
-    expect(state).toMatchObject({ health: 'haunted', moment: 'waiting', lastAction: 'resume', restart: false });
-    expect(ghostPose(state)).toBe('present');
-    expect(hauntingNarration(state)).toMatch(/called the shadow back/);
-  });
-
-  it('answers check-ins from the bell’s actual state', () => {
-    const session = new LegacySession();
-    session.toggle('restart');
-    expect(session.status().join(' ')).toMatch(/^TERMINAL: Not yet\. The bell is quiet/);
-    session.toggle('output');
-    expect(session.status().join(' ')).toMatch(/Quiet is not the same as free\. The bell is quiet now/);
-  });
-
-  it('keeps every default surface free of process vocabulary', () => {
-    const session = new LegacySession();
-    const seen: LegacySnapshot[] = [session.snapshot()];
-    const record = (action: () => void) => { action(); seen.push(session.snapshot()); };
-    for (let i = 0; i < 3; i++) record(() => session.step());
-    record(() => session.terminate());
-    record(() => session.terminate(true));
-    record(() => session.toggle('output'));
-    record(() => session.toggle('archive'));
-    record(() => session.toggle('restart'));
-    for (let i = 0; i < 3; i++) record(() => session.step());
-    record(() => session.terminate(true));
-    record(() => session.resumeResidue());
-    record(() => session.terminate());
-    record(() => session.undo());
-    record(() => session.toggle('archive'));
-    record(() => session.terminate());
-    expect(new Set(seen.map(state => state.health))).toEqual(new Set(['haunted', 'residue', 'blank', 'remembered']));
-    for (const state of seen) for (const text of surfaces(state)) expect(text).not.toMatch(TECHNICAL);
   });
 });
